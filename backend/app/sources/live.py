@@ -15,8 +15,12 @@ import base64
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Awaitable, Callable
+from zoneinfo import ZoneInfo
 
 import httpx
+
+# FuelCheck reports prices in NSW local time (no offset in the payload).
+_NSW_TZ = ZoneInfo("Australia/Sydney")
 
 from app.models import DailyLow, Location, Price, Snapshot, Station
 from app.sources.base import FuelSource
@@ -108,9 +112,13 @@ class LiveFuelCheckSource(FuelSource):
 
     @staticmethod
     def _parse_lastupdated(raw: str) -> datetime:
-        dt = datetime.strptime(raw, _LASTUPDATED_FMT)
-        # FuelCheck reports NSW local time; treat as naive-local and stamp UTC-ish.
-        return dt.replace(tzinfo=timezone.utc)
+        # FuelCheck reports NSW local time (UTC+10/+11). Parse it AS NSW-local then
+        # convert to UTC — stamping the naive value as UTC would shift every price
+        # ~10–11h into the "future" vs captured_at and mis-classify freshness (the
+        # trust thesis). Snapshots already carry real UTC ISO timestamps; this is the
+        # live-path fix.
+        dt = datetime.strptime(raw, _LASTUPDATED_FMT).replace(tzinfo=_NSW_TZ)
+        return dt.astimezone(timezone.utc)
 
     def _parse_snapshot(self, payload: dict) -> Snapshot:
         stations: list[Station] = []
