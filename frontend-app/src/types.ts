@@ -16,6 +16,7 @@ export interface StationOffer {
   fuel_type: string;
   price: number;
   discount: number;
+  discount_label: string | null;
   effective_price: number;
   last_updated: string;
   freshness: Freshness;
@@ -58,7 +59,6 @@ export interface Meta {
   price_count: number;
   freshness_breakdown: Record<Freshness, number>;
   fuel_types: Record<string, string>;
-  discount_programs: Record<string, { label: string; note: string }>;
   provider: string;
   now: string;
 }
@@ -69,6 +69,19 @@ export interface StationHit {
   brand: string | null;
   address: string | null;
   distance_km: number | null;
+}
+
+export interface CatalogPreset {
+  key: string;
+  label: string;
+  brands: string[];
+  cents: number;
+  premium: number | null;
+}
+
+export interface CustomRule {
+  brand: string;
+  cents: number;
 }
 
 export interface AdvisorResult {
@@ -89,6 +102,8 @@ export interface UserModel {
   tankL: number;
   usualStation: string | null;
   usualStationName: string | null;
-  membership: string | null;
+  memberships: string[];
+  rateOverrides: Record<string, number>;
+  customRules: CustomRule[];
   theme: "dark" | "light";
 }

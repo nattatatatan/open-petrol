@@ -1,10 +1,32 @@
 import type {
   AdvisorResult,
+  CatalogPreset,
+  CustomRule,
   Meta,
   NearMeResult,
   RouteResult,
   StationHit,
 } from "./types";
+
+/** Compact query encoding for the user's membership selection (the engine resolves
+ *  the single best discount per station). The user owns these numbers. */
+export interface MembershipParams {
+  memberships: string[];
+  rateOverrides: Record<string, number>;
+  customRules: CustomRule[];
+}
+
+function membershipQuery(m?: MembershipParams) {
+  if (!m) return {};
+  return {
+    memberships: m.memberships.join(",") || undefined,
+    rate_overrides:
+      Object.entries(m.rateOverrides).map(([k, v]) => `${k}:${v}`).join(",") || undefined,
+    custom_discounts:
+      m.customRules.filter((r) => r.brand).map((r) => `${r.brand}:${r.cents}`).join(",") ||
+      undefined,
+  };
+}
 
 async function get<T>(path: string, params: Record<string, string | number | undefined>): Promise<T> {
   const qs = new URLSearchParams();
@@ -22,23 +44,25 @@ async function get<T>(path: string, params: Record<string, string | number | und
 export const api = {
   meta: () => get<Meta>("/api/meta", {}),
 
+  catalog: () => get<{ presets: CatalogPreset[] }>("/api/catalog", {}),
+
   nearMe: (p: {
     lat: number; lng: number; fuel: string; tank: number; radius: number;
-    usual?: string | null; membership?: string | null;
+    usual?: string | null; membership?: MembershipParams;
   }) =>
     get<NearMeResult>("/api/near-me", {
       lat: p.lat, lng: p.lng, fuel: p.fuel, tank: p.tank, radius: p.radius,
-      usual_station: p.usual ?? undefined, membership: p.membership ?? undefined,
+      usual_station: p.usual ?? undefined, ...membershipQuery(p.membership),
     }),
 
   onMyWay: (p: {
     originLat: number; originLng: number; dest: string; fuel: string; tank: number;
-    usual?: string | null; membership?: string | null;
+    usual?: string | null; membership?: MembershipParams;
   }) =>
     get<RouteResult>("/api/on-my-way", {
       origin_lat: p.originLat, origin_lng: p.originLng, dest: p.dest,
       fuel: p.fuel, tank: p.tank, usual_station: p.usual ?? undefined,
-      membership: p.membership ?? undefined,
+      ...membershipQuery(p.membership),
     }),
 
   geocode: (q: string) =>

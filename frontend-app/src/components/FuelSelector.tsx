@@ -11,24 +11,31 @@ export function FuelSelector({
 }) {
   const entries = Object.entries(fuelTypes).filter(([code]) => code !== "EV");
   return (
-    <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-      {entries.map(([code, label]) => {
-        const active = code === value;
-        return (
-          <button
-            key={code}
-            onClick={() => onChange(code)}
-            title={label}
-            className={`shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-              active
-                ? "border-brand bg-brand text-[color:var(--color-text-onAction)]"
-                : "border-border text-text-secondary hover:border-border-strong hover:text-text"
-            }`}
-          >
-            {code}
-          </button>
-        );
-      })}
+    <div>
+      <div className="mb-1.5 text-xs font-semibold uppercase tracking-display text-text-secondary">
+        Fuel type
+      </div>
+      {/* Discrete set → wrapped chips, not a scrolling row (which reads as a slider). */}
+      <div className="flex flex-wrap gap-2">
+        {entries.map(([code, label]) => {
+          const active = code === value;
+          return (
+            <button
+              key={code}
+              onClick={() => onChange(code)}
+              title={label}
+              aria-pressed={active}
+              className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                active
+                  ? "border-brand bg-brand text-[color:var(--color-text-onAction)]"
+                  : "border-border text-text-secondary hover:border-border-strong hover:text-text"
+              }`}
+            >
+              {code}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

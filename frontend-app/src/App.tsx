@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "./api";
 import { useGeolocation } from "./hooks/useGeolocation";
 import { useUserModel } from "./hooks/useUserModel";
-import type { Meta, NearMeResult, RouteResult, StationOffer } from "./types";
+import type { CatalogPreset, Meta, NearMeResult, RouteResult, StationOffer } from "./types";
 import { navigateUrl } from "./lib/navigate";
 import { Advisor } from "./components/Advisor";
 import { FuelSelector } from "./components/FuelSelector";
@@ -24,6 +24,7 @@ export default function App() {
   const { model, update } = useUserModel();
   const geo = useGeolocation();
   const [meta, setMeta] = useState<Meta | null>(null);
+  const [catalog, setCatalog] = useState<CatalogPreset[]>([]);
   const [mode, setMode] = useState<Mode>("route");
   const [destination, setDestination] = useState("");
   const [result, setResult] = useState<Result | null>(null);
@@ -33,6 +34,7 @@ export default function App() {
 
   useEffect(() => {
     api.meta().then(setMeta).catch(() => setError("Couldn't reach the price service."));
+    api.catalog().then((c) => setCatalog(c.presets)).catch(() => {});
   }, []);
 
   // Least-clicks: ask for location on open so we can answer with zero taps
@@ -60,17 +62,22 @@ export default function App() {
     setLoading(true);
     setError(null);
     try {
+      const membership = {
+        memberships: model.memberships,
+        rateOverrides: model.rateOverrides,
+        customRules: model.customRules,
+      };
       const res =
         mode === "route"
           ? await api.onMyWay({
               originLat: geo.coords.lat, originLng: geo.coords.lng, dest: destination,
               fuel: model.fuelType, tank: model.tankL, usual: model.usualStation,
-              membership: model.membership,
+              membership,
             })
           : await api.nearMe({
               lat: geo.coords.lat, lng: geo.coords.lng, fuel: model.fuelType,
               tank: model.tankL, radius: 10, usual: model.usualStation,
-              membership: model.membership,
+              membership,
             });
       setResult(res);
       api.meta().then(setMeta).catch(() => {});
@@ -80,7 +87,8 @@ export default function App() {
     } finally {
       setLoading(false);
     }
-  }, [geo.coords, mode, destination, model.fuelType, model.tankL, model.usualStation, model.membership]);
+  }, [geo.coords, mode, destination, model.fuelType, model.tankL, model.usualStation,
+      model.memberships, model.rateOverrides, model.customRules]);
 
   // Live re-query when the user model changes (fuel / tank / baseline) and we
   // already have a result — keeps the answer scoped to their choices.
@@ -90,7 +98,8 @@ export default function App() {
   useEffect(() => {
     if (hasResult) searchRef.current();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [model.fuelType, model.tankL, model.usualStation, model.membership]);
+  }, [model.fuelType, model.tankL, model.usualStation,
+      model.memberships, model.rateOverrides, model.customRules]);
 
   // Near-me needs no destination, so once we have a location it can answer
   // immediately (1 tap: the tab). Route stays the primary, destination-driven flow.
@@ -108,6 +117,10 @@ export default function App() {
   const recommended = result?.recommended ?? null;
   const usualName =
     offers.find((o) => o.station_code === model.usualStation)?.name ?? null;
+  const activeMembershipLabels = [
+    ...catalog.filter((p) => model.memberships.includes(p.key)).map((p) => p.label),
+    ...model.customRules.filter((r) => r.brand).map((r) => r.brand),
+  ];
 
   const navigate = (o: StationOffer) =>
     window.open(navigateUrl(o, origin, destCoords), "_blank", "noopener");
@@ -182,8 +195,8 @@ export default function App() {
           />
 
           <p className="px-1 text-xs text-text-secondary">
-            {model.membership && meta?.discount_programs[model.membership]
-              ? `Showing your effective price with ${meta.discount_programs[model.membership].label}. Pump prices from FuelCheck.`
+            {activeMembershipLabels.length > 0
+              ? `Showing your effective price with ${activeMembershipLabels.join(" + ")}. Pump prices from FuelCheck.`
               : "Pump prices from FuelCheck — member/docket discounts (e.g. NRMA −5c, Coles/Woolies −4c) aren’t included. Add yours in settings."}
           </p>
 
@@ -223,7 +236,7 @@ export default function App() {
         open={settingsOpen}
         model={model}
         usualStationName={usualName}
-        discountPrograms={meta?.discount_programs ?? {}}
+        catalog={catalog}
         coords={geo.coords}
         onUpdate={update}
         onClose={() => setSettingsOpen(false)}

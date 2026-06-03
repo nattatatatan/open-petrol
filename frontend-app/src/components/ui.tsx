@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -60,6 +61,33 @@ export function Card({
   const bg = raised ? "bg-[color:var(--color-card-raised)]" : "bg-[color:var(--color-card)]";
   return (
     <div className={`${bg} border border-border rounded-lg ${className}`}>{children}</div>
+  );
+}
+
+/** Tap-to-toggle info bubble (mobile has no hover) — for explanatory copy that
+ *  doesn't need to sit on screen permanently. */
+export function InfoTooltip({ label, children }: { label: string; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <span className="relative inline-flex">
+      <button
+        type="button"
+        aria-label={label}
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-border text-[10px] text-text-secondary"
+      >
+        i
+      </button>
+      {open && (
+        <span
+          role="tooltip"
+          className="absolute left-0 top-6 z-10 w-56 rounded-md border border-border bg-[color:var(--color-card-raised)] px-3 py-2 text-xs font-normal text-text-secondary shadow-lg"
+        >
+          {children}
+        </span>
+      )}
+    </span>
   );
 }
 

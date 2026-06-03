@@ -8,14 +8,27 @@ const DEFAULT_MODEL: UserModel = {
   tankL: 55,
   usualStation: null,
   usualStationName: null,
-  membership: null,
+  memberships: [],
+  rateOverrides: {},
+  customRules: [],
   theme: "dark",
 };
 
 function load(): UserModel {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) return { ...DEFAULT_MODEL, ...JSON.parse(raw) };
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // Migrate the old single-select `membership` field to the multi-select model.
+      if (typeof parsed.membership === "string" && !parsed.memberships) {
+        const map: Record<string, string> = {
+          woolworths: "everyday_rewards", coles: "flybuys", nrma: "nrma",
+        };
+        parsed.memberships = map[parsed.membership] ? [map[parsed.membership]] : [];
+        delete parsed.membership;
+      }
+      return { ...DEFAULT_MODEL, ...parsed };
+    }
   } catch {
     /* ignore */
   }

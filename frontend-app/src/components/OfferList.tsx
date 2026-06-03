@@ -54,7 +54,7 @@ export function OfferList({
                 <div className="text-right">
                   <div
                     className="mono text-sm text-text"
-                    title={o.discount > 0 ? `${formatCents(o.price)}c pump − ${formatCents(o.discount)}c member` : undefined}
+                    title={o.discount > 0 ? `${formatCents(o.price)}c pump − ${formatCents(o.discount)}c ${o.discount_label ?? "member"}` : undefined}
                   >
                     {formatCents(o.discount > 0 ? o.effective_price : o.price)}
                     <span className="text-text-secondary">c</span>
@@ -65,9 +65,13 @@ export function OfferList({
                   <div
                     className="text-xs"
                     style={{ color: positive ? "var(--color-success)" : "var(--color-text-bodySecondary)" }}
-                    title="Net saving after the fuel + time cost of the detour"
+                    title={
+                      positive
+                        ? "Saving vs your baseline, after the fuel + time to drive there"
+                        : "The detour costs more than you'd save vs your baseline"
+                    }
                   >
-                    {positive ? `net ${formatDollars(o.net_benefit)}` : "after detour —"}
+                    {positive ? `save ${formatDollars(o.net_benefit)}` : "not worth the drive"}
                   </div>
                 </div>
               </button>

@@ -6,6 +6,7 @@ import {
   formatDistance,
   formatDollars,
   formatMinutes,
+  freshnessAge,
 } from "../lib/format";
 
 /** The answer, visually dominant — "one glance, one action" (CLAUDE.md §8).
@@ -57,7 +58,7 @@ export function ResultHero({
           {offer.discount > 0 && (
             <p className="mt-1 text-xs text-text-secondary">
               <span className="mono line-through">{formatCents(offer.price)}</span> pump · −
-              {formatCents(offer.discount)}c member
+              {formatCents(offer.discount)}c {offer.discount_label ?? "member"}
             </p>
           )}
           <Pill className="mt-2 border border-border text-text-secondary">
@@ -97,6 +98,13 @@ export function ResultHero({
           reference={reference}
         />
       </div>
+
+      {offer.freshness !== "fresh" && (
+        <p className="mt-2 px-lg text-xs text-[color:var(--color-text-alert)]">
+          This price is {freshnessAge(offer.last_updated, reference)} old — worth
+          confirming at the pump.
+        </p>
+      )}
 
       <p className="mt-2 px-lg text-xs text-text-secondary">
         {worthwhile ? "Saving" : "Compared"} vs {baseline.label} ({formatCents(baseline.price)}c/L)
