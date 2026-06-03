@@ -1,0 +1,506 @@
+[
+  {
+    "date": "2026-04-22",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 168.2
+  },
+  {
+    "date": "2026-04-23",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 169.1
+  },
+  {
+    "date": "2026-04-24",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 170.4
+  },
+  {
+    "date": "2026-04-25",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 171.4
+  },
+  {
+    "date": "2026-04-26",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 173.2
+  },
+  {
+    "date": "2026-04-27",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 173.5
+  },
+  {
+    "date": "2026-04-28",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 175.4
+  },
+  {
+    "date": "2026-04-29",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 175.7
+  },
+  {
+    "date": "2026-04-30",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 176.8
+  },
+  {
+    "date": "2026-05-01",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 177.7
+  },
+  {
+    "date": "2026-05-02",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 179.1
+  },
+  {
+    "date": "2026-05-03",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 180.1
+  },
+  {
+    "date": "2026-05-04",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 182.1
+  },
+  {
+    "date": "2026-05-05",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 183.7
+  },
+  {
+    "date": "2026-05-06",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 183.7
+  },
+  {
+    "date": "2026-05-07",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 184.9
+  },
+  {
+    "date": "2026-05-08",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 186.6
+  },
+  {
+    "date": "2026-05-09",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 188.3
+  },
+  {
+    "date": "2026-05-10",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 190.0
+  },
+  {
+    "date": "2026-05-11",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 190.2
+  },
+  {
+    "date": "2026-05-12",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 190.9
+  },
+  {
+    "date": "2026-05-13",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 191.7
+  },
+  {
+    "date": "2026-05-14",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 193.1
+  },
+  {
+    "date": "2026-05-15",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 194.3
+  },
+  {
+    "date": "2026-05-16",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 195.4
+  },
+  {
+    "date": "2026-05-17",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 190.4
+  },
+  {
+    "date": "2026-05-18",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 186.7
+  },
+  {
+    "date": "2026-05-19",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 181.5
+  },
+  {
+    "date": "2026-05-20",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 178.3
+  },
+  {
+    "date": "2026-05-21",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 172.8
+  },
+  {
+    "date": "2026-05-22",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 168.4
+  },
+  {
+    "date": "2026-05-23",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 168.4
+  },
+  {
+    "date": "2026-05-24",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 171.1
+  },
+  {
+    "date": "2026-05-25",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 171.5
+  },
+  {
+    "date": "2026-05-26",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 173.4
+  },
+  {
+    "date": "2026-05-27",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 174.0
+  },
+  {
+    "date": "2026-05-28",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 174.9
+  },
+  {
+    "date": "2026-05-29",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 176.0
+  },
+  {
+    "date": "2026-05-30",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 176.7
+  },
+  {
+    "date": "2026-05-31",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 177.6
+  },
+  {
+    "date": "2026-06-01",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 180.5
+  },
+  {
+    "date": "2026-06-02",
+    "fuel_type": "E10",
+    "area": "Sydney",
+    "price": 180.8
+  },
+  {
+    "date": "2026-04-22",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 171.6
+  },
+  {
+    "date": "2026-04-23",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 172.0
+  },
+  {
+    "date": "2026-04-24",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 172.5
+  },
+  {
+    "date": "2026-04-25",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 174.8
+  },
+  {
+    "date": "2026-04-26",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 174.8
+  },
+  {
+    "date": "2026-04-27",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 176.1
+  },
+  {
+    "date": "2026-04-28",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 178.1
+  },
+  {
+    "date": "2026-04-29",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 178.8
+  },
+  {
+    "date": "2026-04-30",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 181.3
+  },
+  {
+    "date": "2026-05-01",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 180.7
+  },
+  {
+    "date": "2026-05-02",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 183.2
+  },
+  {
+    "date": "2026-05-03",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 184.0
+  },
+  {
+    "date": "2026-05-04",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 185.6
+  },
+  {
+    "date": "2026-05-05",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 185.6
+  },
+  {
+    "date": "2026-05-06",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 187.4
+  },
+  {
+    "date": "2026-05-07",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 188.4
+  },
+  {
+    "date": "2026-05-08",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 189.6
+  },
+  {
+    "date": "2026-05-09",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 191.6
+  },
+  {
+    "date": "2026-05-10",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 193.0
+  },
+  {
+    "date": "2026-05-11",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 192.8
+  },
+  {
+    "date": "2026-05-12",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 194.6
+  },
+  {
+    "date": "2026-05-13",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 195.7
+  },
+  {
+    "date": "2026-05-14",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 197.1
+  },
+  {
+    "date": "2026-05-15",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 198.7
+  },
+  {
+    "date": "2026-05-16",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 198.4
+  },
+  {
+    "date": "2026-05-17",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 193.8
+  },
+  {
+    "date": "2026-05-18",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 190.0
+  },
+  {
+    "date": "2026-05-19",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 184.3
+  },
+  {
+    "date": "2026-05-20",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 179.7
+  },
+  {
+    "date": "2026-05-21",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 174.8
+  },
+  {
+    "date": "2026-05-22",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 170.0
+  },
+  {
+    "date": "2026-05-23",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 172.1
+  },
+  {
+    "date": "2026-05-24",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 173.5
+  },
+  {
+    "date": "2026-05-25",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 174.1
+  },
+  {
+    "date": "2026-05-26",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 175.1
+  },
+  {
+    "date": "2026-05-27",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 177.2
+  },
+  {
+    "date": "2026-05-28",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 178.4
+  },
+  {
+    "date": "2026-05-29",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 179.1
+  },
+  {
+    "date": "2026-05-30",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 180.7
+  },
+  {
+    "date": "2026-05-31",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 182.3
+  },
+  {
+    "date": "2026-06-01",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 183.2
+  },
+  {
+    "date": "2026-06-02",
+    "fuel_type": "U91",
+    "area": "Sydney",
+    "price": 184.1
+  }
+]

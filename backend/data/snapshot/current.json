@@ -1,0 +1,1619 @@
+{
+  "captured_at": "2026-06-02T08:30:00+00:00",
+  "stations": [
+    {
+      "code": "1001",
+      "name": "BP Parramatta",
+      "brand": "BP",
+      "address": "115 Parramatta Rd, Parramatta NSW",
+      "location": {
+        "latitude": -33.8264,
+        "longitude": 150.995701
+      }
+    },
+    {
+      "code": "1002",
+      "name": "Costco Parramatta",
+      "brand": "Costco",
+      "address": "4 Parramatta Rd, Parramatta NSW",
+      "location": {
+        "latitude": -33.812858,
+        "longitude": 151.008526
+      }
+    },
+    {
+      "code": "1003",
+      "name": "Mobil Chatswood",
+      "brand": "Mobil",
+      "address": "322 Chatswood Rd, Chatswood NSW",
+      "location": {
+        "latitude": -33.807009,
+        "longitude": 151.175336
+      }
+    },
+    {
+      "code": "1004",
+      "name": "Ampol Bondi",
+      "brand": "Ampol",
+      "address": "137 Bondi Rd, Bondi NSW",
+      "location": {
+        "latitude": -33.894616,
+        "longitude": 151.269728
+      }
+    },
+    {
+      "code": "1005",
+      "name": "7-Eleven Bondi",
+      "brand": "7-Eleven",
+      "address": "162 Bondi Rd, Bondi NSW",
+      "location": {
+        "latitude": -33.898003,
+        "longitude": 151.26547
+      }
+    },
+    {
+      "code": "1006",
+      "name": "Mobil Liverpool",
+      "brand": "Mobil",
+      "address": "113 Liverpool Rd, Liverpool NSW",
+      "location": {
+        "latitude": -33.910752,
+        "longitude": 150.920586
+      }
+    },
+    {
+      "code": "1007",
+      "name": "7-Eleven Liverpool",
+      "brand": "7-Eleven",
+      "address": "275 Liverpool Rd, Liverpool NSW",
+      "location": {
+        "latitude": -33.915973,
+        "longitude": 150.913749
+      }
+    },
+    {
+      "code": "1008",
+      "name": "Metro Petroleum Penrith",
+      "brand": "Metro Petroleum",
+      "address": "102 Penrith Rd, Penrith NSW",
+      "location": {
+        "latitude": -33.7429,
+        "longitude": 150.694384
+      }
+    },
+    {
+      "code": "1009",
+      "name": "7-Eleven Penrith",
+      "brand": "7-Eleven",
+      "address": "41 Penrith Rd, Penrith NSW",
+      "location": {
+        "latitude": -33.757319,
+        "longitude": 150.695817
+      }
+    },
+    {
+      "code": "1010",
+      "name": "Shell Hornsby",
+      "brand": "Shell",
+      "address": "344 Hornsby Rd, Hornsby NSW",
+      "location": {
+        "latitude": -33.697589,
+        "longitude": 151.096876
+      }
+    },
+    {
+      "code": "1011",
+      "name": "7-Eleven Hornsby",
+      "brand": "7-Eleven",
+      "address": "122 Hornsby Rd, Hornsby NSW",
+      "location": {
+        "latitude": -33.694069,
+        "longitude": 151.089001
+      }
+    },
+    {
+      "code": "1012",
+      "name": "Costco Sydney CBD",
+      "brand": "Costco",
+      "address": "335 Sydney CBD Rd, Sydney CBD NSW",
+      "location": {
+        "latitude": -33.860068,
+        "longitude": 151.1986
+      }
+    },
+    {
+      "code": "1013",
+      "name": "BP Sydney CBD",
+      "brand": "BP",
+      "address": "8 Sydney CBD Rd, Sydney CBD NSW",
+      "location": {
+        "latitude": -33.879586,
+        "longitude": 151.221283
+      }
+    },
+    {
+      "code": "1014",
+      "name": "Metro Petroleum Newtown",
+      "brand": "Metro Petroleum",
+      "address": "285 Newtown Rd, Newtown NSW",
+      "location": {
+        "latitude": -33.899648,
+        "longitude": 151.190276
+      }
+    },
+    {
+      "code": "1015",
+      "name": "BP Newtown",
+      "brand": "BP",
+      "address": "35 Newtown Rd, Newtown NSW",
+      "location": {
+        "latitude": -33.889368,
+        "longitude": 151.168945
+      }
+    },
+    {
+      "code": "1016",
+      "name": "Ampol Manly",
+      "brand": "Ampol",
+      "address": "162 Manly Rd, Manly NSW",
+      "location": {
+        "latitude": -33.792779,
+        "longitude": 151.2832
+      }
+    },
+    {
+      "code": "1017",
+      "name": "Costco Manly",
+      "brand": "Costco",
+      "address": "314 Manly Rd, Manly NSW",
+      "location": {
+        "latitude": -33.78889,
+        "longitude": 151.292885
+      }
+    },
+    {
+      "code": "1018",
+      "name": "Shell Cronulla",
+      "brand": "Shell",
+      "address": "325 Cronulla Rd, Cronulla NSW",
+      "location": {
+        "latitude": -34.052477,
+        "longitude": 151.147186
+      }
+    },
+    {
+      "code": "1019",
+      "name": "Mobil Cronulla",
+      "brand": "Mobil",
+      "address": "354 Cronulla Rd, Cronulla NSW",
+      "location": {
+        "latitude": -34.056238,
+        "longitude": 151.144985
+      }
+    },
+    {
+      "code": "1020",
+      "name": "BP Blacktown",
+      "brand": "BP",
+      "address": "209 Blacktown Rd, Blacktown NSW",
+      "location": {
+        "latitude": -33.774612,
+        "longitude": 150.907137
+      }
+    },
+    {
+      "code": "1021",
+      "name": "Shell Bankstown",
+      "brand": "Shell",
+      "address": "56 Bankstown Rd, Bankstown NSW",
+      "location": {
+        "latitude": -33.923697,
+        "longitude": 151.042297
+      }
+    },
+    {
+      "code": "1022",
+      "name": "Metro Petroleum Bankstown",
+      "brand": "Metro Petroleum",
+      "address": "348 Bankstown Rd, Bankstown NSW",
+      "location": {
+        "latitude": -33.921672,
+        "longitude": 151.035626
+      }
+    },
+    {
+      "code": "1023",
+      "name": "BP Ryde",
+      "brand": "BP",
+      "address": "131 Ryde Rd, Ryde NSW",
+      "location": {
+        "latitude": -33.815355,
+        "longitude": 151.107538
+      }
+    },
+    {
+      "code": "1024",
+      "name": "BP Ryde",
+      "brand": "BP",
+      "address": "159 Ryde Rd, Ryde NSW",
+      "location": {
+        "latitude": -33.807326,
+        "longitude": 151.100908
+      }
+    },
+    {
+      "code": "1025",
+      "name": "Mobil Hurstville",
+      "brand": "Mobil",
+      "address": "165 Hurstville Rd, Hurstville NSW",
+      "location": {
+        "latitude": -33.960642,
+        "longitude": 151.10526
+      }
+    },
+    {
+      "code": "1026",
+      "name": "Metro Petroleum Castle Hill",
+      "brand": "Metro Petroleum",
+      "address": "13 Castle Hill Rd, Castle Hill NSW",
+      "location": {
+        "latitude": -33.738609,
+        "longitude": 150.997779
+      }
+    },
+    {
+      "code": "1027",
+      "name": "BP Castle Hill",
+      "brand": "BP",
+      "address": "357 Castle Hill Rd, Castle Hill NSW",
+      "location": {
+        "latitude": -33.725318,
+        "longitude": 150.998252
+      }
+    },
+    {
+      "code": "1028",
+      "name": "Costco Campbelltown",
+      "brand": "Costco",
+      "address": "244 Campbelltown Rd, Campbelltown NSW",
+      "location": {
+        "latitude": -34.054467,
+        "longitude": 150.819848
+      }
+    },
+    {
+      "code": "1029",
+      "name": "BP Campbelltown",
+      "brand": "BP",
+      "address": "356 Campbelltown Rd, Campbelltown NSW",
+      "location": {
+        "latitude": -34.072679,
+        "longitude": 150.80755
+      }
+    },
+    {
+      "code": "1030",
+      "name": "7-Eleven Strathfield",
+      "brand": "7-Eleven",
+      "address": "200 Strathfield Rd, Strathfield NSW",
+      "location": {
+        "latitude": -33.867974,
+        "longitude": 151.090267
+      }
+    },
+    {
+      "code": "1031",
+      "name": "Mobil Strathfield",
+      "brand": "Mobil",
+      "address": "66 Strathfield Rd, Strathfield NSW",
+      "location": {
+        "latitude": -33.87322,
+        "longitude": 151.103272
+      }
+    },
+    {
+      "code": "1032",
+      "name": "Mobil Randwick",
+      "brand": "Mobil",
+      "address": "216 Randwick Rd, Randwick NSW",
+      "location": {
+        "latitude": -33.919322,
+        "longitude": 151.252029
+      }
+    },
+    {
+      "code": "1033",
+      "name": "Ampol Randwick",
+      "brand": "Ampol",
+      "address": "112 Randwick Rd, Randwick NSW",
+      "location": {
+        "latitude": -33.914635,
+        "longitude": 151.231945
+      }
+    },
+    {
+      "code": "1034",
+      "name": "Mobil Dee Why",
+      "brand": "Mobil",
+      "address": "304 Dee Why Rd, Dee Why NSW",
+      "location": {
+        "latitude": -33.740405,
+        "longitude": 151.29076
+      }
+    },
+    {
+      "code": "1035",
+      "name": "United Dee Why",
+      "brand": "United",
+      "address": "251 Dee Why Rd, Dee Why NSW",
+      "location": {
+        "latitude": -33.762696,
+        "longitude": 151.296081
+      }
+    },
+    {
+      "code": "1036",
+      "name": "Metro Petroleum Epping",
+      "brand": "Metro Petroleum",
+      "address": "45 Epping Rd, Epping NSW",
+      "location": {
+        "latitude": -33.776765,
+        "longitude": 151.075892
+      }
+    },
+    {
+      "code": "1037",
+      "name": "Metro Petroleum Epping",
+      "brand": "Metro Petroleum",
+      "address": "98 Epping Rd, Epping NSW",
+      "location": {
+        "latitude": -33.771161,
+        "longitude": 151.082399
+      }
+    }
+  ],
+  "prices": [
+    {
+      "station_code": "1001",
+      "fuel_type": "E10",
+      "price": 184.7,
+      "last_updated": "2026-06-01T21:35:33.609570+00:00"
+    },
+    {
+      "station_code": "1001",
+      "fuel_type": "U91",
+      "price": 189.1,
+      "last_updated": "2026-06-01T21:35:33.609570+00:00"
+    },
+    {
+      "station_code": "1001",
+      "fuel_type": "P95",
+      "price": 201.0,
+      "last_updated": "2026-06-01T21:35:33.609570+00:00"
+    },
+    {
+      "station_code": "1001",
+      "fuel_type": "P98",
+      "price": 211.6,
+      "last_updated": "2026-06-01T21:35:33.609570+00:00"
+    },
+    {
+      "station_code": "1001",
+      "fuel_type": "DL",
+      "price": 194.5,
+      "last_updated": "2026-06-01T21:35:33.609570+00:00"
+    },
+    {
+      "station_code": "1001",
+      "fuel_type": "LPG",
+      "price": 100.4,
+      "last_updated": "2026-06-01T21:35:33.609570+00:00"
+    },
+    {
+      "station_code": "1002",
+      "fuel_type": "E10",
+      "price": 181.2,
+      "last_updated": "2026-06-02T02:56:33.263400+00:00"
+    },
+    {
+      "station_code": "1002",
+      "fuel_type": "U91",
+      "price": 184.1,
+      "last_updated": "2026-06-02T02:56:33.263400+00:00"
+    },
+    {
+      "station_code": "1002",
+      "fuel_type": "P95",
+      "price": 196.1,
+      "last_updated": "2026-06-02T02:56:33.263400+00:00"
+    },
+    {
+      "station_code": "1002",
+      "fuel_type": "P98",
+      "price": 205.8,
+      "last_updated": "2026-06-02T02:56:33.263400+00:00"
+    },
+    {
+      "station_code": "1002",
+      "fuel_type": "DL",
+      "price": 187.9,
+      "last_updated": "2026-06-02T02:56:33.263400+00:00"
+    },
+    {
+      "station_code": "1002",
+      "fuel_type": "LPG",
+      "price": 96.5,
+      "last_updated": "2026-06-02T02:56:33.263400+00:00"
+    },
+    {
+      "station_code": "1003",
+      "fuel_type": "E10",
+      "price": 183.9,
+      "last_updated": "2026-06-01T18:24:30.827793+00:00"
+    },
+    {
+      "station_code": "1003",
+      "fuel_type": "U91",
+      "price": 187.5,
+      "last_updated": "2026-06-01T18:24:30.827793+00:00"
+    },
+    {
+      "station_code": "1003",
+      "fuel_type": "P95",
+      "price": 199.0,
+      "last_updated": "2026-06-01T18:24:30.827793+00:00"
+    },
+    {
+      "station_code": "1003",
+      "fuel_type": "P98",
+      "price": 209.7,
+      "last_updated": "2026-06-01T18:24:30.827793+00:00"
+    },
+    {
+      "station_code": "1003",
+      "fuel_type": "DL",
+      "price": 194.2,
+      "last_updated": "2026-06-01T18:24:30.827793+00:00"
+    },
+    {
+      "station_code": "1004",
+      "fuel_type": "E10",
+      "price": 188.2,
+      "last_updated": "2026-06-01T19:48:01.563250+00:00"
+    },
+    {
+      "station_code": "1004",
+      "fuel_type": "U91",
+      "price": 193.8,
+      "last_updated": "2026-06-01T19:48:01.563250+00:00"
+    },
+    {
+      "station_code": "1004",
+      "fuel_type": "P95",
+      "price": 204.9,
+      "last_updated": "2026-06-01T19:48:01.563250+00:00"
+    },
+    {
+      "station_code": "1004",
+      "fuel_type": "P98",
+      "price": 213.0,
+      "last_updated": "2026-06-01T19:48:01.563250+00:00"
+    },
+    {
+      "station_code": "1004",
+      "fuel_type": "DL",
+      "price": 196.4,
+      "last_updated": "2026-06-01T19:48:01.563250+00:00"
+    },
+    {
+      "station_code": "1004",
+      "fuel_type": "PDL",
+      "price": 211.2,
+      "last_updated": "2026-06-01T19:48:01.563250+00:00"
+    },
+    {
+      "station_code": "1005",
+      "fuel_type": "E10",
+      "price": 185.8,
+      "last_updated": "2026-06-01T21:09:23.036294+00:00"
+    },
+    {
+      "station_code": "1005",
+      "fuel_type": "U91",
+      "price": 187.9,
+      "last_updated": "2026-06-01T21:09:23.036294+00:00"
+    },
+    {
+      "station_code": "1005",
+      "fuel_type": "P95",
+      "price": 197.9,
+      "last_updated": "2026-06-01T21:09:23.036294+00:00"
+    },
+    {
+      "station_code": "1005",
+      "fuel_type": "P98",
+      "price": 207.9,
+      "last_updated": "2026-06-01T21:09:23.036294+00:00"
+    },
+    {
+      "station_code": "1005",
+      "fuel_type": "DL",
+      "price": 193.3,
+      "last_updated": "2026-06-01T21:09:23.036294+00:00"
+    },
+    {
+      "station_code": "1005",
+      "fuel_type": "LPG",
+      "price": 99.5,
+      "last_updated": "2026-06-01T21:09:23.036294+00:00"
+    },
+    {
+      "station_code": "1006",
+      "fuel_type": "E10",
+      "price": 188.6,
+      "last_updated": "2026-06-01T17:23:03.684658+00:00"
+    },
+    {
+      "station_code": "1006",
+      "fuel_type": "U91",
+      "price": 191.3,
+      "last_updated": "2026-06-01T17:23:03.684658+00:00"
+    },
+    {
+      "station_code": "1006",
+      "fuel_type": "P95",
+      "price": 202.4,
+      "last_updated": "2026-06-01T17:23:03.684658+00:00"
+    },
+    {
+      "station_code": "1006",
+      "fuel_type": "P98",
+      "price": 213.3,
+      "last_updated": "2026-06-01T17:23:03.684658+00:00"
+    },
+    {
+      "station_code": "1006",
+      "fuel_type": "DL",
+      "price": 195.8,
+      "last_updated": "2026-06-01T17:23:03.684658+00:00"
+    },
+    {
+      "station_code": "1006",
+      "fuel_type": "LPG",
+      "price": 101.9,
+      "last_updated": "2026-06-01T17:23:03.684658+00:00"
+    },
+    {
+      "station_code": "1007",
+      "fuel_type": "E10",
+      "price": 187.3,
+      "last_updated": "2026-06-01T03:39:11.377518+00:00"
+    },
+    {
+      "station_code": "1007",
+      "fuel_type": "U91",
+      "price": 191.3,
+      "last_updated": "2026-06-01T03:39:11.377518+00:00"
+    },
+    {
+      "station_code": "1007",
+      "fuel_type": "P95",
+      "price": 202.5,
+      "last_updated": "2026-06-01T03:39:11.377518+00:00"
+    },
+    {
+      "station_code": "1007",
+      "fuel_type": "P98",
+      "price": 211.4,
+      "last_updated": "2026-06-01T03:39:11.377518+00:00"
+    },
+    {
+      "station_code": "1007",
+      "fuel_type": "DL",
+      "price": 192.8,
+      "last_updated": "2026-06-01T03:39:11.377518+00:00"
+    },
+    {
+      "station_code": "1008",
+      "fuel_type": "E10",
+      "price": 176.7,
+      "last_updated": "2026-06-01T16:55:38.893539+00:00"
+    },
+    {
+      "station_code": "1008",
+      "fuel_type": "U91",
+      "price": 183.4,
+      "last_updated": "2026-06-01T16:55:38.893539+00:00"
+    },
+    {
+      "station_code": "1008",
+      "fuel_type": "P95",
+      "price": 195.2,
+      "last_updated": "2026-06-01T16:55:38.893539+00:00"
+    },
+    {
+      "station_code": "1008",
+      "fuel_type": "P98",
+      "price": 205.0,
+      "last_updated": "2026-06-01T16:55:38.893539+00:00"
+    },
+    {
+      "station_code": "1008",
+      "fuel_type": "DL",
+      "price": 185.9,
+      "last_updated": "2026-06-01T16:55:38.893539+00:00"
+    },
+    {
+      "station_code": "1009",
+      "fuel_type": "E10",
+      "price": 182.6,
+      "last_updated": "2026-06-01T17:17:16.644101+00:00"
+    },
+    {
+      "station_code": "1009",
+      "fuel_type": "U91",
+      "price": 184.5,
+      "last_updated": "2026-06-01T17:17:16.644101+00:00"
+    },
+    {
+      "station_code": "1009",
+      "fuel_type": "P95",
+      "price": 198.9,
+      "last_updated": "2026-06-01T17:17:16.644101+00:00"
+    },
+    {
+      "station_code": "1009",
+      "fuel_type": "P98",
+      "price": 207.1,
+      "last_updated": "2026-06-01T17:17:16.644101+00:00"
+    },
+    {
+      "station_code": "1009",
+      "fuel_type": "DL",
+      "price": 189.3,
+      "last_updated": "2026-06-01T17:17:16.644101+00:00"
+    },
+    {
+      "station_code": "1009",
+      "fuel_type": "PDL",
+      "price": 203.6,
+      "last_updated": "2026-06-01T17:17:16.644101+00:00"
+    },
+    {
+      "station_code": "1010",
+      "fuel_type": "E10",
+      "price": 187.7,
+      "last_updated": "2026-06-02T06:04:47.697897+00:00"
+    },
+    {
+      "station_code": "1010",
+      "fuel_type": "U91",
+      "price": 190.7,
+      "last_updated": "2026-06-02T06:04:47.697897+00:00"
+    },
+    {
+      "station_code": "1010",
+      "fuel_type": "P95",
+      "price": 202.1,
+      "last_updated": "2026-06-02T06:04:47.697897+00:00"
+    },
+    {
+      "station_code": "1010",
+      "fuel_type": "P98",
+      "price": 214.3,
+      "last_updated": "2026-06-02T06:04:47.697897+00:00"
+    },
+    {
+      "station_code": "1010",
+      "fuel_type": "DL",
+      "price": 195.7,
+      "last_updated": "2026-06-02T06:04:47.697897+00:00"
+    },
+    {
+      "station_code": "1011",
+      "fuel_type": "E10",
+      "price": 183.5,
+      "last_updated": "2026-06-01T18:01:58.615257+00:00"
+    },
+    {
+      "station_code": "1011",
+      "fuel_type": "U91",
+      "price": 186.2,
+      "last_updated": "2026-06-01T18:01:58.615257+00:00"
+    },
+    {
+      "station_code": "1011",
+      "fuel_type": "P95",
+      "price": 196.9,
+      "last_updated": "2026-06-01T18:01:58.615257+00:00"
+    },
+    {
+      "station_code": "1011",
+      "fuel_type": "P98",
+      "price": 209.2,
+      "last_updated": "2026-06-01T18:01:58.615257+00:00"
+    },
+    {
+      "station_code": "1011",
+      "fuel_type": "DL",
+      "price": 191.0,
+      "last_updated": "2026-06-01T18:01:58.615257+00:00"
+    },
+    {
+      "station_code": "1012",
+      "fuel_type": "E10",
+      "price": 182.6,
+      "last_updated": "2026-06-02T01:42:50.212412+00:00"
+    },
+    {
+      "station_code": "1012",
+      "fuel_type": "U91",
+      "price": 185.5,
+      "last_updated": "2026-06-02T01:42:50.212412+00:00"
+    },
+    {
+      "station_code": "1012",
+      "fuel_type": "P95",
+      "price": 196.9,
+      "last_updated": "2026-06-02T01:42:50.212412+00:00"
+    },
+    {
+      "station_code": "1012",
+      "fuel_type": "P98",
+      "price": 206.8,
+      "last_updated": "2026-06-02T01:42:50.212412+00:00"
+    },
+    {
+      "station_code": "1012",
+      "fuel_type": "DL",
+      "price": 192.5,
+      "last_updated": "2026-06-02T01:42:50.212412+00:00"
+    },
+    {
+      "station_code": "1012",
+      "fuel_type": "LPG",
+      "price": 97.6,
+      "last_updated": "2026-06-02T01:42:50.212412+00:00"
+    },
+    {
+      "station_code": "1013",
+      "fuel_type": "E10",
+      "price": 188.9,
+      "last_updated": "2026-06-02T05:10:25.600037+00:00"
+    },
+    {
+      "station_code": "1013",
+      "fuel_type": "U91",
+      "price": 193.2,
+      "last_updated": "2026-06-02T05:10:25.600037+00:00"
+    },
+    {
+      "station_code": "1013",
+      "fuel_type": "P95",
+      "price": 207.7,
+      "last_updated": "2026-06-02T05:10:25.600037+00:00"
+    },
+    {
+      "station_code": "1013",
+      "fuel_type": "P98",
+      "price": 214.8,
+      "last_updated": "2026-06-02T05:10:25.600037+00:00"
+    },
+    {
+      "station_code": "1013",
+      "fuel_type": "DL",
+      "price": 199.9,
+      "last_updated": "2026-06-02T05:10:25.600037+00:00"
+    },
+    {
+      "station_code": "1014",
+      "fuel_type": "E10",
+      "price": 180.5,
+      "last_updated": "2026-06-02T04:08:45.535314+00:00"
+    },
+    {
+      "station_code": "1014",
+      "fuel_type": "U91",
+      "price": 182.4,
+      "last_updated": "2026-06-02T04:08:45.535314+00:00"
+    },
+    {
+      "station_code": "1014",
+      "fuel_type": "P95",
+      "price": 196.1,
+      "last_updated": "2026-06-02T04:08:45.535314+00:00"
+    },
+    {
+      "station_code": "1014",
+      "fuel_type": "P98",
+      "price": 207.9,
+      "last_updated": "2026-06-02T04:08:45.535314+00:00"
+    },
+    {
+      "station_code": "1014",
+      "fuel_type": "DL",
+      "price": 189.3,
+      "last_updated": "2026-06-02T04:08:45.535314+00:00"
+    },
+    {
+      "station_code": "1014",
+      "fuel_type": "PDL",
+      "price": 200.4,
+      "last_updated": "2026-06-02T04:08:45.535314+00:00"
+    },
+    {
+      "station_code": "1015",
+      "fuel_type": "E10",
+      "price": 188.6,
+      "last_updated": "2026-06-01T14:41:39.313383+00:00"
+    },
+    {
+      "station_code": "1015",
+      "fuel_type": "U91",
+      "price": 192.3,
+      "last_updated": "2026-06-01T14:41:39.313383+00:00"
+    },
+    {
+      "station_code": "1015",
+      "fuel_type": "P95",
+      "price": 204.0,
+      "last_updated": "2026-06-01T14:41:39.313383+00:00"
+    },
+    {
+      "station_code": "1015",
+      "fuel_type": "P98",
+      "price": 215.7,
+      "last_updated": "2026-06-01T14:41:39.313383+00:00"
+    },
+    {
+      "station_code": "1015",
+      "fuel_type": "DL",
+      "price": 195.8,
+      "last_updated": "2026-06-01T14:41:39.313383+00:00"
+    },
+    {
+      "station_code": "1015",
+      "fuel_type": "LPG",
+      "price": 104.8,
+      "last_updated": "2026-06-01T14:41:39.313383+00:00"
+    },
+    {
+      "station_code": "1015",
+      "fuel_type": "PDL",
+      "price": 208.9,
+      "last_updated": "2026-06-01T14:41:39.313383+00:00"
+    },
+    {
+      "station_code": "1016",
+      "fuel_type": "E10",
+      "price": 190.5,
+      "last_updated": "2026-06-01T20:04:36.533604+00:00"
+    },
+    {
+      "station_code": "1016",
+      "fuel_type": "U91",
+      "price": 192.0,
+      "last_updated": "2026-06-01T20:04:36.533604+00:00"
+    },
+    {
+      "station_code": "1016",
+      "fuel_type": "P95",
+      "price": 204.9,
+      "last_updated": "2026-06-01T20:04:36.533604+00:00"
+    },
+    {
+      "station_code": "1016",
+      "fuel_type": "P98",
+      "price": 213.7,
+      "last_updated": "2026-06-01T20:04:36.533604+00:00"
+    },
+    {
+      "station_code": "1016",
+      "fuel_type": "DL",
+      "price": 197.5,
+      "last_updated": "2026-06-01T20:04:36.533604+00:00"
+    },
+    {
+      "station_code": "1016",
+      "fuel_type": "PDL",
+      "price": 210.6,
+      "last_updated": "2026-06-01T20:04:36.533604+00:00"
+    },
+    {
+      "station_code": "1017",
+      "fuel_type": "E10",
+      "price": 184.3,
+      "last_updated": "2026-06-01T19:08:33.849333+00:00"
+    },
+    {
+      "station_code": "1017",
+      "fuel_type": "U91",
+      "price": 184.9,
+      "last_updated": "2026-06-01T19:08:33.849333+00:00"
+    },
+    {
+      "station_code": "1017",
+      "fuel_type": "P95",
+      "price": 199.4,
+      "last_updated": "2026-06-01T19:08:33.849333+00:00"
+    },
+    {
+      "station_code": "1017",
+      "fuel_type": "P98",
+      "price": 208.8,
+      "last_updated": "2026-06-01T19:08:33.849333+00:00"
+    },
+    {
+      "station_code": "1017",
+      "fuel_type": "DL",
+      "price": 189.4,
+      "last_updated": "2026-06-01T19:08:33.849333+00:00"
+    },
+    {
+      "station_code": "1018",
+      "fuel_type": "E10",
+      "price": 188.2,
+      "last_updated": "2026-06-01T05:35:08.231691+00:00"
+    },
+    {
+      "station_code": "1018",
+      "fuel_type": "U91",
+      "price": 192.4,
+      "last_updated": "2026-06-01T05:35:08.231691+00:00"
+    },
+    {
+      "station_code": "1018",
+      "fuel_type": "P95",
+      "price": 203.5,
+      "last_updated": "2026-06-01T05:35:08.231691+00:00"
+    },
+    {
+      "station_code": "1018",
+      "fuel_type": "P98",
+      "price": 216.9,
+      "last_updated": "2026-06-01T05:35:08.231691+00:00"
+    },
+    {
+      "station_code": "1018",
+      "fuel_type": "DL",
+      "price": 196.7,
+      "last_updated": "2026-06-01T05:35:08.231691+00:00"
+    },
+    {
+      "station_code": "1018",
+      "fuel_type": "PDL",
+      "price": 210.8,
+      "last_updated": "2026-06-01T05:35:08.231691+00:00"
+    },
+    {
+      "station_code": "1019",
+      "fuel_type": "E10",
+      "price": 188.9,
+      "last_updated": "2026-06-01T20:50:59.311213+00:00"
+    },
+    {
+      "station_code": "1019",
+      "fuel_type": "U91",
+      "price": 191.5,
+      "last_updated": "2026-06-01T20:50:59.311213+00:00"
+    },
+    {
+      "station_code": "1019",
+      "fuel_type": "P95",
+      "price": 203.8,
+      "last_updated": "2026-06-01T20:50:59.311213+00:00"
+    },
+    {
+      "station_code": "1019",
+      "fuel_type": "P98",
+      "price": 213.9,
+      "last_updated": "2026-06-01T20:50:59.311213+00:00"
+    },
+    {
+      "station_code": "1019",
+      "fuel_type": "DL",
+      "price": 194.2,
+      "last_updated": "2026-06-01T20:50:59.311213+00:00"
+    },
+    {
+      "station_code": "1020",
+      "fuel_type": "E10",
+      "price": 190.4,
+      "last_updated": "2026-06-02T03:45:54.912079+00:00"
+    },
+    {
+      "station_code": "1020",
+      "fuel_type": "U91",
+      "price": 192.5,
+      "last_updated": "2026-06-02T03:45:54.912079+00:00"
+    },
+    {
+      "station_code": "1020",
+      "fuel_type": "P95",
+      "price": 207.4,
+      "last_updated": "2026-06-02T03:45:54.912079+00:00"
+    },
+    {
+      "station_code": "1020",
+      "fuel_type": "P98",
+      "price": 216.9,
+      "last_updated": "2026-06-02T03:45:54.912079+00:00"
+    },
+    {
+      "station_code": "1020",
+      "fuel_type": "DL",
+      "price": 198.4,
+      "last_updated": "2026-06-02T03:45:54.912079+00:00"
+    },
+    {
+      "station_code": "1021",
+      "fuel_type": "E10",
+      "price": 188.7,
+      "last_updated": "2026-05-31T13:58:04.316800+00:00"
+    },
+    {
+      "station_code": "1021",
+      "fuel_type": "U91",
+      "price": 189.1,
+      "last_updated": "2026-05-31T13:58:04.316800+00:00"
+    },
+    {
+      "station_code": "1021",
+      "fuel_type": "P95",
+      "price": 202.8,
+      "last_updated": "2026-05-31T13:58:04.316800+00:00"
+    },
+    {
+      "station_code": "1021",
+      "fuel_type": "P98",
+      "price": 211.8,
+      "last_updated": "2026-05-31T13:58:04.316800+00:00"
+    },
+    {
+      "station_code": "1021",
+      "fuel_type": "DL",
+      "price": 194.3,
+      "last_updated": "2026-05-31T13:58:04.316800+00:00"
+    },
+    {
+      "station_code": "1021",
+      "fuel_type": "LPG",
+      "price": 100.5,
+      "last_updated": "2026-05-31T13:58:04.316800+00:00"
+    },
+    {
+      "station_code": "1022",
+      "fuel_type": "E10",
+      "price": 181.9,
+      "last_updated": "2026-05-30T23:21:26.234471+00:00"
+    },
+    {
+      "station_code": "1022",
+      "fuel_type": "U91",
+      "price": 184.2,
+      "last_updated": "2026-05-30T23:21:26.234471+00:00"
+    },
+    {
+      "station_code": "1022",
+      "fuel_type": "P95",
+      "price": 197.5,
+      "last_updated": "2026-05-30T23:21:26.234471+00:00"
+    },
+    {
+      "station_code": "1022",
+      "fuel_type": "P98",
+      "price": 208.7,
+      "last_updated": "2026-05-30T23:21:26.234471+00:00"
+    },
+    {
+      "station_code": "1022",
+      "fuel_type": "DL",
+      "price": 190.1,
+      "last_updated": "2026-05-30T23:21:26.234471+00:00"
+    },
+    {
+      "station_code": "1023",
+      "fuel_type": "E10",
+      "price": 184.0,
+      "last_updated": "2026-05-31T18:08:11.656880+00:00"
+    },
+    {
+      "station_code": "1023",
+      "fuel_type": "U91",
+      "price": 187.9,
+      "last_updated": "2026-05-31T18:08:11.656880+00:00"
+    },
+    {
+      "station_code": "1023",
+      "fuel_type": "P95",
+      "price": 202.0,
+      "last_updated": "2026-05-31T18:08:11.656880+00:00"
+    },
+    {
+      "station_code": "1023",
+      "fuel_type": "P98",
+      "price": 211.8,
+      "last_updated": "2026-05-31T18:08:11.656880+00:00"
+    },
+    {
+      "station_code": "1023",
+      "fuel_type": "DL",
+      "price": 193.7,
+      "last_updated": "2026-05-31T18:08:11.656880+00:00"
+    },
+    {
+      "station_code": "1024",
+      "fuel_type": "E10",
+      "price": 189.9,
+      "last_updated": "2026-06-01T21:24:42.301608+00:00"
+    },
+    {
+      "station_code": "1024",
+      "fuel_type": "U91",
+      "price": 190.6,
+      "last_updated": "2026-06-01T21:24:42.301608+00:00"
+    },
+    {
+      "station_code": "1024",
+      "fuel_type": "P95",
+      "price": 204.2,
+      "last_updated": "2026-06-01T21:24:42.301608+00:00"
+    },
+    {
+      "station_code": "1024",
+      "fuel_type": "P98",
+      "price": 213.5,
+      "last_updated": "2026-06-01T21:24:42.301608+00:00"
+    },
+    {
+      "station_code": "1024",
+      "fuel_type": "DL",
+      "price": 198.2,
+      "last_updated": "2026-06-01T21:24:42.301608+00:00"
+    },
+    {
+      "station_code": "1024",
+      "fuel_type": "LPG",
+      "price": 103.1,
+      "last_updated": "2026-06-01T21:24:42.301608+00:00"
+    },
+    {
+      "station_code": "1025",
+      "fuel_type": "E10",
+      "price": 183.0,
+      "last_updated": "2026-06-01T23:02:10.594615+00:00"
+    },
+    {
+      "station_code": "1025",
+      "fuel_type": "U91",
+      "price": 187.8,
+      "last_updated": "2026-06-01T23:02:10.594615+00:00"
+    },
+    {
+      "station_code": "1025",
+      "fuel_type": "P95",
+      "price": 200.2,
+      "last_updated": "2026-06-01T23:02:10.594615+00:00"
+    },
+    {
+      "station_code": "1025",
+      "fuel_type": "P98",
+      "price": 209.0,
+      "last_updated": "2026-06-01T23:02:10.594615+00:00"
+    },
+    {
+      "station_code": "1025",
+      "fuel_type": "DL",
+      "price": 194.0,
+      "last_updated": "2026-06-01T23:02:10.594615+00:00"
+    },
+    {
+      "station_code": "1025",
+      "fuel_type": "PDL",
+      "price": 206.7,
+      "last_updated": "2026-06-01T23:02:10.594615+00:00"
+    },
+    {
+      "station_code": "1026",
+      "fuel_type": "E10",
+      "price": 179.0,
+      "last_updated": "2026-06-01T17:07:48.767592+00:00"
+    },
+    {
+      "station_code": "1026",
+      "fuel_type": "U91",
+      "price": 180.7,
+      "last_updated": "2026-06-01T17:07:48.767592+00:00"
+    },
+    {
+      "station_code": "1026",
+      "fuel_type": "P95",
+      "price": 192.7,
+      "last_updated": "2026-06-01T17:07:48.767592+00:00"
+    },
+    {
+      "station_code": "1026",
+      "fuel_type": "P98",
+      "price": 201.7,
+      "last_updated": "2026-06-01T17:07:48.767592+00:00"
+    },
+    {
+      "station_code": "1026",
+      "fuel_type": "DL",
+      "price": 186.9,
+      "last_updated": "2026-06-01T17:07:48.767592+00:00"
+    },
+    {
+      "station_code": "1027",
+      "fuel_type": "E10",
+      "price": 190.0,
+      "last_updated": "2026-06-01T15:31:59.782991+00:00"
+    },
+    {
+      "station_code": "1027",
+      "fuel_type": "U91",
+      "price": 191.4,
+      "last_updated": "2026-06-01T15:31:59.782991+00:00"
+    },
+    {
+      "station_code": "1027",
+      "fuel_type": "P95",
+      "price": 204.8,
+      "last_updated": "2026-06-01T15:31:59.782991+00:00"
+    },
+    {
+      "station_code": "1027",
+      "fuel_type": "P98",
+      "price": 214.6,
+      "last_updated": "2026-06-01T15:31:59.782991+00:00"
+    },
+    {
+      "station_code": "1027",
+      "fuel_type": "DL",
+      "price": 196.5,
+      "last_updated": "2026-06-01T15:31:59.782991+00:00"
+    },
+    {
+      "station_code": "1027",
+      "fuel_type": "LPG",
+      "price": 103.9,
+      "last_updated": "2026-06-01T15:31:59.782991+00:00"
+    },
+    {
+      "station_code": "1027",
+      "fuel_type": "PDL",
+      "price": 209.0,
+      "last_updated": "2026-06-01T15:31:59.782991+00:00"
+    },
+    {
+      "station_code": "1028",
+      "fuel_type": "E10",
+      "price": 179.9,
+      "last_updated": "2026-06-02T02:57:13.582575+00:00"
+    },
+    {
+      "station_code": "1028",
+      "fuel_type": "U91",
+      "price": 184.0,
+      "last_updated": "2026-06-02T02:57:13.582575+00:00"
+    },
+    {
+      "station_code": "1028",
+      "fuel_type": "P95",
+      "price": 194.1,
+      "last_updated": "2026-06-02T02:57:13.582575+00:00"
+    },
+    {
+      "station_code": "1028",
+      "fuel_type": "P98",
+      "price": 204.5,
+      "last_updated": "2026-06-02T02:57:13.582575+00:00"
+    },
+    {
+      "station_code": "1028",
+      "fuel_type": "DL",
+      "price": 189.7,
+      "last_updated": "2026-06-02T02:57:13.582575+00:00"
+    },
+    {
+      "station_code": "1029",
+      "fuel_type": "E10",
+      "price": 185.4,
+      "last_updated": "2026-05-31T22:06:48.105143+00:00"
+    },
+    {
+      "station_code": "1029",
+      "fuel_type": "U91",
+      "price": 189.9,
+      "last_updated": "2026-05-31T22:06:48.105143+00:00"
+    },
+    {
+      "station_code": "1029",
+      "fuel_type": "P95",
+      "price": 202.6,
+      "last_updated": "2026-05-31T22:06:48.105143+00:00"
+    },
+    {
+      "station_code": "1029",
+      "fuel_type": "P98",
+      "price": 208.9,
+      "last_updated": "2026-05-31T22:06:48.105143+00:00"
+    },
+    {
+      "station_code": "1029",
+      "fuel_type": "DL",
+      "price": 195.3,
+      "last_updated": "2026-05-31T22:06:48.105143+00:00"
+    },
+    {
+      "station_code": "1029",
+      "fuel_type": "LPG",
+      "price": 101.1,
+      "last_updated": "2026-05-31T22:06:48.105143+00:00"
+    },
+    {
+      "station_code": "1030",
+      "fuel_type": "E10",
+      "price": 185.9,
+      "last_updated": "2026-06-01T17:32:58.871834+00:00"
+    },
+    {
+      "station_code": "1030",
+      "fuel_type": "U91",
+      "price": 189.8,
+      "last_updated": "2026-06-01T17:32:58.871834+00:00"
+    },
+    {
+      "station_code": "1030",
+      "fuel_type": "P95",
+      "price": 200.1,
+      "last_updated": "2026-06-01T17:32:58.871834+00:00"
+    },
+    {
+      "station_code": "1030",
+      "fuel_type": "P98",
+      "price": 211.4,
+      "last_updated": "2026-06-01T17:32:58.871834+00:00"
+    },
+    {
+      "station_code": "1030",
+      "fuel_type": "DL",
+      "price": 195.7,
+      "last_updated": "2026-06-01T17:32:58.871834+00:00"
+    },
+    {
+      "station_code": "1031",
+      "fuel_type": "E10",
+      "price": 189.3,
+      "last_updated": "2026-06-01T20:39:43.720155+00:00"
+    },
+    {
+      "station_code": "1031",
+      "fuel_type": "U91",
+      "price": 189.5,
+      "last_updated": "2026-06-01T20:39:43.720155+00:00"
+    },
+    {
+      "station_code": "1031",
+      "fuel_type": "P95",
+      "price": 201.8,
+      "last_updated": "2026-06-01T20:39:43.720155+00:00"
+    },
+    {
+      "station_code": "1031",
+      "fuel_type": "P98",
+      "price": 212.1,
+      "last_updated": "2026-06-01T20:39:43.720155+00:00"
+    },
+    {
+      "station_code": "1031",
+      "fuel_type": "DL",
+      "price": 195.6,
+      "last_updated": "2026-06-01T20:39:43.720155+00:00"
+    },
+    {
+      "station_code": "1032",
+      "fuel_type": "E10",
+      "price": 184.5,
+      "last_updated": "2026-06-01T21:42:41.828550+00:00"
+    },
+    {
+      "station_code": "1032",
+      "fuel_type": "U91",
+      "price": 187.0,
+      "last_updated": "2026-06-01T21:42:41.828550+00:00"
+    },
+    {
+      "station_code": "1032",
+      "fuel_type": "P95",
+      "price": 199.4,
+      "last_updated": "2026-06-01T21:42:41.828550+00:00"
+    },
+    {
+      "station_code": "1032",
+      "fuel_type": "P98",
+      "price": 210.2,
+      "last_updated": "2026-06-01T21:42:41.828550+00:00"
+    },
+    {
+      "station_code": "1032",
+      "fuel_type": "DL",
+      "price": 190.2,
+      "last_updated": "2026-06-01T21:42:41.828550+00:00"
+    },
+    {
+      "station_code": "1032",
+      "fuel_type": "LPG",
+      "price": 96.5,
+      "last_updated": "2026-06-01T21:42:41.828550+00:00"
+    },
+    {
+      "station_code": "1032",
+      "fuel_type": "PDL",
+      "price": 203.0,
+      "last_updated": "2026-06-01T21:42:41.828550+00:00"
+    },
+    {
+      "station_code": "1033",
+      "fuel_type": "E10",
+      "price": 186.3,
+      "last_updated": "2026-05-31T13:09:09.988582+00:00"
+    },
+    {
+      "station_code": "1033",
+      "fuel_type": "U91",
+      "price": 189.9,
+      "last_updated": "2026-05-31T13:09:09.988582+00:00"
+    },
+    {
+      "station_code": "1033",
+      "fuel_type": "P95",
+      "price": 203.0,
+      "last_updated": "2026-05-31T13:09:09.988582+00:00"
+    },
+    {
+      "station_code": "1033",
+      "fuel_type": "P98",
+      "price": 214.4,
+      "last_updated": "2026-05-31T13:09:09.988582+00:00"
+    },
+    {
+      "station_code": "1033",
+      "fuel_type": "DL",
+      "price": 196.0,
+      "last_updated": "2026-05-31T13:09:09.988582+00:00"
+    },
+    {
+      "station_code": "1033",
+      "fuel_type": "LPG",
+      "price": 104.3,
+      "last_updated": "2026-05-31T13:09:09.988582+00:00"
+    },
+    {
+      "station_code": "1034",
+      "fuel_type": "E10",
+      "price": 188.0,
+      "last_updated": "2026-06-01T17:03:01.376284+00:00"
+    },
+    {
+      "station_code": "1034",
+      "fuel_type": "U91",
+      "price": 190.2,
+      "last_updated": "2026-06-01T17:03:01.376284+00:00"
+    },
+    {
+      "station_code": "1034",
+      "fuel_type": "P95",
+      "price": 200.4,
+      "last_updated": "2026-06-01T17:03:01.376284+00:00"
+    },
+    {
+      "station_code": "1034",
+      "fuel_type": "P98",
+      "price": 210.8,
+      "last_updated": "2026-06-01T17:03:01.376284+00:00"
+    },
+    {
+      "station_code": "1034",
+      "fuel_type": "DL",
+      "price": 193.5,
+      "last_updated": "2026-06-01T17:03:01.376284+00:00"
+    },
+    {
+      "station_code": "1034",
+      "fuel_type": "PDL",
+      "price": 207.1,
+      "last_updated": "2026-06-01T17:03:01.376284+00:00"
+    },
+    {
+      "station_code": "1035",
+      "fuel_type": "E10",
+      "price": 180.3,
+      "last_updated": "2026-05-31T17:46:06.399888+00:00"
+    },
+    {
+      "station_code": "1035",
+      "fuel_type": "U91",
+      "price": 180.5,
+      "last_updated": "2026-05-31T17:46:06.399888+00:00"
+    },
+    {
+      "station_code": "1035",
+      "fuel_type": "P95",
+      "price": 194.7,
+      "last_updated": "2026-05-31T17:46:06.399888+00:00"
+    },
+    {
+      "station_code": "1035",
+      "fuel_type": "P98",
+      "price": 203.6,
+      "last_updated": "2026-05-31T17:46:06.399888+00:00"
+    },
+    {
+      "station_code": "1035",
+      "fuel_type": "DL",
+      "price": 186.4,
+      "last_updated": "2026-05-31T17:46:06.399888+00:00"
+    },
+    {
+      "station_code": "1036",
+      "fuel_type": "E10",
+      "price": 178.6,
+      "last_updated": "2026-06-01T21:06:10.825583+00:00"
+    },
+    {
+      "station_code": "1036",
+      "fuel_type": "U91",
+      "price": 182.2,
+      "last_updated": "2026-06-01T21:06:10.825583+00:00"
+    },
+    {
+      "station_code": "1036",
+      "fuel_type": "P95",
+      "price": 193.7,
+      "last_updated": "2026-06-01T21:06:10.825583+00:00"
+    },
+    {
+      "station_code": "1036",
+      "fuel_type": "P98",
+      "price": 203.3,
+      "last_updated": "2026-06-01T21:06:10.825583+00:00"
+    },
+    {
+      "station_code": "1036",
+      "fuel_type": "DL",
+      "price": 186.4,
+      "last_updated": "2026-06-01T21:06:10.825583+00:00"
+    },
+    {
+      "station_code": "1037",
+      "fuel_type": "E10",
+      "price": 179.5,
+      "last_updated": "2026-06-01T17:20:12.144949+00:00"
+    },
+    {
+      "station_code": "1037",
+      "fuel_type": "U91",
+      "price": 179.7,
+      "last_updated": "2026-06-01T17:20:12.144949+00:00"
+    },
+    {
+      "station_code": "1037",
+      "fuel_type": "P95",
+      "price": 192.2,
+      "last_updated": "2026-06-01T17:20:12.144949+00:00"
+    },
+    {
+      "station_code": "1037",
+      "fuel_type": "P98",
+      "price": 204.1,
+      "last_updated": "2026-06-01T17:20:12.144949+00:00"
+    },
+    {
+      "station_code": "1037",
+      "fuel_type": "DL",
+      "price": 185.6,
+      "last_updated": "2026-06-01T17:20:12.144949+00:00"
+    }
+  ]
+}
