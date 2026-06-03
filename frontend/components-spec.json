@@ -1,0 +1,129 @@
+{
+  "$meta": {
+    "source": "Figma file 8DEHgeY96tTXXyOeabhXt1 — COMPONENTS section",
+    "extractionStatus": "PARTIAL — only the Button page (node 656:731) was fully read before the Figma MCP call limit was hit.",
+    "stylingTokenBindingNote": "Per-component bound-variable details (exact color/typography/spacing tokens each part uses) require get_design_context per component and were NOT retrieved. Where styling is marked 'inferred' it is a reasonable mapping to the foundation tokens, not confirmed from Figma. Dimensions marked 'measured' come from node geometry and ARE confirmed.",
+    "toFinishInstruction": "For each component below with status 'not_extracted', call get_metadata on its nodeId for the variant matrix, then get_design_context on representative variants for bound tokens."
+  },
+
+  "components": [
+    {
+      "name": "Button",
+      "figmaPage": "     ↪ Button",
+      "nodeId": "656:731",
+      "status": "extracted (variant matrix from metadata; token bindings inferred)",
+      "subComponents": [
+        {
+          "name": "Large button",
+          "componentSetNodeId": "1:1983",
+          "type": "button",
+          "variantAxes": {
+            "Hierarchy": ["Primary", "Secondary", "Destructive"],
+            "State": ["Enabled", "Disabled", "Loading"],
+            "Size": ["Default", "Small"],
+            "Surface": ["Dark", "Light"]
+          },
+          "states": ["enabled (default)", "disabled", "loading"],
+          "hover": "undefined — no explicit hover variant present in the variant set (hover likely handled in code via text/icon action-hover tokens)",
+          "propsInferred": {
+            "hierarchy": ["primary", "secondary", "destructive"],
+            "size": ["default", "small"],
+            "state": ["enabled", "disabled", "loading"],
+            "surface": ["dark", "light"]
+          },
+          "dimensionsMeasured": {
+            "default": { "width": 361, "height": 60, "note": "width is the design instance width; in code treat as fill/hug" },
+            "small": { "height": 40 }
+          },
+          "stylingInferred": {
+            "radius": "radius.* (undefined which step — confirm; likely radius.default=4 or radius.md=8)",
+            "primarySurface": "color.surface.brand (#F2AC59)",
+            "primaryText": "color.text.onAction",
+            "destructiveSurface": "color.surface.error / color.destructive.default (#E93C79) — confirm",
+            "disabledSurface": "color.surface.disabled",
+            "disabledText": "color.text.disabled",
+            "typography": "undefined — confirm via get_design_context"
+          },
+          "behaviorNotes": "Loading is a discrete variant (not just a runtime flag). Surface=Dark/Light selects the on-dark vs on-light treatment."
+        },
+        {
+          "name": "Auth Button",
+          "componentSetNodeId": "484:409",
+          "type": "button (social auth)",
+          "variantAxes": { "Type": ["Apple", "Google"], "Mode": ["Light", "Dark"] },
+          "states": "undefined (only Type and Mode axes present)",
+          "propsInferred": { "provider": ["apple", "google"], "mode": ["light", "dark"] },
+          "dimensionsMeasured": { "height": 54, "width": 361 },
+          "compositionNotes": "Provider logo + label. Logo asset sourced from Logos/Icons page."
+        },
+        {
+          "name": "Tertiary button — inline",
+          "componentSetNodeId": "696:413",
+          "type": "button (text/inline link)",
+          "variantAxes": { "State": ["Enabled", "Disabled"] },
+          "states": ["enabled", "disabled"],
+          "dimensionsMeasured": { "width": 82, "height": 24 }
+        },
+        {
+          "name": "Round button",
+          "componentNodeId": "1418:799",
+          "type": "button (pill)",
+          "variantAxes": "undefined (single component, no variant axes in metadata)",
+          "dimensionsMeasured": { "width": 205, "height": 36 },
+          "stylingInferred": { "radius": "radius.round (9999)" }
+        },
+        {
+          "name": "Emphasize button",
+          "componentNodeId": "1425:977",
+          "type": "button (icon / FAB-like, square)",
+          "dimensionsMeasured": { "width": 48, "height": 48 }
+        },
+        {
+          "name": "Small button icon",
+          "componentSetNodeId": "2783:1185",
+          "type": "button (icon + size variants)",
+          "variantAxes": { "Size": ["Small", "Medium"] },
+          "dimensionsMeasured": { "small": { "width": 142, "height": 34 }, "medium": { "width": 228, "height": 40 } }
+        },
+        {
+          "name": "Arrow button (Button with icon)",
+          "componentSetNodeId": "2783:1144",
+          "type": "button (with directional icon)",
+          "variantAxes": { "Theme": ["dark", "light", "grey"], "Size": ["large", "medium", "small", "Extra large"] },
+          "dimensionsMeasured": { "large": { "width": 361, "height": 64 }, "medium": { "width": 361, "height": 56 }, "extraLarge": { "width": 406, "height": 192 } }
+        },
+        {
+          "name": "Large button icon",
+          "componentSetNodeId": "2783:1194",
+          "type": "button (large, icon)",
+          "variantAxes": { "Hierarchy": ["Primary", "Secondary"], "Surface": ["Dark", "Light"] },
+          "dimensionsMeasured": { "width": 329, "height": 78 }
+        }
+      ]
+    },
+
+    { "name": "Badge", "figmaPage": "     ↪  Badge", "nodeId": "580:543", "type": "badge", "status": "not_extracted" },
+    { "name": "Text", "figmaPage": "     ↪  Text", "nodeId": "2783:13445", "type": "typography primitive", "status": "not_extracted" },
+    { "name": "Tag", "figmaPage": "     ↪ Tag", "nodeId": "765:367", "type": "tag/chip", "status": "not_extracted" },
+    { "name": "Input", "figmaPage": "     ↪  Input", "nodeId": "1:1066", "type": "input", "status": "not_extracted" },
+    { "name": "Control", "figmaPage": "     ↪ Control", "nodeId": "2782:9117", "type": "form control (checkbox/radio/switch — confirm)", "status": "not_extracted" },
+    { "name": "Tile", "figmaPage": "     ↪ Tile", "nodeId": "2783:1123", "type": "tile", "status": "not_extracted" },
+    { "name": "List item", "figmaPage": "     ↪ List item", "nodeId": "2784:17114", "type": "list-item", "status": "not_extracted" },
+    { "name": "Uploader", "figmaPage": "     ↪  Uploader", "nodeId": "2783:11935", "type": "file-uploader", "status": "not_extracted" },
+    { "name": "Navigation", "figmaPage": "     ↪  Navigation", "nodeId": "175:931", "type": "navigation", "status": "not_extracted" },
+    { "name": "Selector", "figmaPage": "     ↪  Selector", "nodeId": "4004:21149", "type": "selector/dropdown (confirm)", "status": "not_extracted" },
+    { "name": "Cards", "figmaPage": "     ↪  Cards", "nodeId": "175:214", "type": "card", "status": "not_extracted" },
+    { "name": "System Status", "figmaPage": "     ↪  System Status", "nodeId": "4008:20367", "type": "feedback (alert/banner — confirm)", "status": "not_extracted" },
+    { "name": "Avatar", "figmaPage": "     ↪  Avatar", "nodeId": "4008:20281", "type": "avatar", "status": "not_extracted" },
+    { "name": "Overlay", "figmaPage": "     ↪  Overlay", "nodeId": "656:367", "type": "modal/overlay", "status": "not_extracted" },
+    { "name": "Empty Message", "figmaPage": "     ↪  Empty Message", "nodeId": "4008:20874", "type": "empty-state", "status": "not_extracted" },
+    { "name": "Chart", "figmaPage": "     ↪ Chart", "nodeId": "706:254", "type": "data-viz", "status": "not_extracted", "note": "Likely consumes color.visualization.1/2/3" },
+    { "name": "Divider", "figmaPage": "     ↪ Divider", "nodeId": "790:275", "type": "divider", "status": "not_extracted", "note": "Likely consumes color.divider.default / color.divider.subtle" }
+  ],
+
+  "feedbackComponentsCoverage": {
+    "alerts": "candidate: 'System Status' (4008:20367) — not_extracted",
+    "toasts": "undefined — no page named toast; may live under System Status or Overlay",
+    "tooltips": "undefined — not found as a top-level component page"
+  }
+}

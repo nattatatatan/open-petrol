@@ -1,0 +1,25 @@
+# Secrets — never commit
+.env
+*.env
+!*.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Data / cache (regenerated; large)
+backend/data/cache.db
+backend/data/cache.db-*
+
+# Node / frontend
+node_modules/
+frontend-app/dist/
+frontend-app/.vite/
+
+# OS / editor
+.DS_Store
+*.log

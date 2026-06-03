@@ -1,0 +1,40 @@
+{
+  "$meta": {
+    "source": "Figma file 8DEHgeY96tTXXyOeabhXt1 — FOUNDATION section",
+    "extractionStatus": "PARTIAL — Logos (541:199) and Icons (227:292) pages were identified but their contents were NOT read before the Figma MCP call limit was hit.",
+    "toFinishInstruction": "Call get_metadata on each nodeId below to enumerate individual assets, then export via Figma export settings or get_design_context asset URLs."
+  },
+
+  "logos": {
+    "figmaPage": "     ↪  Logos",
+    "nodeId": "541:199",
+    "status": "not_extracted",
+    "variants": "undefined",
+    "usageContexts": "undefined",
+    "exportFormatPreference": "SVG recommended (vector logos); PNG fallback for raster lockups",
+    "filenames": "undefined"
+  },
+
+  "icons": {
+    "figmaPage": "     ↪  Icons",
+    "nodeId": "227:292",
+    "status": "not_extracted",
+    "setStructure": { "categories": "undefined", "namingConvention": "undefined" },
+    "constraints": { "strokeWidth": "undefined", "sizingRule": "undefined (foundation defines no icon-size variable; confirm on page)" },
+    "exportFormatPreference": "SVG (icons should be inline SVG / icon-font; single-color so they can inherit color.icon.* tokens)",
+    "relatedColorTokens": ["color.icon.primary", "color.icon.disabled", "color.icon.action", "color.icon.actionHover", "color.icon.error", "color.icon.warning", "color.icon.alert", "color.icon.success", "color.icon.onAction"]
+  },
+
+  "imagery": {
+    "figmaPage": "     ↪  Imagery (placeholder)",
+    "nodeId": "49:725",
+    "status": "not_extracted",
+    "note": "Labeled 'placeholder' in Figma — likely guidance/ratios rather than shippable assets."
+  },
+
+  "exportFormats": {
+    "icons": "SVG",
+    "logos": "SVG (vector) + PNG (raster lockups)",
+    "imagery": "undefined"
+  }
+}

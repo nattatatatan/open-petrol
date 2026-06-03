@@ -1,0 +1,10 @@
+**/__pycache__/
+**/*.pyc
+backend/.venv/
+backend/data/cache.db
+backend/data/cache.db-*
+frontend-app/node_modules/
+frontend-app/dist/
+.git/
+.DS_Store
+*.log
