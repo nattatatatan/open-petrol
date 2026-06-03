@@ -80,6 +80,12 @@ the product. Don't drift into a generic price browser.
   thresholds explicitly; this is exactly the trust detail-work being graded.
 - Degrade gracefully: if a refresh fails, serve last-good cache with its timestamp and a
   banner — never a blank screen.
+- **Stale prices: caveat, don't offer a fake fix (SHIPPED).** An ageing/stale recommended
+  station shows a passive "This price is N old — worth confirming at the pump" line. We
+  deliberately offer **no per-user refresh button**: re-polling can't fix an *operator*-
+  stale price (the operator just hasn't resubmitted), and per-user fetches would break
+  cache-first (§2) and the rate cap. The only valid "refresh" is the global last-good
+  banner above (our cache failed). "Report wrong price" → Fair Trading is future work.
 
 ### 5. Location-aware
 - Core primitive is "cheapest near me." Use geolocation with a manual location fallback.
@@ -125,13 +131,21 @@ the product. Don't drift into a generic price browser.
   and can exceed the gap between our top stations — so our "cheapest" can be wrong for
   those users. v1 must show a one-line caveat (zero clicks). Modelling effective price
   (brand-keyed, one optional one-time setting) is a high-ROI STRETCH, not must-have.
-  *(SHIPPED — thread A: one optional setting names the user's program (Woolworths/Coles/
-  NRMA); the engine subtracts a brand-keyed discount to get an EFFECTIVE price and ranks
-  on that, so a 4–5c/L card can flip the winner. Pump price stays visible — we never hide
-  it. **Trust guard:** mappings only cover brands a program demonstrably honours — Coles/
-  flybuys maps to Reddy Express ONLY, not generic Shell (e.g. OTR sites are Shell-branded
-  but don't take the docket); over-claiming a discount breaks the same trust as a stale
-  price. The caveat copy switches to "showing your effective price with X" when set.)*
+  *(SHIPPED — thread A: multi-select card catalog (Everyday Rewards / flybuys / NRMA /
+  RACV) served as JSON (`GET /api/catalog`; bundled now, remote-on-launch in prod so base
+  rates update without a new build). Engine applies the **single best** brand-tied
+  discount per station (NO stacking) → effective price → ranks on it; NRMA is fuel-tiered
+  (4c regular / 5c premium). Rates are **user-editable** and a **custom "−Xc at [brand]"**
+  rule is supported — because there's no API for which cards a user holds, their dockets,
+  or rates, **the user owns the number**, which is exactly what lets us defer stacking,
+  docket-tracking & eligibility. Auto-applied per station; **0 taps at fill time**. Pump
+  price stays visible — never hidden. **Trust guard:** presets only map brands a program
+  demonstrably honours — flybuys → Reddy Express ONLY, not generic Shell (e.g. OTR sites
+  are Shell-branded but don't take the docket); over-claiming a discount breaks the same
+  trust as a stale price. **Costco excluded** (its FuelCheck pump price already IS the
+  member price — a "discount" would double-count); **RACQ deferred** (Puma near-absent in
+  NSW data). Explicit cuts: stacking engine, docket tracking, 7-Eleven Fuel Lock. The
+  caveat copy switches to "showing your effective price with X (+ Y)" when set.)*
 - **Multi-fuel: single-select + an E10/91 nudge (UX review).** Keep fuel single-select.
   The common multi-fuel case is E10-or-91 (E10 = 91 + ethanol; most post-2005 cars take
   both, but E10 is ~3% less efficient) — surface the cheaper compatible option honestly

@@ -27,11 +27,14 @@ This was built as an AI-Native Engineer assessment; the design rationale lives i
 - **Real savings vs an explicit baseline.** Every "$X saved" is measured against
   *your usual station* (set once — by tapping "Set usual" or a nearest-first
   typeahead) or, if unset, the *area average* — and we say which.
-- **Membership-aware (optional).** Name your discount program (Woolworths / Coles /
-  NRMA) and we rank on your **effective price** — a 4–5c/L card can beat the
-  pump-cheapest station. Pump price stays visible, and we only credit brands a
-  program actually honours (Coles → Reddy Express, not every Shell) — over-claiming
-  a discount would break the same trust as a stale price.
+- **Membership-aware (optional).** Pick your cards (Everyday Rewards / flybuys / NRMA
+  / RACV), edit a rate, or add a custom "−Xc at [brand]" — we apply the **single best**
+  discount per station (no stacking) and rank on your **effective price**, so a 4–5c/L
+  card can beat the pump-cheapest station. Auto-applied (0 taps at the pump); pump price
+  stays visible. We only credit brands a program actually honours (flybuys → Reddy
+  Express, not every Shell), and exclude Costco (its pump price already *is* the member
+  price) — over-claiming a discount would break the same trust as a stale price.
+  *The user owns the number*, which is what lets us defer stacking and docket-tracking.
 - **Trustworthy by construction.** Prices show their **own** age (fresh / ageing /
   stale), stale prices are de-ranked, and the data's provenance + timestamp are
   always on screen.

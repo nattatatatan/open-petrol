@@ -70,14 +70,28 @@ Evidence behind the product decisions in CLAUDE.md. Useful for the walkthrough
   top-ranked stations, so FuelCheck *pump* price can rank the wrong winner for these
   users. → must-have honesty caveat now; effective-price modelling (brand-keyed) is a
   high-ROI stretch. 7-Eleven lock is out of scope (separate app, 7-day lock).
-- **SHIPPED (stretch):** one optional setting (Woolworths/Coles/NRMA) → engine subtracts
-  a brand-keyed discount → ranks on EFFECTIVE price; pump price stays visible. Brand
-  mapping is deliberately conservative to avoid OVER-claiming: Coles/flybuys → Reddy
-  Express only (the former Coles Express network), NOT generic "Shell" — in the live
-  data, OTR sites are Shell-branded but don't honour the docket, and not every Shell is a
-  participating Coles Express. Claiming a discount that doesn't apply would break the same
-  trust as labelling a stale price fresh (CLAUDE.md §4), so we only map brands a program
-  demonstrably covers.
+- **SHIPPED (stretch):** multi-select card catalog (Everyday Rewards / flybuys / NRMA /
+  RACV) → engine applies the **single best** brand-tied discount per station (no stacking)
+  → ranks on EFFECTIVE price; pump price stays visible. NRMA is fuel-tiered (4c regular /
+  5c premium). Rates are **user-editable** and a **custom "−Xc at [brand]"** rule is
+  supported.
+- **Why user-editable rates (the load-bearing insight):** there is NO API for discount
+  rates, for which cards a user holds, or for active dockets — that data is inherently
+  private. So user input was always required; making the rate editable is a tiny
+  extension. Crucially, **the user owns the number**, which is exactly why we can defer
+  the stacking engine, docket tracking, and eligibility entirely (all CUT for v1) — a user
+  can express a 10c docket week by bumping the rate, with zero modelling on our side.
+  7-Eleven Fuel Lock is also out (different mechanic — a 7-day price lock, not a rate).
+- **Anti-over-claim mapping:** Coles/flybuys → Reddy Express only (the former Coles Express
+  network), NOT generic "Shell" — in the live data, OTR sites are Shell-branded but don't
+  honour the docket, and not every Shell is a participating Coles Express. Claiming a
+  discount that doesn't apply would break the same trust as labelling a stale price fresh
+  (CLAUDE.md §4). **Costco is excluded** entirely: its FuelCheck pump price already IS the
+  member price, so modelling a "Costco discount" would double-count. **RACQ deferred** —
+  it maps to Puma, which is near-absent in the NSW dataset (the preset would be inert).
+- Production note: the preset catalog is a small REMOTE JSON fetched once on launch (base
+  rates update without a new build) — the only fetch that makes sense (the shared catalog,
+  never the user's personal cards). Bundled JSON for the demo.
 
 ## EV charging (thread B)
 
