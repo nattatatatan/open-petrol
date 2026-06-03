@@ -73,11 +73,10 @@ async def recommend_along_route(
         snapshot.stations, fuel_type, membership or MembershipSelection()
     )
     discounts = {code: cents for code, (cents, _) in resolved.items()}
-    baseline = compute_baseline(prices, usual_station_code, discounts)
     stations = {s.code: s for s in snapshot.stations}
 
     # 1) Cheap corridor pre-filter: perpendicular distance to the route polyline.
-    shortlist: list[tuple[str, float]] = []
+    corridor: list[tuple[str, float]] = []
     for code in prices:
         station = stations.get(code)
         if station is None:
@@ -87,9 +86,19 @@ async def recommend_along_route(
             direct.geometry,
         )
         if perp <= corridor_buffer_km:
-            shortlist.append((code, perp))
-    shortlist.sort(key=lambda x: x[1])
-    shortlist = shortlist[:max_via_candidates]
+            corridor.append((code, perp))
+
+    # Baseline = the average ALONG THE CORRIDOR (honest "best value on your way"),
+    # not all-NSW. Usual-station baseline still resolves from the full snapshot.
+    baseline = compute_baseline(
+        {code: prices[code] for code, _ in corridor},
+        usual_station_code, discounts,
+        usual_price=prices.get(usual_station_code) if usual_station_code else None,
+    )
+
+    # Via-route only the nearest few candidates (don't route every corridor station).
+    corridor.sort(key=lambda x: x[1])
+    shortlist = corridor[:max_via_candidates]
 
     # 2) Precise via-route detour only for the shortlist (run concurrently).
     async def _offer(code: str, perp: float) -> StationOffer:

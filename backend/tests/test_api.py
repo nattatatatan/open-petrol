@@ -87,6 +87,19 @@ class _FakeGeocoder:
         ]
 
 
+def test_unknown_fuel_is_200_empty_not_500():
+    # Regression: an unknown/zero-row fuel used to ZeroDivisionError -> HTTP 500.
+    with TestClient(create_app()) as client:
+        res = client.get(
+            "/api/near-me",
+            params={"lat": -33.8688, "lng": 151.2093, "fuel": "NOPE", "radius": 10},
+        )
+        assert res.status_code == 200
+        body = res.json()
+        assert body["offers"] == []
+        assert body["recommended"] is None
+
+
 def test_geocode_search_returns_suggestions():
     app = create_app()
     with TestClient(app) as client:

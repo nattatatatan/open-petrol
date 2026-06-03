@@ -93,9 +93,16 @@ def compute_baseline(
     prices: dict[str, Price],
     usual_station_code: str | None,
     discounts: dict[str, float] | None = None,
+    usual_price: Price | None = None,
 ) -> Baseline:
     """Baseline = the user's usual station if we have a price for it; otherwise the
     area average. Never an unanchored number (CLAUDE.md §7).
+
+    `prices` is the LOCAL set the average is taken over (in-radius for near-me,
+    in-corridor for route) so "the area average" is genuinely local, not all-NSW.
+    `usual_price` lets the usual-station baseline resolve from the full snapshot even
+    when the usual station falls outside that local set — your usual is your usual
+    wherever you are.
 
     When a membership is active we compare against EFFECTIVE prices on both sides, so
     the saving reflects what the user actually pays — not a pump-vs-discounted mix."""
@@ -104,12 +111,20 @@ def compute_baseline(
     def effective(code: str, price: float) -> float:
         return price - discounts.get(code, 0.0)
 
-    if usual_station_code and usual_station_code in prices:
-        return Baseline(
-            kind="usual_station",
-            price=round(effective(usual_station_code, prices[usual_station_code].price), 1),
-            label="your usual station",
-        )
+    if usual_station_code:
+        up = usual_price if usual_price is not None else prices.get(usual_station_code)
+        if up is not None:
+            return Baseline(
+                kind="usual_station",
+                price=round(effective(usual_station_code, up.price), 1),
+                label="your usual station",
+            )
+
+    if not prices:
+        # No stations carry this fuel locally — no anchor. The caller returns an empty
+        # result (recommended: null), so this baseline is never used for a saving.
+        return Baseline(kind="area_average", price=0.0, label="the area average")
+
     avg = sum(effective(c, p.price) for c, p in prices.items()) / len(prices)
     return Baseline(kind="area_average", price=round(avg, 1), label="the area average")
 
@@ -220,10 +235,11 @@ def find_cheapest_stations(
         snapshot.stations, fuel_type, membership or MembershipSelection()
     )
     discounts = {code: cents for code, (cents, _) in resolved.items()}
-    baseline = compute_baseline(prices, usual_station_code, discounts)
     stations = {s.code: s for s in snapshot.stations}
 
-    offers: list[StationOffer] = []
+    # Scope to the radius FIRST, so "the area average" baseline is the local average
+    # (not all-NSW). The usual-station baseline still resolves from the full snapshot.
+    local: dict[str, tuple[Price, float]] = {}
     for code, price in prices.items():
         station = stations.get(code)
         if station is None:
@@ -232,21 +248,29 @@ def find_cheapest_stations(
             origin_lat, origin_lng,
             station.location.latitude, station.location.longitude,
         )
-        if dist > radius_km:
-            continue
-        offers.append(
-            build_offer(
-                station, price,
-                baseline=baseline,
-                reference_time=snapshot.captured_at,
-                distance_km=dist,
-                detour_km=dist * NEAR_ME_ROUND_TRIP,
-                tank_l=tank_l,
-                consumption_l_per_km=consumption_l_per_km,
-                discount=discounts.get(code, 0.0),
-                discount_label=resolved.get(code, (0.0, None))[1],
-            )
+        if dist <= radius_km:
+            local[code] = (price, dist)
+
+    baseline = compute_baseline(
+        {code: pr for code, (pr, _) in local.items()},
+        usual_station_code, discounts,
+        usual_price=prices.get(usual_station_code) if usual_station_code else None,
+    )
+
+    offers = [
+        build_offer(
+            stations[code], price,
+            baseline=baseline,
+            reference_time=snapshot.captured_at,
+            distance_km=dist,
+            detour_km=dist * NEAR_ME_ROUND_TRIP,
+            tank_l=tank_l,
+            consumption_l_per_km=consumption_l_per_km,
+            discount=discounts.get(code, 0.0),
+            discount_label=resolved.get(code, (0.0, None))[1],
         )
+        for code, (price, dist) in local.items()
+    ]
 
     return _finalize(
         offers, fuel_type=fuel_type, captured_at=snapshot.captured_at,

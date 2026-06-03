@@ -172,6 +172,38 @@ def test_membership_baseline_uses_effective_prices():
     assert base.price == 177.5
 
 
+def test_unknown_fuel_returns_empty_not_zero_division():
+    # No station carries "NOPE" — must not ZeroDivisionError (was a 500 blocker).
+    res = find_cheapest_stations(
+        SNAP, origin_lat=ORIGIN[0], origin_lng=ORIGIN[1],
+        fuel_type="NOPE", tank_l=55, radius_km=15,
+    )
+    assert res.offers == []
+    assert res.recommended is None
+    assert res.baseline.price == 0.0
+
+
+def test_area_average_is_local_not_all_snapshot():
+    # FAR (~12km, 176) sits outside an 8km radius, so it must NOT pull the local
+    # average down: in-radius set is NEAR(179) + STALE(170) -> 174.5, not 175.0.
+    res = find_cheapest_stations(
+        SNAP, origin_lat=ORIGIN[0], origin_lng=ORIGIN[1],
+        fuel_type="E10", tank_l=55, radius_km=8,
+    )
+    assert res.baseline.kind == "area_average"
+    assert res.baseline.price == 174.5
+
+
+def test_usual_baseline_resolves_even_when_out_of_radius():
+    # Usual = FAR (outside the 8km radius). It must still anchor the baseline.
+    res = find_cheapest_stations(
+        SNAP, origin_lat=ORIGIN[0], origin_lng=ORIGIN[1],
+        fuel_type="E10", tank_l=55, radius_km=8, usual_station_code="FAR",
+    )
+    assert res.baseline.kind == "usual_station"
+    assert res.baseline.price == 176.0
+
+
 def test_radius_filters_out_distant_stations():
     res = find_cheapest_stations(
         SNAP, origin_lat=ORIGIN[0], origin_lng=ORIGIN[1],
