@@ -8,7 +8,7 @@ import {
   formatDistance,
   formatDollars,
   formatMinutes,
-  freshnessAge,
+  ageLabel,
 } from "../lib/format";
 
 type LatLng = [number, number];
@@ -127,7 +127,7 @@ export function AnswerCard({
 
         {offer.freshness !== "fresh" && (
           <p className="mt-2 text-xs text-[color:var(--color-text-alert)]">
-            This price is {freshnessAge(offer.last_updated, reference)} old — worth confirming at the pump.
+            This price is {ageLabel(offer.last_updated, reference)} old — worth confirming at the pump.
           </p>
         )}
 

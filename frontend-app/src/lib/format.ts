@@ -14,13 +14,17 @@ export const formatDistance = (km: number) =>
 export const formatMinutes = (min: number | null) =>
   min === null ? "" : `+${Math.round(min)} min`;
 
-export function freshnessAge(lastUpdated: string, reference: string): string {
+/** Bare age, no "ago" — for inline sentences like "this price is 5h old". */
+export function ageLabel(lastUpdated: string, reference: string): string {
   const ms = new Date(reference).getTime() - new Date(lastUpdated).getTime();
   const hrs = ms / 3_600_000;
-  if (hrs < 1) return `${Math.max(1, Math.round(hrs * 60))} min ago`;
-  if (hrs < 24) return `${Math.round(hrs)}h ago`;
-  return `${Math.round(hrs / 24)}d ago`;
+  if (hrs < 1) return `${Math.max(1, Math.round(hrs * 60))} min`;
+  if (hrs < 24) return `${Math.round(hrs)}h`;
+  return `${Math.round(hrs / 24)}d`;
 }
+
+export const freshnessAge = (lastUpdated: string, reference: string): string =>
+  `${ageLabel(lastUpdated, reference)} ago`;
 
 export function relativeFromNow(iso: string | null): string {
   if (!iso) return "—";
