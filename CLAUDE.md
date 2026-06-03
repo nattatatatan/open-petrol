@@ -35,6 +35,9 @@ the product. Don't drift into a generic price browser.
   minimal detour along my way → here's what I save → navigate.* "Near me now" is the
   secondary low-tank case. (See §7.5 — route-awareness is the primary behaviour.)
 - **NSW only for v1** (FuelCheck covers NSW + ACT). State this as a deliberate cut.
+- **EV charging excluded from v1** (UX review): FuelCheck's "EV" isn't c/L-comparable and
+  charger type/power live in a separate quarterly dataset — a sibling EV mode is future
+  work. State this as a deliberate cut.
 - Deliverables: working build (deployed link or screen recording) + GitHub repo +
   5–10 min walkthrough of decisions.
 
@@ -82,17 +85,18 @@ the product. Don't drift into a generic price browser.
 - Core primitive is "cheapest near me." Use geolocation with a manual location fallback.
   `stationId` + lat/lng are first-class fields.
 
-### 6. AI-native product feature — "Fill up now or wait?" advisor (CONFIRMED)
-- Advisor layered on top of the always-available "cheapest near me, now" core. Simple,
-  explainable cycle heuristic — NOT ML. Three layers: deterministic engine (source of
-  truth) → Claude as a language-only layer (parse + phrase, tool-use, never invents a
-  number) → presentation that shows the basis. Server-side key only; full deterministic
-  fallback if the LLM is missing/down.
-- **The LLM only earns its keep if there's a real free-text entry point.** A genuine NL
-  input must exist in the UI (e.g. "is it worth driving 5km for U91?") — otherwise Claude
-  is just templating a deterministic verdict and the key/latency/cost buy nothing, which
-  a sharp reviewer will catch. If we cut to heuristic-only (see Cut-line), that's fine
-  and defensible — but then drop the LLM entirely rather than faking value.
+### 6. "Fill up now or wait?" — timing as a passive glanceable signal (UX review)
+- Layered on the always-available "cheapest now" core. Simple, explainable cycle
+  heuristic — NOT ML. The deterministic engine (source of truth) computes the verdict;
+  the UI shows **one passive, glanceable line** ("good time to fill" / "near cycle peak —
+  fill only what you need"), tap to see the basis. Hidden entirely when confidence is low.
+- **Interactive LLM Q&A is DROPPED for v1 (UX review decision).** A driver at the bowser
+  won't type questions — there's no natural free-text trigger, and a text box is an
+  attention/safety cost we can't justify. Per the LLM-earns-its-keep test, without a
+  natural NL entry point the LLM would just template a deterministic verdict with a key
+  attached — so we don't ship it. The grounded deterministic signal *is* the feature.
+  (The Claude tool-use layer is built and retained server-side, disabled, to re-enable
+  behind a genuinely natural trigger later, e.g. voice. Numbers always come from code.)
 - Needs a HISTORICAL daily-lows series (current v1/v2 API has no trends endpoint). See §10.
 
 ### 7. Product model — the decisions the brief leaves implicit (DON'T skip)
@@ -109,6 +113,20 @@ the product. Don't drift into a generic price browser.
   on net benefit.
 - **Minimal user model:** fuel type, tank size (default 55L, editable), optional home/
   usual station (the baseline). This is what makes the saving THEIRS, not generic.
+- **Savings framing — lead with c/L (UX review).** Show the per-litre difference as the
+  primary, unambiguous figure ("9.6c/L cheaper"); the dollar amount is a clearly-labelled
+  estimate ("≈ $X off a ~55L fill"). c/L scales linearly in the head (half a tank = half
+  the saving) and avoids the naive-halving + wrong-tank traps. Never a mandatory input.
+- **Loyalty/membership honesty (UX review, RESEARCH.md).** FuelCheck publishes PUMP
+  prices; member/docket discounts (RACV/NRMA ~5c, Coles/Woolies ~4c, Costco) are 4–5c/L
+  and can exceed the gap between our top stations — so our "cheapest" can be wrong for
+  those users. v1 must show a one-line caveat (zero clicks). Modelling effective price
+  (brand-keyed, one optional one-time setting) is a high-ROI STRETCH, not must-have.
+- **Multi-fuel: single-select + an E10/91 nudge (UX review).** Keep fuel single-select.
+  The common multi-fuel case is E10-or-91 (E10 = 91 + ethanol; most post-2005 cars take
+  both, but E10 is ~3% less efficient) — surface the cheaper compatible option honestly
+  at zero clicks (STRETCH). Full multi-select is CUT (mixes units; LPG dual-fuel is a
+  declining ~2% niche).
 
 ### 7.5 Route-aware: "On my way" mode (PRIMARY flow — grounded in RESEARCH.md)
 Research confirms refuelling is trip-integrated: drivers fill up along routes they're
@@ -123,9 +141,11 @@ How "On my way" works:
 1. Compute the route (+ alternates) origin→destination. Search space = a **corridor**
    around the route polyline, not a radius around a point.
 2. **Cost primitive = added detour**, not distance: extra driving to divert + rejoin ×
-   fuel consumption (optionally value-of-time). 200m off-route ≠ 5km off-route.
+   fuel consumption **plus a conservative default value-of-time** (UX review — a smart
+   default, no setting; kept low so we under-penalise detours). 200m off-route ≠ 5km.
 3. Rank on **net benefit = saving vs baseline − detour cost**. This is `worth_driving`
-   generalised from detour-from-point to detour-from-route (same math).
+   generalised from detour-from-point to detour-from-route (same math). **Show the
+   net-of-detour figure on EVERY option** (not just the winner) so comparisons are honest.
 4. Show spatially + temporally: route + candidate pins, winner annotated "+3 min · save
    $7.20", and where along the trip it falls.
 5. **Navigate adds the station as a WAYPOINT** en route to the real destination — not as
@@ -148,6 +168,11 @@ v1 cut: single destination, single best stop; multi-stop "how much to buy at eac
 ### 8. Design principles (you are the designer — this is graded)
 - **Mobile-first, non-negotiable.** Use context = phone at the bowser. Design narrow-
   viewport first; desktop is secondary.
+- **Least clicks; smart defaults over settings (UX review).** Auto-request location on
+  open so "near me now" answers with ~0 taps; remember the last fuel; infer the baseline
+  (area average) so setup never blocks. The only things left explicit are what we truly
+  can't infer (destination, memberships). Every new idea must justify its click/attention
+  cost or become a default.
 - **One glance, one action.** The answer (go *here* → save $X on your tank) visually
   dominates; the comparison list is secondary. Do NOT build a cluttered two-panel
   compare tool — that's the ChatGPT-paragraph experience we're beating.
