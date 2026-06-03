@@ -155,7 +155,12 @@ export default function App() {
   }
 
   const needsManual = geo.status === "denied" || geo.status === "unavailable";
-  const showSkeleton = loading || (mode === "near" && !result && !error && !needsManual);
+  // Skeleton only while we're genuinely about to answer: a search is running, or
+  // near-me is waiting on a location we can still get. Never when location is
+  // blocked (then we prompt for a suburb instead of pulsing forever).
+  const showSkeleton =
+    loading ||
+    (mode === "near" && !result && !error && !needsManual);
 
   return (
     <div className="mx-auto flex min-h-full max-w-md flex-col px-md pb-[env(safe-area-inset-bottom)]">
@@ -272,6 +277,13 @@ export default function App() {
           <Card className="p-xl text-center">
             <p className="text-text">No stations found {mode === "route" ? "along this route" : "nearby"}.</p>
             <p className="mt-1 text-sm text-text-secondary">Try a wider search or a different fuel type.</p>
+          </Card>
+        ) : needsManual && !geo.coords ? (
+          <Card className="p-xl text-center">
+            <p className="text-text">Where are you?</p>
+            <p className="mt-1 text-sm text-text-secondary">
+              Enter your suburb above and we’ll find your cheapest fill-up nearby.
+            </p>
           </Card>
         ) : mode === "route" ? (
           <Card className="p-xl text-center">
