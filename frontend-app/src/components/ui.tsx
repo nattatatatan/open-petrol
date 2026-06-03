@@ -1,15 +1,21 @@
 import { useState } from "react";
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  hierarchy?: "primary" | "secondary" | "ghost";
+  /** Figma "Large button" Hierarchy axis. `ghost` is retained as the inline/tertiary
+   *  text-button role (Figma "Tertiary button"). */
+  hierarchy?: "primary" | "secondary" | "destructive" | "ghost";
   size?: "default" | "small";
+  /** Figma "Surface" axis — which surface the button sits on. Defaults to `dark`
+   *  (the app's page surface). Only changes the outlined/text hierarchies. */
+  surface?: "dark" | "light";
   loading?: boolean;
 };
 
 export function Button({
   hierarchy = "primary",
   size = "default",
+  surface = "dark",
   loading = false,
   className = "",
   children,
@@ -17,16 +23,23 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const base =
-    "inline-flex items-center justify-center gap-2 font-semibold rounded-full transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface-page)] focus-visible:ring-brand";
+    "inline-flex items-center justify-center gap-2 font-medium rounded-full transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface-page)] focus-visible:ring-brand";
+  // Heights per the finalized spec (Large button: default 60, small 40).
   const sizes = {
-    default: "h-[52px] px-6 text-[15px]",
+    default: "h-[60px] px-6 text-base",
     small: "h-[40px] px-4 text-sm",
   };
+  // On a light surface the outlined/text variants need dark ink + dark border.
+  const onLight = surface === "light";
   const hierarchies = {
     primary: "bg-brand text-[color:var(--color-text-onAction)] hover:brightness-105",
-    secondary:
-      "bg-transparent text-text border border-border hover:border-border-strong",
-    ghost: "bg-transparent text-text-action hover:text-text",
+    secondary: onLight
+      ? "bg-transparent text-black border border-black/30 hover:border-black"
+      : "bg-transparent text-text border border-border hover:border-border-strong",
+    destructive: "bg-destructive text-white hover:brightness-110",
+    ghost: onLight
+      ? "bg-transparent text-black hover:text-text-action"
+      : "bg-transparent text-text-action hover:text-text",
   };
   return (
     <button
@@ -37,6 +50,62 @@ export function Button({
       {loading && <Spinner />}
       {children}
     </button>
+  );
+}
+
+type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & {
+  /** Maps the Figma Input "Error" state. Selected/Filled are handled by :focus
+   *  and the value itself, so they don't need explicit props. */
+  invalid?: boolean;
+  /** Optional trailing affix (the spec's "Suffix type: Icon | Text"). */
+  suffix?: ReactNode;
+  size?: "default" | "small";
+  /** Sit on the raised card surface (e.g. inside a sheet) instead of transparent.
+   *  A prop, not a className, so it can't lose Tailwind's same-property sort order. */
+  raised?: boolean;
+};
+
+// Padding/background are props (not className) because Tailwind resolves conflicting
+// utilities by stylesheet order, so a className override of the base px/py/bg would
+// silently lose without tailwind-merge.
+const INPUT_SIZES = { default: "px-3 py-3", small: "px-3 py-2" } as const;
+
+/** Text input matching the spec's Input states (Default / Selected / Filled / Error).
+ *  Selected (focus) uses the `highlighted` border role — the design system's distinct
+ *  active-emphasis border — rather than `strong`. */
+export function Input({
+  invalid = false,
+  suffix,
+  size = "default",
+  raised = false,
+  className = "",
+  ...rest
+}: InputProps) {
+  const bg = raised ? "bg-[color:var(--color-card-raised)]" : "bg-transparent";
+  const field = "w-full bg-transparent text-text placeholder:text-text-secondary focus:outline-none";
+  if (suffix) {
+    // Border lives on the wrapper; focus-within mirrors the input's focus state.
+    const wrap = invalid
+      ? "border-border-error focus-within:border-border-error"
+      : "border-border focus-within:border-border-highlighted";
+    return (
+      <div
+        className={`flex items-center gap-2 rounded-md border transition-colors ${INPUT_SIZES[size]} ${bg} ${wrap} ${className}`}
+      >
+        <input className={field} aria-invalid={invalid || undefined} {...rest} />
+        <span className="shrink-0 text-text-secondary">{suffix}</span>
+      </div>
+    );
+  }
+  const border = invalid
+    ? "border-border-error focus:border-border-error"
+    : "border-border focus:border-border-highlighted";
+  return (
+    <input
+      className={`rounded-md border transition-colors ${INPUT_SIZES[size]} ${bg} ${border} text-text placeholder:text-text-secondary focus:outline-none ${className}`}
+      aria-invalid={invalid || undefined}
+      {...rest}
+    />
   );
 }
 
@@ -88,6 +157,17 @@ export function InfoTooltip({ label, children }: { label: string; children: Reac
         </span>
       )}
     </span>
+  );
+}
+
+/** Loading placeholder — soft pulse, never a blank screen (STYLE_GUIDE §10).
+ *  The pulse is disabled under `prefers-reduced-motion` (see index.css). */
+export function Skeleton({ className = "" }: { className?: string }) {
+  return (
+    <div
+      aria-hidden
+      className={`animate-pulse-soft rounded-md bg-[color:var(--color-card-raised)] ${className}`}
+    />
   );
 }
 

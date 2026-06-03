@@ -44,3 +44,16 @@ body {
 .animate-pulse-soft {
   animation: pulse-soft 1.4s ease-in-out infinite;
 }
+
+/* Honour reduced-motion (STYLE_GUIDE §11): no skeleton pulse, no confidence
+ * "cooling" transition — show the end state instantly. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-soft {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -12,17 +12,36 @@
   --color-text-body: #ffffff;
   --color-text-bodySecondary: #a8abb0;
   --color-text-action: #f2ac59;
+  /* onAction = label on a brand/accent (gold/orange) surface. Spec maps dark→#fff,
+   * but our action surfaces are gold in BOTH themes and black-on-gold is the legible,
+   * shipped look — we keep #000 (a documented divergence, same spirit as surface.page). */
   --color-text-onAction: #000000;
+  --color-text-actionHover: #6c4516;
   --color-text-error: #e93c79;
   --color-text-warning: #f2ac59;
   --color-text-alert: #fd5422;
+  --color-text-disabled: #232426;
+
+  /* icon/* mapped layer — bound to currentColor via the Icon wrapper. */
+  --color-icon-primary: #ffffff;
+  --color-icon-disabled: #8f9197;
+  --color-icon-action: #dd9128;
+  --color-icon-actionHover: #6c4516;
+  --color-icon-error: #e93c79;
+  --color-icon-warning: #f2ac59;
+  --color-icon-alert: #fd5422;
+  --color-icon-success: #78b83e;
+  --color-icon-onAction: #000000;
 
   --color-surface-page: #000000;
   --color-surface-primary: #18191a;
   --color-surface-secondary: #ffffff;
   --color-surface-tertiary: #232426;
+  --color-surface-error: #370617;
+  --color-surface-disabled: #3b3c3f;
   --color-surface-brand: #f2ac59;
   --color-surface-accent: #fd5422;
+  --color-surface-accentSecondary: #6b2f14;
 
   --color-card: #18191a;
   --color-card-raised: #232426;
@@ -31,13 +50,25 @@
   --color-border-strong: #ffffff;
   --color-border-highlighted: #f2ac59;
   --color-border-error: #e93c79;
+  --color-border-alert: #fd5422;
 
+  --color-divider-default: #d2d7df;
   --color-divider-subtle: #47494d;
 
   --color-brand: #f2ac59;
   --color-accent: #fd5422;
+  --color-destructive: #e93c79;
   --color-success: #78b83e;
   --color-warning: #f2ac59;
+
+  /* Product-semantic aliases (STYLE_GUIDE §6) — components reference intent, not
+   * raw palette, so the meaning is named and theming stays automatic. */
+  --decision-winner: var(--color-brand); /* gold — the ONE recommendation        */
+  --saving-positive: var(--color-success); /* green — saving magnitude            */
+  --confidence-fresh: var(--color-brand);
+  --confidence-ageing: var(--color-warning);
+  --confidence-stale: var(--color-text-bodySecondary); /* cooled / neutral        */
+  --detour-cost: var(--color-text-bodySecondary); /* never gold, never green      */
 }
 
 [data-theme="light"] {
@@ -46,17 +77,33 @@
   --color-text-bodySecondary: #5b5f65;
   --color-text-action: #db8c32;
   --color-text-onAction: #000000;
-
+  --color-text-actionHover: #6c4516;
   --color-text-error: #e93c79;
   --color-text-warning: #db8c32;
   --color-text-alert: #fd5422;
+  --color-text-disabled: #72777e;
+
+  /* icon/* — action/warning/success use the darker gold/green for legibility on a
+   * light surface, mirroring the text/* light-theme adaptations above. */
+  --color-icon-primary: #000000;
+  --color-icon-disabled: #8f9197;
+  --color-icon-action: #db8c32;
+  --color-icon-actionHover: #6c4516;
+  --color-icon-error: #e93c79;
+  --color-icon-warning: #db8c32;
+  --color-icon-alert: #fd5422;
+  --color-icon-success: #5a9e1f;
+  --color-icon-onAction: #000000;
 
   --color-surface-page: #d2d7df;
   --color-surface-primary: #ffffff;
   --color-surface-secondary: #ffffff;
   --color-surface-tertiary: #f3f5f7;
+  --color-surface-error: #fbe1ea;
+  --color-surface-disabled: #c3c9cf;
   --color-surface-brand: #f2ac59;
   --color-surface-accent: #fd5422;
+  --color-surface-accentSecondary: #6b2f14;
 
   --color-card: #ffffff;
   --color-card-raised: #ffffff;
@@ -65,11 +112,22 @@
   --color-border-strong: #000000;
   --color-border-highlighted: #dd9128;
   --color-border-error: #e93c79;
+  --color-border-alert: #fd5422;
 
+  --color-divider-default: #18191a;
   --color-divider-subtle: #c3c9cf;
 
   --color-brand: #f2ac59;
   --color-accent: #fd5422;
+  --color-destructive: #e93c79;
   --color-success: #5a9e1f;
   --color-warning: #db8c32;
+
+  /* Product-semantic aliases (STYLE_GUIDE §6) — same intent names, light values. */
+  --decision-winner: var(--color-brand);
+  --saving-positive: var(--color-success);
+  --confidence-fresh: var(--color-brand);
+  --confidence-ageing: var(--color-warning);
+  --confidence-stale: var(--color-text-bodySecondary);
+  --detour-cost: var(--color-text-bodySecondary);
 }
