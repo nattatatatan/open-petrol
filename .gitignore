@@ -19,6 +19,7 @@ backend/data/cache.db-*
 node_modules/
 frontend-app/dist/
 frontend-app/.vite/
+frontend-app/tsconfig.tsbuildinfo
 
 # OS / editor
 .DS_Store

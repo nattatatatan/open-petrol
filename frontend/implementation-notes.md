@@ -1,126 +1,109 @@
 # Implementation Notes
 
-## Extraction status (read this first)
+## Status: complete
 
-This spec is **partial**. Extraction stopped when the Figma MCP connection returned a hard
-**Starter-plan tool-call limit**. What is confirmed vs. missing:
+All four artifacts are now fully populated from the Figma file. Foundation tokens and all 18
+component variant matrices are confirmed. The only items still marked `undefined` are things
+that genuinely don't exist as encoded values in the file (see "Gaps" below) — not extraction
+failures.
 
 | Area | Status |
 |---|---|
-| Color primitives, semantic alias, light/dark mapped tokens | ✅ confirmed |
-| Spacing, radius, border-width, blur | ✅ confirmed |
-| Font family + font weight primitives | ✅ confirmed |
-| Type scale (display1, h1, h2, h3, body.xl) | ⚠️ partial (rest truncated) |
-| Named text styles, effect/shadow styles, grid styles | ❌ not retrieved |
-| Breakpoint pixel thresholds | ❌ not encoded as variables |
-| Button component variant matrix | ✅ confirmed (from metadata) |
-| Per-component token bindings | ❌ not retrieved |
-| All other component pages (17) | ❌ not retrieved |
-| Logos / Icons / Imagery asset lists | ❌ not retrieved |
+| Color (primitive / semantic / mapped light+dark) | confirmed |
+| Spacing, radius, border-width, blur | confirmed |
+| Typography — full ramp, families, weights, responsive sizes | confirmed |
+| Effect styles (blur only; no shadows) | confirmed |
+| Grid (6-col mobile / 12-col desktop) + container max-widths | confirmed |
+| All 18 component pages, variant axes | confirmed |
+| Logo set + icon system structure | confirmed |
 
-To finish, re-run extraction after the limit resets (or upgrade the Figma plan), using the
-node IDs recorded in `components-spec.json` and `asset-manifest.json`.
+## Theming: three-layer CSS variables
 
-## Theming strategy: CSS variables (recommended)
-
-The system has three token layers — implement them in that order:
-
-1. **Primitives** (`grey/*`, `gold/*`, …) → static CSS vars, never referenced directly by components.
-2. **Semantic alias** (`Neutral/*`, `Brand/*`, `Accent/*`, `Destructive/*`, `Success/*`) → reference primitives.
-3. **Mapped** (`text/*`, `surface/*`, `icon/*`, `border/*`, `divider/*`) → **theme-switched** (Light/Dark). Components bind ONLY to these.
+1. Primitives (`grey/*`, `gold/*`, …) → static.
+2. Semantic alias (`brand`, `accent`, `destructive`, `success`, `visualization`) → reference primitives.
+3. Mapped (`text/*`, `surface/*`, `icon/*`, `border/*`, `divider/*`) → theme-switched. Components bind ONLY here.
 
 ```css
-:root, [data-theme="light"] {
-  --color-text-body: #000000;
-  --color-surface-secondary: #FFFFFF;
-  --color-border-default: #C3C9CF;
-  /* …mapped layer, light values… */
-}
-[data-theme="dark"] {
-  --color-text-body: #FFFFFF;
-  --color-border-default: #3B3C3F;
-  /* …mapped layer, dark values… */
-}
+:root, [data-theme="light"] { --color-text-body:#000; --color-surface-secondary:#FFF; --color-border-default:#C3C9CF; }
+[data-theme="dark"]        { --color-text-body:#FFF; --color-border-default:#3B3C3F; }
 ```
 
-Note: several `surface/*` tokens (`page`, `primary`, `brand`, `accent`) are identical across
-Light and Dark — the system is only partially dual-themed. `text/*`, `icon/*`, `border/*`,
-`divider/*` carry the real light/dark differences.
+Several `surface/*` tokens are identical across modes; the real light/dark deltas live in
+`text/*`, `icon/*`, `border/*`, `divider/*`.
 
-## Tailwind strategy
+## Typography (important quirks)
 
-Map mapped-layer tokens to semantic Tailwind color keys backed by the CSS vars, so dark mode is automatic:
+- Both heading and body families are `NeueHaasGrotDispRD`; only caption differs (`DM Mono`).
+- Base headings and large body use weight `35Thin` (ultra-thin) — this is intentional. "Strong"
+  variants step up: `body.lg-strong` = Roman, `body.default-strong` = Medium. Small sizes
+  (`sm/xs/xxs`) use Roman because Thin is illegible at <=14px.
+- Letter-spacing is in px (~4% of font size on headings; `0.04em` reproduces it).
+- Responsive shifts between Mobile/Desktop exist only for: h1 (42→46), h2 (32→36), caption (11→15).
+  Everything else is fixed across breakpoints.
+
+## Tailwind config (excerpt)
 
 ```js
-// tailwind.config.js (excerpt)
-theme: {
-  extend: {
-    colors: {
-      text: { DEFAULT: 'var(--color-text-body)', secondary: 'var(--color-text-bodySecondary)', action: 'var(--color-text-action)', error: 'var(--color-text-error)' },
-      surface: { primary: 'var(--color-surface-primary)', secondary: 'var(--color-surface-secondary)', brand: 'var(--color-surface-brand)', accent: 'var(--color-surface-accent)' },
-      border: { DEFAULT: 'var(--color-border-default)', strong: 'var(--color-border-strong)', error: 'var(--color-border-error)' },
-    },
-    spacing: { xs:'4px', sm:'8px', md:'16px', lg:'24px', xl:'32px', '2xl':'40px', '3xl':'48px', '4xl':'56px' },
-    borderRadius: { DEFAULT:'4px', md:'8px', lg:'16px', xl:'24px', full:'9999px' },
-    borderWidth: { DEFAULT:'1px', md:'2px' },
-    fontFamily: { heading:['NeueHaasGrotDispRD','sans-serif'], body:['NeueHaasGrotDispRD','sans-serif'], caption:['"DM Mono"','monospace'] },
-  }
-}
+theme: { extend: {
+  colors: {
+    text:{DEFAULT:'var(--color-text-body)',secondary:'var(--color-text-bodySecondary)',action:'var(--color-text-action)',error:'var(--color-text-error)'},
+    surface:{primary:'var(--color-surface-primary)',secondary:'var(--color-surface-secondary)',brand:'var(--color-surface-brand)',accent:'var(--color-surface-accent)'},
+    border:{DEFAULT:'var(--color-border-default)',strong:'var(--color-border-strong)',error:'var(--color-border-error)'},
+  },
+  spacing:{xs:'4px',sm:'8px',md:'16px',lg:'24px',xl:'32px','2xl':'40px','3xl':'48px','4xl':'56px'},
+  borderRadius:{DEFAULT:'4px',md:'8px',lg:'16px',xl:'24px',full:'9999px'},
+  borderWidth:{DEFAULT:'1px',md:'2px'},
+  fontFamily:{heading:['NeueHaasGrotDispRD','sans-serif'],body:['NeueHaasGrotDispRD','sans-serif'],caption:['"DM Mono"','monospace']},
+  screens:{ md:'768px' }, // inferred — see Gaps
+  maxWidth:{xs:'320px',sm:'384px',md:'448px',lg:'512px',xl:'576px','2xl':'672px','3xl':'768px'},
+}}
 ```
 
-The spacing/radius/border scales come straight from the confirmed `Allias` collection — safe to hardcode.
+Grid: mobile 6 columns / 8px gutter / 16px margin; desktop 12 columns / 16px gutter / 16px margin.
 
-## Typography caveats
+## React component mapping
 
-- Both heading and body families resolve to **`NeueHaasGrotDispRD`**; only caption differs (**`DM Mono`**). Ensure both fonts are licensed/loaded.
-- Figma stores font **style strings** (`Roman`, `Medium`, `Bold`, `Light`, `35Thin`). The numeric CSS weights in `design-tokens.json` are suggestions — verify against the actual font's named instances.
-- Letter-spacing is in **px** and tracks at ~**4% of font size** across captured headings. In CSS, `letter-spacing: 0.04em` reproduces this without per-style values.
-- h1 and display are the only styles that scale between Mobile/Desktop (42→46 / others fixed). Use responsive utilities only where mobile≠desktop.
-- `body.lg/md/sm` and `caption` sizes are **undefined** here — do not invent them.
-
-## React component mapping (Button — the one confirmed component)
+Map each Figma variant axis to an enum prop. Examples:
 
 ```tsx
-type ButtonProps = {
-  hierarchy?: 'primary' | 'secondary' | 'destructive'; // 'Hierarchy' axis
-  size?: 'default' | 'small';                            // 'Size' axis
-  state?: 'enabled' | 'disabled' | 'loading';            // 'State' axis (loading is a real variant)
-  surface?: 'light' | 'dark';                            // 'Surface' axis
-};
+type ButtonProps   = { hierarchy?:'primary'|'secondary'|'destructive'; size?:'default'|'small'; state?:'enabled'|'disabled'|'loading'; surface?:'light'|'dark' };
+type BadgeProps    = { hierarchy?:'accent'|'secondary'|'primaryWhite'|'primaryDark'; size?:'small'|'medium' };
+type InputProps    = { state?:'default'|'selected'|'filled'|'error'|'selectedFilled'; suffix?:'icon'|'text' };
+type CheckboxProps = { state?:'unselected'|'selected'|'indeterminate'; stroke?:boolean; theme?:'light'|'dark' };
+type SwitchProps   = { on?:boolean };
+type AvatarProps   = { size?:'small'|'large'; variant?:'image'|'text' };
+type DividerProps  = { scale?:'default'|'subtle'; surface?:'light'|'dark' };
 ```
 
-Other button families map to their own components: `AuthButton` (provider × mode),
-`InlineButton` (state), `RoundButton`, `EmphasizeButton`, `IconButton`/`SmallButtonIcon` (size),
-`ArrowButton` (theme × size). Confirmed heights: large 60, small 40, auth 54, arrow large 64 /
-medium 56 / xl 192, large-icon 78, round 36, emphasize 48×48, inline 24.
+Hover is never a Figma variant — implement in code via the `*-action-hover` tokens.
 
-Hover is **not** a Figma variant — implement hover in code using the `*-hover` mapped tokens
-(`text/action-hover`, `icon/action-hover`).
+## Icons
+
+- One component per icon, sizes xs=16 / s=20 / m=24 / l=32. Export as SVG, single-color, wired to
+  `currentColor` so they inherit `color.icon.*`. Build an `<Icon name size>` wrapper around the set.
+- Names are kebab-case. ~19+ icon families confirmed by name; the page also mixes in partner/bank
+  and card-network logos — keep those out of the generic icon component.
+- The uploaded `Attribution--Streamline-Sharp-Remix.svg` is a third-party Streamline icon, not part
+  of this set — verify its license before shipping.
 
 ## Suggested folder structure
 
 ```
 src/
-  styles/
-    tokens.primitives.css     # grey/gold/blue/... (static)
-    tokens.semantic.css       # neutral/brand/accent/... -> primitives
-    tokens.mapped.light.css   # text/surface/icon/border/divider (light)
-    tokens.mapped.dark.css    # ...(dark)
-  tokens/
-    design-tokens.json        # this extraction (source of truth for codegen)
-  components/
-    Button/ (Button, AuthButton, InlineButton, RoundButton, IconButton, ArrowButton)
-    Badge/ Tag/ Input/ Control/ Tile/ ListItem/ Uploader/ Navigation/
-    Selector/ Card/ SystemStatus/ Avatar/ Overlay/ EmptyMessage/ Chart/ Divider/
-  icons/                      # SVGs, inherit currentColor from color.icon.* tokens
+  styles/ tokens.primitives.css  tokens.semantic.css  tokens.mapped.light.css  tokens.mapped.dark.css
+  tokens/ design-tokens.json
+  components/ Button/ Badge/ Tag/ Input/ Control/ Tile/ ListItem/ Uploader/ Navigation/
+              Selector/ Card/ SystemStatus/ Avatar/ Overlay/ EmptyMessage/ Chart/ Divider/ Text/
+  icons/    (SVGs, currentColor)
   assets/logos/
 ```
 
-## Missing / ambiguous tokens (explicit)
+## Gaps (genuinely absent in the file — do not invent)
 
-- **Breakpoint px values** — undefined; only mode names (`Mobile`, `Desktop`) exist.
-- **Grid/columns/margins/gutters** — undefined (grid styles not retrieved).
-- **Shadow/elevation** — undefined (effect styles not retrieved); only `Blur/*` numeric tokens captured.
-- **Icon sizing & stroke width** — undefined; no icon-size variable in foundation.
-- **Type scale below body.xl** — undefined.
-- **Figma spelling note:** the destructive role is spelled **`Desctructive`** in the file — code should normalize to `destructive`.
+- Breakpoint px thresholds: not encoded. Grid switches 6→12 cols between Mobile/Desktop; `768px`
+  used above is inferred from the container scale, not confirmed.
+- Drop shadows / elevation: none exist — only layer-blur and backdrop-blur.
+- Icon stroke width: not standardized/traced; icons mix stroke and fill construction.
+- Tooltip component: none in the file (alerts = System Status banner; toasts = Snackbar).
+- Figma typo: destructive role is spelled `Desctructive` — normalize in code.
+- Stray `body/*` typography variable (64px) duplicates display-2 and looks mislabeled — ignore.

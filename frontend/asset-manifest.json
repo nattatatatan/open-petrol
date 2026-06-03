@@ -1,40 +1,51 @@
 {
   "$meta": {
     "source": "Figma file 8DEHgeY96tTXXyOeabhXt1 — FOUNDATION section",
-    "extractionStatus": "PARTIAL — Logos (541:199) and Icons (227:292) pages were identified but their contents were NOT read before the Figma MCP call limit was hit.",
-    "toFinishInstruction": "Call get_metadata on each nodeId below to enumerate individual assets, then export via Figma export settings or get_design_context asset URLs."
+    "extractionStatus": "COMPLETE for inventory/structure. Individual SVG asset files must be exported from Figma directly (SVG export), not derivable via MCP.",
+    "exportGuidance": "Export icons and logos as SVG (select components -> Export -> SVG). Wire single-color icons to currentColor so they inherit color.icon.* tokens."
   },
 
   "logos": {
-    "figmaPage": "     ↪  Logos",
     "nodeId": "541:199",
-    "status": "not_extracted",
-    "variants": "undefined",
-    "usageContexts": "undefined",
-    "exportFormatPreference": "SVG recommended (vector logos); PNG fallback for raster lockups",
-    "filenames": "undefined"
+    "brandLogo": {
+      "componentSet": "LOGO",
+      "variants": { "Property 1": ["Default","Alt name","Dark"] },
+      "sizes": { "Default": "98x35", "Alt name": "210x35 (wordmark — wider)", "Dark": "98x35" }
+    },
+    "exportFormat": "SVG",
+    "note": "Partner/bank and card-network logos live on the Icons page, not here (see icons.partnerLogos)."
   },
 
   "icons": {
-    "figmaPage": "     ↪  Icons",
     "nodeId": "227:292",
-    "status": "not_extracted",
-    "setStructure": { "categories": "undefined", "namingConvention": "undefined" },
-    "constraints": { "strokeWidth": "undefined", "sizingRule": "undefined (foundation defines no icon-size variable; confirm on page)" },
-    "exportFormatPreference": "SVG (icons should be inline SVG / icon-font; single-color so they can inherit color.icon.* tokens)",
-    "relatedColorTokens": ["color.icon.primary", "color.icon.disabled", "color.icon.action", "color.icon.actionHover", "color.icon.error", "color.icon.warning", "color.icon.alert", "color.icon.success", "color.icon.onAction"]
+    "totalNodes": 901,
+    "iconSystem": {
+      "structure": "One COMPONENT_SET per icon, with a Size axis.",
+      "sizeAxis": { "xs": 16, "s": 20, "m": 24, "l": 32 },
+      "namingConvention": "kebab-case semantic names",
+      "exampleNames": ["external-link","external","alert","profile-card","house","direction","message","lock","cash","location","connectivity","document","add-expand-plus","gas"],
+      "categoriesInferred": ["navigation/direction","communication/message","finance (cash/gas)","security (lock)","place (house/location)","document","status (alert)"],
+      "categoriesConfirmed": "undefined — page is not split into labeled category sections in the metadata",
+      "strokeWidth": "undefined — not traced (varies; some icons are fill-based, e.g. the uploaded Streamline glyph)",
+      "exportFormat": "SVG (inline, currentColor)"
+    },
+    "partnerLogos": {
+      "note": "Brand/bank + card-network logos also present on this page (AU banking context).",
+      "examples": ["Commbank (72x72)","ING (72x72)","Unloan (58x58)","ANZ (58x54)"],
+      "cardLogoSet": { "componentSet": "Card Logo", "variants": ["Type=Logo 1","Type=Logo 2"] }
+    }
   },
 
-  "imagery": {
-    "figmaPage": "     ↪  Imagery (placeholder)",
-    "nodeId": "49:725",
-    "status": "not_extracted",
-    "note": "Labeled 'placeholder' in Figma — likely guidance/ratios rather than shippable assets."
+  "imagery": { "nodeId": "49:725", "status": "placeholder page — no shippable assets" },
+
+  "uploadedAssetReview": {
+    "file": "Attribution--Streamline-Sharp-Remix.svg",
+    "classification": "icon, NOT a brand logo",
+    "origin": "Streamline icon library (Sharp Remix set) — third-party",
+    "glyph": "person bust inside a circle (attribution symbol)",
+    "presentInThisFile": false,
+    "recommendation": "File under icons (third-party). Confirm Streamline license before shipping. In code, bind to color.icon.primary rather than hardcoded black."
   },
 
-  "exportFormats": {
-    "icons": "SVG",
-    "logos": "SVG (vector) + PNG (raster lockups)",
-    "imagery": "undefined"
-  }
+  "exportFormats": { "icons": "SVG", "logos": "SVG", "imagery": "undefined" }
 }

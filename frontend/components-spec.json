@@ -1,129 +1,138 @@
 {
   "$meta": {
     "source": "Figma file 8DEHgeY96tTXXyOeabhXt1 — COMPONENTS section",
-    "extractionStatus": "PARTIAL — only the Button page (node 656:731) was fully read before the Figma MCP call limit was hit.",
-    "stylingTokenBindingNote": "Per-component bound-variable details (exact color/typography/spacing tokens each part uses) require get_design_context per component and were NOT retrieved. Where styling is marked 'inferred' it is a reasonable mapping to the foundation tokens, not confirmed from Figma. Dimensions marked 'measured' come from node geometry and ARE confirmed.",
-    "toFinishInstruction": "For each component below with status 'not_extracted', call get_metadata on its nodeId for the variant matrix, then get_design_context on representative variants for bound tokens."
+    "extractionStatus": "COMPLETE for variant matrices (all 18 component pages). Per-part token bindings (exact color/typography per layer) NOT individually traced — bind to the mapped tokens in design-tokens.json by role.",
+    "dimensionsNote": "w/h are the Figma component-set or component bounding box in px (includes all variants laid out). Treat as reference, not fixed code sizes; components are responsive/hug.",
+    "axesNote": "Each axis lists the exact Figma variant property values. Map to enum props in code."
   },
-
   "components": [
-    {
-      "name": "Button",
-      "figmaPage": "     ↪ Button",
-      "nodeId": "656:731",
-      "status": "extracted (variant matrix from metadata; token bindings inferred)",
-      "subComponents": [
-        {
-          "name": "Large button",
-          "componentSetNodeId": "1:1983",
-          "type": "button",
-          "variantAxes": {
-            "Hierarchy": ["Primary", "Secondary", "Destructive"],
-            "State": ["Enabled", "Disabled", "Loading"],
-            "Size": ["Default", "Small"],
-            "Surface": ["Dark", "Light"]
-          },
-          "states": ["enabled (default)", "disabled", "loading"],
-          "hover": "undefined — no explicit hover variant present in the variant set (hover likely handled in code via text/icon action-hover tokens)",
-          "propsInferred": {
-            "hierarchy": ["primary", "secondary", "destructive"],
-            "size": ["default", "small"],
-            "state": ["enabled", "disabled", "loading"],
-            "surface": ["dark", "light"]
-          },
-          "dimensionsMeasured": {
-            "default": { "width": 361, "height": 60, "note": "width is the design instance width; in code treat as fill/hug" },
-            "small": { "height": 40 }
-          },
-          "stylingInferred": {
-            "radius": "radius.* (undefined which step — confirm; likely radius.default=4 or radius.md=8)",
-            "primarySurface": "color.surface.brand (#F2AC59)",
-            "primaryText": "color.text.onAction",
-            "destructiveSurface": "color.surface.error / color.destructive.default (#E93C79) — confirm",
-            "disabledSurface": "color.surface.disabled",
-            "disabledText": "color.text.disabled",
-            "typography": "undefined — confirm via get_design_context"
-          },
-          "behaviorNotes": "Loading is a discrete variant (not just a runtime flag). Surface=Dark/Light selects the on-dark vs on-light treatment."
-        },
-        {
-          "name": "Auth Button",
-          "componentSetNodeId": "484:409",
-          "type": "button (social auth)",
-          "variantAxes": { "Type": ["Apple", "Google"], "Mode": ["Light", "Dark"] },
-          "states": "undefined (only Type and Mode axes present)",
-          "propsInferred": { "provider": ["apple", "google"], "mode": ["light", "dark"] },
-          "dimensionsMeasured": { "height": 54, "width": 361 },
-          "compositionNotes": "Provider logo + label. Logo asset sourced from Logos/Icons page."
-        },
-        {
-          "name": "Tertiary button — inline",
-          "componentSetNodeId": "696:413",
-          "type": "button (text/inline link)",
-          "variantAxes": { "State": ["Enabled", "Disabled"] },
-          "states": ["enabled", "disabled"],
-          "dimensionsMeasured": { "width": 82, "height": 24 }
-        },
-        {
-          "name": "Round button",
-          "componentNodeId": "1418:799",
-          "type": "button (pill)",
-          "variantAxes": "undefined (single component, no variant axes in metadata)",
-          "dimensionsMeasured": { "width": 205, "height": 36 },
-          "stylingInferred": { "radius": "radius.round (9999)" }
-        },
-        {
-          "name": "Emphasize button",
-          "componentNodeId": "1425:977",
-          "type": "button (icon / FAB-like, square)",
-          "dimensionsMeasured": { "width": 48, "height": 48 }
-        },
-        {
-          "name": "Small button icon",
-          "componentSetNodeId": "2783:1185",
-          "type": "button (icon + size variants)",
-          "variantAxes": { "Size": ["Small", "Medium"] },
-          "dimensionsMeasured": { "small": { "width": 142, "height": 34 }, "medium": { "width": 228, "height": 40 } }
-        },
-        {
-          "name": "Arrow button (Button with icon)",
-          "componentSetNodeId": "2783:1144",
-          "type": "button (with directional icon)",
-          "variantAxes": { "Theme": ["dark", "light", "grey"], "Size": ["large", "medium", "small", "Extra large"] },
-          "dimensionsMeasured": { "large": { "width": 361, "height": 64 }, "medium": { "width": 361, "height": 56 }, "extraLarge": { "width": 406, "height": 192 } }
-        },
-        {
-          "name": "Large button icon",
-          "componentSetNodeId": "2783:1194",
-          "type": "button (large, icon)",
-          "variantAxes": { "Hierarchy": ["Primary", "Secondary"], "Surface": ["Dark", "Light"] },
-          "dimensionsMeasured": { "width": 329, "height": 78 }
-        }
-      ]
-    },
+    { "name": "Button", "nodeId": "656:731", "category": "action", "sets": [
+      { "name": "Large button", "type": "button", "axes": { "Hierarchy": ["Primary","Secondary","Destructive"], "State": ["Enabled","Disabled","Loading"], "Size": ["Default","Small"], "Surface": ["Dark","Light"] }, "heights": { "default": 60, "small": 40 } },
+      { "name": "Auth Button", "type": "button.social", "axes": { "Type": ["Apple","Google"], "Mode": ["Light","Dark"] }, "height": 54 },
+      { "name": "Tertiary button (inline)", "type": "button.text", "axes": { "State": ["Enabled","Disabled"] }, "height": 24 },
+      { "name": "Round button", "type": "button.pill", "axes": "none", "size": "205x36" },
+      { "name": "Emphasize button", "type": "button.icon", "axes": "none", "size": "48x48" },
+      { "name": "Small button icon", "type": "button.icon", "axes": { "Size": ["Small","Medium"] } },
+      { "name": "Arrow button", "type": "button.icon", "axes": { "Theme": ["dark","light","grey"], "Size": ["large","medium","small","Extra large"] } },
+      { "name": "Large button icon", "type": "button.icon", "axes": { "Hierarchy": ["Primary","Secondary"], "Surface": ["Dark","Light"] } }
+    ], "states": ["enabled","disabled","loading"], "hoverNote": "Hover not a variant — implement via *-action-hover tokens." },
 
-    { "name": "Badge", "figmaPage": "     ↪  Badge", "nodeId": "580:543", "type": "badge", "status": "not_extracted" },
-    { "name": "Text", "figmaPage": "     ↪  Text", "nodeId": "2783:13445", "type": "typography primitive", "status": "not_extracted" },
-    { "name": "Tag", "figmaPage": "     ↪ Tag", "nodeId": "765:367", "type": "tag/chip", "status": "not_extracted" },
-    { "name": "Input", "figmaPage": "     ↪  Input", "nodeId": "1:1066", "type": "input", "status": "not_extracted" },
-    { "name": "Control", "figmaPage": "     ↪ Control", "nodeId": "2782:9117", "type": "form control (checkbox/radio/switch — confirm)", "status": "not_extracted" },
-    { "name": "Tile", "figmaPage": "     ↪ Tile", "nodeId": "2783:1123", "type": "tile", "status": "not_extracted" },
-    { "name": "List item", "figmaPage": "     ↪ List item", "nodeId": "2784:17114", "type": "list-item", "status": "not_extracted" },
-    { "name": "Uploader", "figmaPage": "     ↪  Uploader", "nodeId": "2783:11935", "type": "file-uploader", "status": "not_extracted" },
-    { "name": "Navigation", "figmaPage": "     ↪  Navigation", "nodeId": "175:931", "type": "navigation", "status": "not_extracted" },
-    { "name": "Selector", "figmaPage": "     ↪  Selector", "nodeId": "4004:21149", "type": "selector/dropdown (confirm)", "status": "not_extracted" },
-    { "name": "Cards", "figmaPage": "     ↪  Cards", "nodeId": "175:214", "type": "card", "status": "not_extracted" },
-    { "name": "System Status", "figmaPage": "     ↪  System Status", "nodeId": "4008:20367", "type": "feedback (alert/banner — confirm)", "status": "not_extracted" },
-    { "name": "Avatar", "figmaPage": "     ↪  Avatar", "nodeId": "4008:20281", "type": "avatar", "status": "not_extracted" },
-    { "name": "Overlay", "figmaPage": "     ↪  Overlay", "nodeId": "656:367", "type": "modal/overlay", "status": "not_extracted" },
-    { "name": "Empty Message", "figmaPage": "     ↪  Empty Message", "nodeId": "4008:20874", "type": "empty-state", "status": "not_extracted" },
-    { "name": "Chart", "figmaPage": "     ↪ Chart", "nodeId": "706:254", "type": "data-viz", "status": "not_extracted", "note": "Likely consumes color.visualization.1/2/3" },
-    { "name": "Divider", "figmaPage": "     ↪ Divider", "nodeId": "790:275", "type": "divider", "status": "not_extracted", "note": "Likely consumes color.divider.default / color.divider.subtle" }
+    { "name": "Badge", "nodeId": "580:543", "category": "badge", "sets": [
+      { "name": "Badge", "type": "badge", "axes": { "Hierarchy": ["Accent","Secondary","Primary-White","Primary-Dark"], "Size": ["Small","Medium"] } }
+    ] },
+
+    { "name": "Text", "nodeId": "2783:13445", "category": "typography", "sets": [
+      { "name": "emphasize tag", "axes": { "Behavior": ["Label","Caption"] } },
+      { "name": "Text tags", "axes": { "Size": ["Default","Small"] } },
+      { "name": "Paragraph", "axes": { "Size": ["Small","Large"] } },
+      { "name": "Icon text", "axes": { "Property 1": ["incomplete","complete"] } }
+    ], "standalone": ["Heading","Section title","Main text","AI Talk/Default","Copy text","Emphasize text"] },
+
+    { "name": "Tag", "nodeId": "765:367", "category": "tag", "sets": [
+      { "name": "Chips", "axes": { "Status": ["Unselected","Selected"], "Theme": ["Dark","Light"] } },
+      { "name": "tag", "axes": { "State": ["Selected","Unselected"], "Size": ["Large","Small"], "Theme": ["White","Dark","Dark Grey"] } }
+    ] },
+
+    { "name": "Input", "nodeId": "1:1066", "category": "input", "sets": [
+      { "name": "Input with label", "axes": { "Status": ["Default","Filled","Selected","Error"] } },
+      { "name": "Input", "axes": { "State": ["Default","Selected","Error","Filled","Selected-Filled"], "Suffix type": ["Icon","Text"] } },
+      { "name": "Input password", "axes": { "Behavior": ["Masked","Reveal"], "State": ["Filled","Error","Selected","Default","Selected-Typing"] } },
+      { "name": "Input calendar", "axes": { "Affix": ["Suffix"], "Status": ["Default","Filled"] } },
+      { "name": "large input", "axes": { "States": ["Error","Default","Selected"], "Theme": ["Dark","Light"] } },
+      { "name": "Input passcode", "axes": { "State": ["Selected-Default","Selected-Filled","Default","Error","Filled"] } },
+      { "name": "Input area", "axes": { "State": ["Default","Selected-Typing","Selected","Filled","Error"], "Suffix type": ["Text","Icon"] } },
+      { "name": "Search", "axes": { "Status": ["Default","Error","Filled","Typing","Selected + typing"], "Surface": ["Dark","Light"] } }
+    ], "states": ["default","selected","filled","typing","error","disabled?"] },
+
+    { "name": "Control", "nodeId": "2782:9117", "category": "form-control", "sets": [
+      { "name": "Radio", "axes": { "Type": ["Selected","Unselected"], "Theme": ["Dark","Light"] } },
+      { "name": "Single checkbox", "axes": { "State": ["Unselected","Selected","Indeterminate"], "Theme": ["Light","Dark"], "Stroke": ["No","Yes"] } },
+      { "name": "Toggle/Switch", "axes": { "Property 1": ["Off","On"] } },
+      { "name": "Stepper", "axes": { "Style": ["Outline","Filled"], "Point": ["Lowest","Highest","Mid"], "State": ["Default","Selected","Error"] } },
+      { "name": "Slider", "axes": { "Property 1": ["Default","Progressive","Progressive active"] } },
+      { "name": "Knob progressive selected", "axes": { "Property 1": ["active","enabled"] } },
+      { "name": "Skeleton", "axes": { "Property 1": ["Dark","Light"] } }
+    ], "standalone": ["Knob Simple"] },
+
+    { "name": "Tile", "nodeId": "2783:1123", "category": "tile", "sets": [
+      { "name": "Tile", "axes": { "Hierarchy": ["Primary","Tertiary","Secondary"], "State": ["Enabled","Loading"], "Size": ["Small","Medium","Large"] } },
+      { "name": "Radio card", "axes": { "State": ["Unselected","Selected","Error"], "Theme": ["Light","Dark"] } },
+      { "name": "Radio card with icon", "axes": { "Entries": ["3","2"] } },
+      { "name": "checkboxes", "axes": { "State": ["Selected","Unselected"], "Theme": ["Light","Dark"], "Card": ["Yes","No"] } },
+      { "name": "action checkbox", "axes": { "Behavior": ["Default","With button","With list + button"], "Error": ["Default","Yes","No"] } },
+      { "name": "Toggle card", "axes": { "Toggle": ["Off","On"], "Card": ["No","Yes"] } },
+      { "name": "Quick action tile", "axes": { "Theme": ["Light","Dark"], "Show description": ["Yes","No"] } },
+      { "name": "Stat tile", "axes": { "Theme": ["Dark","Light"], "Show caption": ["Yes","No"] } }
+    ] },
+
+    { "name": "List item", "nodeId": "2784:17114", "category": "list-item", "sets": [
+      { "name": "Linked list", "axes": { "Show description": ["Yes","No"], "Arrow": ["No"] } },
+      { "name": "dropdown", "axes": { "State": ["Default","Error","Expanded","Filled"] } },
+      { "name": "Expand section", "axes": { "State": ["Collapse","Expand"], "Card": ["Yes","No"] } },
+      { "name": "Main selection", "axes": { "State": ["Default","Expanded"] } },
+      { "name": "List value", "axes": { "Behavior": ["With button","With icon"] } },
+      { "name": "Label value", "axes": { "Number of labels": ["2 label","1 label","3 label"] } },
+      { "name": "List with button", "axes": { "Theme": ["Error","Dark","Light"] } }
+    ], "standalone": ["Two column text","List with icon/Default","Thumbnail"] },
+
+    { "name": "Uploader", "nodeId": "2783:11935", "category": "file-uploader", "sets": [
+      { "name": "Inline uploader", "axes": { "Property 1": ["Uploaded","Error","Default"] } },
+      { "name": "Square uploader", "axes": { "States": ["Uploaded","Uploading","Error"], "Size": ["Small","Large"] } }
+    ] },
+
+    { "name": "Navigation", "nodeId": "175:931", "category": "navigation", "sets": [
+      { "name": "Navigation", "axes": { "Usage": ["Page","Dashboard"], "Layout": ["Default","Back & Close","With title"] } },
+      { "name": "Icon tabs", "axes": { "Property 1": ["unselected","complete","selected"] } },
+      { "name": "Bar stepper", "axes": { "Status": ["Active","Inactive","highlighted"] } },
+      { "name": "Progress - stepper", "axes": { "Property 1": ["Step 2","Carousel"] } },
+      { "name": "Pill", "axes": { "State": ["Active","Enabled","Disabled"], "Viewport": ["Desktop","Mobile"] } },
+      { "name": "Ellipse", "axes": { "State": ["Active","Inactive"] } },
+      { "name": "Carousel", "axes": { "Property 1": ["4 group","2 group","3 group","5 group","6 group"] } }
+    ], "standalone": ["Mobile footer","Story tabs","Action sheet - Sign in","Loading","Pill Group","logo tags"] },
+
+    { "name": "Selector", "nodeId": "4004:21149", "category": "selector.date", "sets": [
+      { "name": "Date cell", "axes": { "Property 1": ["Selected","Unselected"] } }
+    ], "standalone": ["Date selector"] },
+
+    { "name": "Cards", "nodeId": "175:214", "category": "card", "sets": [
+      { "name": "Simple Card", "axes": { "Size": ["Default","Small","Large","Medium"], "Theme": ["Default","Light","Dark"], "Sub Layout": ["Label + Button","Arrow Button"], "States": ["Enabled","Loading"] } },
+      { "name": "Multiple Button Card", "axes": { "Hierarchy": ["Primary","Secondary"], "Status": ["Loading","Enabled"], "Size": ["Small","Large"] } },
+      { "name": "Comparison Card", "axes": { "Hierarchy": ["Primary","Secondary"] } },
+      { "name": "Account Card", "axes": { "Status": ["Enabled","Loading"] } },
+      { "name": "Card Image", "axes": { "Size": ["Medium","Large"], "Decoration": ["Icon tags","Badge"], "Status": ["Default","Enabled","Loading"] } }
+    ] },
+
+    { "name": "System Status", "nodeId": "4008:20367", "category": "feedback", "sets": [
+      { "name": "Page level message", "type": "alert/banner", "axes": { "State": ["Informative","Alert","Error"] } }
+    ], "standalone": ["Snackbar (toast)"] },
+
+    { "name": "Avatar", "nodeId": "4008:20281", "category": "avatar", "sets": [
+      { "name": "Avatar", "axes": { "Size": ["Small","Large"], "Style": ["Image","Text"] } }
+    ] },
+
+    { "name": "Overlay", "nodeId": "656:367", "category": "overlay", "sets": [
+      { "name": "Pop up", "type": "modal", "axes": { "Asset": ["Illustration","Image"] } },
+      { "name": "bottom sheet", "type": "sheet", "axes": { "Layout": ["Selection","Two button","With long text"] } }
+    ] },
+
+    { "name": "Empty Message", "nodeId": "4008:20874", "category": "empty-state", "sets": [
+      { "name": "Ring success", "axes": { "Size": ["Small","Large"], "Text size": ["Small","Large"] } }
+    ], "standalone": ["Checkmark success","Empty message/Left aligned"] },
+
+    { "name": "Chart", "nodeId": "706:254", "category": "data-viz", "sets": [
+      { "name": "Small bar chart", "axes": { "Property 1": ["0%","25%","50%","75%","100%"] } },
+      { "name": "Bar chart", "axes": { "Property 1": ["25%","50%","75%","100%"] } },
+      { "name": "ring progress", "axes": { "Percentage": ["0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"] } }
+    ], "note": "Consumes color.visualization.1/2/3." },
+
+    { "name": "Divider", "nodeId": "790:275", "category": "divider", "sets": [
+      { "name": "Divider", "axes": { "Scale": ["Default","Subtle"], "Surface": ["Dark","Light"] } }
+    ], "note": "Consumes color.divider.default / color.divider.subtle." }
   ],
 
-  "feedbackComponentsCoverage": {
-    "alerts": "candidate: 'System Status' (4008:20367) — not_extracted",
-    "toasts": "undefined — no page named toast; may live under System Status or Overlay",
-    "tooltips": "undefined — not found as a top-level component page"
+  "feedbackCoverage": {
+    "alerts": "System Status > Page level message (Informative/Alert/Error)",
+    "toasts": "System Status > Snackbar",
+    "tooltips": "undefined — no dedicated tooltip component found in the file"
   }
 }
