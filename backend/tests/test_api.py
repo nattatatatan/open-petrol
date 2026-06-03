@@ -78,6 +78,27 @@ def test_station_search_typeahead():
         assert dists == sorted(dists)
 
 
+class _FakeGeocoder:
+    async def suggest(self, q: str, limit: int = 5):
+        from app.routing.geocode import GeocodeResult
+        return [
+            GeocodeResult(latitude=-33.8, longitude=151.2, display_name=f"{q} {i}")
+            for i in range(min(limit, 3))
+        ]
+
+
+def test_geocode_search_returns_suggestions():
+    app = create_app()
+    with TestClient(app) as client:
+        app.state.geocoder = _FakeGeocoder()  # avoid hitting Nominatim in tests
+        res = client.get("/api/geocode/search", params={"q": "parra"})
+        assert res.status_code == 200
+        body = res.json()
+        assert len(body) == 3
+        assert body[0]["display_name"].startswith("parra")
+        assert "latitude" in body[0] and "longitude" in body[0]
+
+
 def test_on_my_way_requires_a_destination():
     with TestClient(create_app()) as client:
         res = client.get(

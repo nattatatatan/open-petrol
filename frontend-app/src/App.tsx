@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { api } from "./api";
+import { api, type GeoPlace } from "./api";
 import { useGeolocation } from "./hooks/useGeolocation";
 import { useUserModel } from "./hooks/useUserModel";
 import type { CatalogPreset, Meta, NearMeResult, RouteResult, StationOffer } from "./types";
@@ -11,7 +11,8 @@ import { SettingsSheet } from "./components/SettingsSheet";
 import { TrustBar } from "./components/TrustBar";
 import { ModeToggle, type Mode } from "./components/ModeToggle";
 import { Icon } from "./components/Icon";
-import { Button, Card, Input, Skeleton, Spinner } from "./components/ui";
+import { PlaceSearch } from "./components/PlaceSearch";
+import { Card, Skeleton, Spinner } from "./components/ui";
 
 type Result = NearMeResult | RouteResult;
 
@@ -29,6 +30,9 @@ export default function App() {
   const [catalog, setCatalog] = useState<CatalogPreset[]>([]);
   const [mode, setMode] = useState<Mode>("near"); // cold-open default (STYLE_GUIDE §3)
   const [destination, setDestination] = useState("");
+  const [destPlace, setDestPlace] = useState<GeoPlace | null>(null);
+  const [editingOrigin, setEditingOrigin] = useState(false);
+  const [originQuery, setOriginQuery] = useState("");
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,19 +52,6 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleManualOrigin = useCallback(
-    async (q: string) => {
-      try {
-        const r = await api.geocode(q);
-        geo.setManual({ lat: r.latitude, lng: r.longitude, label: r.display_name.split(",")[0] });
-        setError(null);
-      } catch {
-        setError(`Couldn't find "${q}".`);
-      }
-    },
-    [geo],
-  );
-
   const runSearch = useCallback(async () => {
     if (!geo.coords) return;
     setLoading(true);
@@ -75,6 +66,7 @@ export default function App() {
         mode === "route"
           ? await api.onMyWay({
               originLat: geo.coords.lat, originLng: geo.coords.lng, dest: destination,
+              destLat: destPlace?.latitude, destLng: destPlace?.longitude,
               fuel: model.fuelType, tank: model.tankL, usual: model.usualStation,
               membership,
             })
@@ -91,7 +83,7 @@ export default function App() {
     } finally {
       setLoading(false);
     }
-  }, [geo.coords, mode, destination, model.fuelType, model.tankL, model.usualStation,
+  }, [geo.coords, mode, destination, destPlace, model.fuelType, model.tankL, model.usualStation,
       model.memberships, model.rateOverrides, model.customRules]);
 
   const searchRef = useRef(runSearch);
@@ -109,6 +101,14 @@ export default function App() {
   useEffect(() => {
     if (mode === "near" && geo.coords && !result && !loading) searchRef.current();
   }, [mode, geo.coords, result, loading]);
+
+  // Route mode: picking a destination suggestion (or changing the origin while a
+  // destination is set) answers immediately — no extra tap. Free-text + Enter/arrow
+  // still goes through runSearch.
+  useEffect(() => {
+    if (mode === "route" && destPlace && geo.coords) searchRef.current();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [destPlace, geo.coords]);
 
   // Live re-query when the user model changes (fuel / tank / baseline / memberships)
   // and we already have an answer — keeps it scoped to their choices.
@@ -185,18 +185,50 @@ export default function App() {
 
       {/* Compact control row: origin (+ destination in route mode) */}
       <div className="mt-md space-y-2">
-        {geo.coords ? (
+        {editingOrigin || (!geo.coords && needsManual) ? (
+          <div className="space-y-1.5">
+            <PlaceSearch
+              value={originQuery}
+              onChange={setOriginQuery}
+              onPick={(p) => {
+                geo.setManual({ lat: p.latitude, lng: p.longitude, label: placeLabel(p) });
+                setEditingOrigin(false);
+                setOriginQuery("");
+                setResult(null); // re-answer from the new origin
+              }}
+              placeholder="Search a suburb or address"
+              autoFocus
+            />
+            <div className="flex items-center justify-between px-1">
+              <button
+                className="inline-flex items-center gap-1 text-xs text-text-action hover:underline"
+                onClick={() => { setEditingOrigin(false); setOriginQuery(""); geo.request(); }}
+              >
+                <Icon name="location" size={12} /> Use current location
+              </button>
+              {geo.coords && (
+                <button
+                  className="text-xs text-text-secondary hover:underline"
+                  onClick={() => { setEditingOrigin(false); setOriginQuery(""); }}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </div>
+        ) : geo.coords ? (
           <div className="flex items-center justify-between rounded-md border border-border px-3 py-2.5 text-sm">
             <span className="inline-flex items-center gap-2 text-text">
               <Icon name="location" size={15} className="text-[color:var(--color-success)]" />
               {geo.coords.label}
             </span>
-            <button className="text-xs text-text-action hover:underline" onClick={geo.request}>
-              Update
+            <button
+              className="text-xs text-text-action hover:underline"
+              onClick={() => setEditingOrigin(true)}
+            >
+              Change
             </button>
           </div>
-        ) : needsManual ? (
-          <ManualOrigin onSubmit={handleManualOrigin} />
         ) : (
           <div className="flex items-center gap-2 rounded-md border border-border px-3 py-2.5 text-sm text-text-secondary">
             <Spinner /> Finding your location…
@@ -204,10 +236,11 @@ export default function App() {
         )}
 
         {mode === "route" && (
-          <Input
+          <PlaceSearch
             value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && geo.coords && destination.trim() && runSearch()}
+            onChange={(v) => { setDestination(v); setDestPlace(null); }}
+            onPick={setDestPlace}
+            onEnter={() => geo.coords && destination.trim() && runSearch()}
             placeholder="Where are you headed? (e.g. Parramatta)"
             suffix={
               <button
@@ -318,27 +351,9 @@ export default function App() {
   );
 }
 
-/** Manual suburb entry — geolocation fallback, never a dead screen (§10). */
-function ManualOrigin({ onSubmit }: { onSubmit: (q: string) => void }) {
-  const [v, setV] = useState("");
-  return (
-    <form
-      className="flex gap-2"
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (v.trim()) onSubmit(v.trim());
-      }}
-    >
-      <Input
-        value={v}
-        onChange={(e) => setV(e.target.value)}
-        placeholder="Enter your suburb"
-        size="small"
-        className="flex-1 text-sm"
-      />
-      <Button hierarchy="secondary" size="small" type="submit">Set</Button>
-    </form>
-  );
+/** Short label for a geocoded place — the leading, most-specific parts. */
+function placeLabel(p: GeoPlace): string {
+  return p.display_name.split(",").slice(0, 2).join(",").trim();
 }
 
 /** Cold-open / loading placeholder — never a blank screen (STYLE_GUIDE §10). */

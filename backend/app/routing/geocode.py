@@ -21,22 +21,31 @@ class Geocoder:
         self._base_url = base_url.rstrip("/")
         self._headers = {"User-Agent": user_agent}
 
-    async def geocode(self, query: str) -> GeocodeResult | None:
+    async def _search(self, query: str, limit: int) -> list[dict]:
         params = {
             "q": query,
             "format": "jsonv2",
-            "limit": "1",
+            "limit": str(limit),
             "countrycodes": "au",
         }
         async with httpx.AsyncClient(timeout=15.0, headers=self._headers) as client:
             resp = await client.get(f"{self._base_url}/search", params=params)
             resp.raise_for_status()
-            results = resp.json()
-        if not results:
-            return None
-        top = results[0]
+            return resp.json()
+
+    @staticmethod
+    def _to_result(r: dict, fallback: str) -> GeocodeResult:
         return GeocodeResult(
-            latitude=float(top["lat"]),
-            longitude=float(top["lon"]),
-            display_name=top.get("display_name", query),
+            latitude=float(r["lat"]),
+            longitude=float(r["lon"]),
+            display_name=r.get("display_name", fallback),
         )
+
+    async def geocode(self, query: str) -> GeocodeResult | None:
+        results = await self._search(query, 1)
+        return self._to_result(results[0], query) if results else None
+
+    async def suggest(self, query: str, limit: int = 5) -> list[GeocodeResult]:
+        """Autocomplete suggestions for origin/destination entry (CLAUDE.md §5, §11).
+        Only called on explicit, debounced user input, so request volume stays low."""
+        return [self._to_result(r, query) for r in await self._search(query, limit)]

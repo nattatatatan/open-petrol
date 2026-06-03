@@ -16,6 +16,12 @@ export interface MembershipParams {
   customRules: CustomRule[];
 }
 
+export interface GeoPlace {
+  latitude: number;
+  longitude: number;
+  display_name: string;
+}
+
 function membershipQuery(m?: MembershipParams) {
   if (!m) return {};
   return {
@@ -57,16 +63,22 @@ export const api = {
 
   onMyWay: (p: {
     originLat: number; originLng: number; dest: string; fuel: string; tank: number;
-    usual?: string | null; membership?: MembershipParams;
+    destLat?: number; destLng?: number; usual?: string | null; membership?: MembershipParams;
   }) =>
     get<RouteResult>("/api/on-my-way", {
-      origin_lat: p.originLat, origin_lng: p.originLng, dest: p.dest,
+      origin_lat: p.originLat, origin_lng: p.originLng,
+      // Prefer exact coords from a picked suggestion; fall back to free-text geocoding.
+      dest: p.destLat != null ? undefined : p.dest,
+      dest_lat: p.destLat, dest_lng: p.destLng,
       fuel: p.fuel, tank: p.tank, usual_station: p.usual ?? undefined,
       ...membershipQuery(p.membership),
     }),
 
   geocode: (q: string) =>
-    get<{ latitude: number; longitude: number; display_name: string }>("/api/geocode", { q }),
+    get<GeoPlace>("/api/geocode", { q }),
+
+  geocodeSearch: (q: string) =>
+    get<GeoPlace[]>("/api/geocode/search", { q }),
 
   searchStations: (p: { q: string; lat?: number; lng?: number }) =>
     get<StationHit[]>("/api/stations/search", { q: p.q, lat: p.lat, lng: p.lng }),

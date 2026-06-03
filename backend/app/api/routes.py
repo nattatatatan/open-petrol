@@ -226,6 +226,16 @@ async def geocode(request: Request, q: str = Query(..., min_length=2)):
     return result
 
 
+@router.get("/geocode/search")
+async def geocode_search(
+    request: Request,
+    q: str = Query(..., min_length=2),
+    limit: int = Query(5, gt=0, le=10),
+):
+    """Typeahead suggestions for origin/destination entry (CLAUDE.md §5, §11)."""
+    return await request.app.state.geocoder.suggest(q, limit)
+
+
 class AdvisorRequest(BaseModel):
     fuel: str = "E10"
     area: str = "Sydney"
