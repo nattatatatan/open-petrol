@@ -25,6 +25,13 @@ DEFAULT_RADIUS_KM = 8.0
 DEFAULT_MAX_RESULTS = 12
 # Near-me: choosing a station X km away costs you the round trip out and back.
 NEAR_ME_ROUND_TRIP = 2.0
+# A driver's time has value (RESEARCH.md / NBER w29831). We fold a DELIBERATELY
+# CONSERVATIVE value-of-time into the detour cost so the ranking won't send someone
+# 6 minutes out of their way to save $1.20 — a smart default, not a setting (no
+# clicks). Kept low so we under- rather than over-penalise detours.
+VALUE_OF_TIME_PER_HOUR = 12.0
+# When we only know detour distance (near-me), estimate its time at an urban speed.
+URBAN_KMH = 40.0
 
 
 class Baseline(BaseModel):
@@ -108,7 +115,12 @@ def build_offer(
 ) -> StationOffer:
     saving_per_litre = baseline.price - price.price
     saving_per_tank = saving_per_litre * tank_l / 100.0
-    detour_cost = detour_km * consumption_l_per_km * (price.price / 100.0)
+    # Detour cost = fuel burned + the value of time spent. Use the precise route
+    # detour minutes when we have them; otherwise estimate from distance.
+    detour_minutes = detour_min if detour_min is not None else detour_km / URBAN_KMH * 60.0
+    fuel_cost = detour_km * consumption_l_per_km * (price.price / 100.0)
+    time_cost = detour_minutes / 60.0 * VALUE_OF_TIME_PER_HOUR
+    detour_cost = fuel_cost + time_cost
     return StationOffer(
         station_code=station.code,
         name=station.name,

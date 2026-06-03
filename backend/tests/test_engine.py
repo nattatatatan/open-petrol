@@ -1,7 +1,12 @@
 from datetime import datetime, timedelta, timezone
 
 from app.engine.geo import haversine_km
-from app.engine.recommend import compute_baseline, find_cheapest_stations
+from app.engine.recommend import (
+    Baseline,
+    build_offer,
+    compute_baseline,
+    find_cheapest_stations,
+)
 from app.models import Freshness, Location, Price, Snapshot, Station
 
 CAPTURED = datetime(2026, 6, 2, 8, 30, tzinfo=timezone.utc)
@@ -72,6 +77,22 @@ def test_stale_price_is_deranked_not_recommended():
     assert stale.freshness is Freshness.STALE
     assert stale.net_benefit == max(o.net_benefit for o in res.offers)
     assert res.recommended.station_code != "STALE"   # de-ranked despite best net
+
+
+def test_value_of_time_is_included_in_detour_cost():
+    base = Baseline(kind="area_average", price=180.0, label="x")
+    station = Station(code="X", name="X", location=Location(latitude=-33.8, longitude=151.2))
+    price = Price(station_code="X", fuel_type="E10", price=170.0, last_updated=CAPTURED)
+    o = build_offer(
+        station, price, baseline=base, reference_time=CAPTURED,
+        distance_km=5, detour_km=10, tank_l=55, consumption_l_per_km=0.08,
+        detour_min=15,
+    )
+    saving = (180 - 170) * 55 / 100        # 5.50
+    fuel = 10 * 0.08 * 1.70                 # 1.36
+    time = 15 / 60 * 12                     # 3.00 (value of time, not just fuel)
+    assert o.detour_cost == round(fuel + time, 2)       # 4.36
+    assert o.net_benefit == round(saving - (fuel + time), 2)  # 1.14
 
 
 def test_radius_filters_out_distant_stations():
