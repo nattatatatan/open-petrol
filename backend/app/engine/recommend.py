@@ -34,6 +34,63 @@ VALUE_OF_TIME_PER_HOUR = 12.0
 URBAN_KMH = 40.0
 
 
+# --- Membership / loyalty effective pricing (CLAUDE.md §7, RESEARCH.md thread A) ---
+#
+# FuelCheck publishes PUMP prices, but a 4–5c/L member or docket discount can exceed
+# the gap between our top stations — so the pump-cheapest can be the WRONG winner for
+# someone with a card. As one optional setting, the user names their main program; we
+# subtract a brand-keyed discount to get an EFFECTIVE price and rank on that. Pump
+# price stays visible (transparency); we never invent a discount we can't ground.
+# Mappings are deliberately conservative — only brands a program demonstrably covers.
+
+
+class DiscountProgram(BaseModel):
+    label: str
+    note: str
+    discounts: dict[str, float]  # station brand -> cents/L off
+
+
+DISCOUNT_PROGRAMS: dict[str, DiscountProgram] = {
+    "woolworths": DiscountProgram(
+        label="Woolworths fuel docket",
+        note="4c/L off at Ampol with a $30 Woolworths shop (ACCC-capped).",
+        discounts={
+            "Ampol": 4.0,
+            "EG Ampol": 4.0,
+            "Ampol Foodary": 4.0,
+            "Ampol Breeze": 4.0,
+        },
+    ),
+    "coles": DiscountProgram(
+        label="Coles / flybuys docket",
+        # Redeemed at the former Coles Express network (now Reddy Express). Plain
+        # Shell sites are a mix and not all participate, so we DON'T claim a discount
+        # we can't ground — over-claiming would break the same trust as a stale price.
+        note="4c/L off at Reddy Express with a $30 Coles shop (ACCC-capped).",
+        discounts={"Reddy Express": 4.0},
+    ),
+    "nrma": DiscountProgram(
+        label="NRMA membership",
+        note="~5c/L off at NRMA-branded fuel stations.",
+        discounts={"NRMA": 5.0},
+    ),
+}
+
+
+def discounts_for_stations(
+    stations: list[Station], membership: str | None
+) -> dict[str, float]:
+    """Map station_code -> cents/L discount for the user's program (empty if none)."""
+    program = DISCOUNT_PROGRAMS.get(membership or "")
+    if program is None:
+        return {}
+    return {
+        s.code: program.discounts.get(s.brand or "", 0.0)
+        for s in stations
+        if program.discounts.get(s.brand or "", 0.0) > 0.0
+    }
+
+
 class Baseline(BaseModel):
     kind: str          # "usual_station" | "area_average"
     price: float       # cents/L
@@ -48,7 +105,9 @@ class StationOffer(BaseModel):
     latitude: float
     longitude: float
     fuel_type: str
-    price: float                 # cents/L
+    price: float                 # cents/L — the published PUMP price (always shown)
+    discount: float = 0.0        # cents/L knocked off by the user's membership
+    effective_price: float = 0.0 # cents/L the user actually pays = price - discount
     last_updated: datetime
     freshness: Freshness
     distance_km: float
@@ -86,17 +145,27 @@ def _prices_for_fuel(snapshot: Snapshot, fuel_type: str) -> dict[str, Price]:
 
 
 def compute_baseline(
-    prices: dict[str, Price], usual_station_code: str | None
+    prices: dict[str, Price],
+    usual_station_code: str | None,
+    discounts: dict[str, float] | None = None,
 ) -> Baseline:
     """Baseline = the user's usual station if we have a price for it; otherwise the
-    area average. Never an unanchored number (CLAUDE.md §7)."""
+    area average. Never an unanchored number (CLAUDE.md §7).
+
+    When a membership is active we compare against EFFECTIVE prices on both sides, so
+    the saving reflects what the user actually pays — not a pump-vs-discounted mix."""
+    discounts = discounts or {}
+
+    def effective(code: str, price: float) -> float:
+        return price - discounts.get(code, 0.0)
+
     if usual_station_code and usual_station_code in prices:
         return Baseline(
             kind="usual_station",
-            price=prices[usual_station_code].price,
+            price=round(effective(usual_station_code, prices[usual_station_code].price), 1),
             label="your usual station",
         )
-    avg = sum(p.price for p in prices.values()) / len(prices)
+    avg = sum(effective(c, p.price) for c, p in prices.items()) / len(prices)
     return Baseline(kind="area_average", price=round(avg, 1), label="the area average")
 
 
@@ -110,15 +179,19 @@ def build_offer(
     detour_km: float,
     tank_l: float,
     consumption_l_per_km: float,
+    discount: float = 0.0,
     detour_min: float | None = None,
     along_route_km: float | None = None,
 ) -> StationOffer:
-    saving_per_litre = baseline.price - price.price
+    # Effective price = what the user actually pays after their membership discount.
+    # All savings/ranking use it; the pump price stays visible for transparency.
+    effective_price = price.price - discount
+    saving_per_litre = baseline.price - effective_price
     saving_per_tank = saving_per_litre * tank_l / 100.0
     # Detour cost = fuel burned + the value of time spent. Use the precise route
     # detour minutes when we have them; otherwise estimate from distance.
     detour_minutes = detour_min if detour_min is not None else detour_km / URBAN_KMH * 60.0
-    fuel_cost = detour_km * consumption_l_per_km * (price.price / 100.0)
+    fuel_cost = detour_km * consumption_l_per_km * (effective_price / 100.0)
     time_cost = detour_minutes / 60.0 * VALUE_OF_TIME_PER_HOUR
     detour_cost = fuel_cost + time_cost
     return StationOffer(
@@ -130,6 +203,8 @@ def build_offer(
         longitude=station.location.longitude,
         fuel_type=price.fuel_type,
         price=price.price,
+        discount=round(discount, 1),
+        effective_price=round(effective_price, 1),
         last_updated=price.last_updated,
         freshness=classify_freshness(price.last_updated, reference_time),
         distance_km=round(distance_km, 2),
@@ -188,12 +263,14 @@ def find_cheapest_stations(
     tank_l: float = DEFAULT_TANK_L,
     radius_km: float = DEFAULT_RADIUS_KM,
     usual_station_code: str | None = None,
+    membership: str | None = None,
     consumption_l_per_km: float = DEFAULT_CONSUMPTION_L_PER_KM,
     max_results: int = DEFAULT_MAX_RESULTS,
 ) -> RankResult:
     """'Cheapest near me, now', ranked net of the round-trip detour to get there."""
     prices = _prices_for_fuel(snapshot, fuel_type)
-    baseline = compute_baseline(prices, usual_station_code)
+    discounts = discounts_for_stations(snapshot.stations, membership)
+    baseline = compute_baseline(prices, usual_station_code, discounts)
     stations = {s.code: s for s in snapshot.stations}
 
     offers: list[StationOffer] = []
@@ -216,6 +293,7 @@ def find_cheapest_stations(
                 detour_km=dist * NEAR_ME_ROUND_TRIP,
                 tank_l=tank_l,
                 consumption_l_per_km=consumption_l_per_km,
+                discount=discounts.get(code, 0.0),
             )
         )
 

@@ -5,6 +5,7 @@ from app.engine.recommend import (
     Baseline,
     build_offer,
     compute_baseline,
+    discounts_for_stations,
     find_cheapest_stations,
 )
 from app.models import Freshness, Location, Price, Snapshot, Station
@@ -93,6 +94,56 @@ def test_value_of_time_is_included_in_detour_cost():
     time = 15 / 60 * 12                     # 3.00 (value of time, not just fuel)
     assert o.detour_cost == round(fuel + time, 2)       # 4.36
     assert o.net_benefit == round(saving - (fuel + time), 2)  # 1.14
+
+
+# Two near stations: a cheaper-at-pump Metro and a dearer Ampol that a Woolworths
+# docket (4c) makes cheaper for the cardholder.
+MEMBER_STATIONS = [
+    Station(code="METRO", name="Metro", brand="Metro Fuel", location=Location(latitude=-33.87, longitude=151.221)),
+    Station(code="AMPOL", name="Ampol", brand="Ampol", location=Location(latitude=-33.87, longitude=151.221)),
+]
+MEMBER_PRICES = [
+    Price(station_code="METRO", fuel_type="E10", price=179.0, last_updated=CAPTURED),
+    Price(station_code="AMPOL", fuel_type="E10", price=180.0, last_updated=CAPTURED),
+]
+MEMBER_SNAP = Snapshot(captured_at=CAPTURED, stations=MEMBER_STATIONS, prices=MEMBER_PRICES)
+
+
+def test_discounts_only_map_covered_brands():
+    d = discounts_for_stations(MEMBER_STATIONS, "woolworths")
+    assert d == {"AMPOL": 4.0}          # Metro isn't in the program
+    assert discounts_for_stations(MEMBER_STATIONS, None) == {}
+    assert discounts_for_stations(MEMBER_STATIONS, "bogus") == {}
+
+
+def test_membership_flips_the_winner_via_effective_price():
+    # No card: Metro (179) is cheaper at the pump than Ampol (180).
+    plain = find_cheapest_stations(
+        MEMBER_SNAP, origin_lat=ORIGIN[0], origin_lng=ORIGIN[1],
+        fuel_type="E10", tank_l=55, radius_km=15,
+    )
+    assert plain.recommended.station_code == "METRO"
+
+    # With a Woolworths docket, Ampol's effective price is 176 — it should win.
+    member = find_cheapest_stations(
+        MEMBER_SNAP, origin_lat=ORIGIN[0], origin_lng=ORIGIN[1],
+        fuel_type="E10", tank_l=55, radius_km=15, membership="woolworths",
+    )
+    ampol = next(o for o in member.offers if o.station_code == "AMPOL")
+    assert member.recommended.station_code == "AMPOL"
+    assert ampol.discount == 4.0
+    assert ampol.effective_price == 176.0
+    assert ampol.price == 180.0          # pump price stays visible
+
+
+def test_membership_baseline_uses_effective_prices():
+    base = compute_baseline(
+        {p.station_code: p for p in MEMBER_PRICES},
+        usual_station_code=None,
+        discounts={"AMPOL": 4.0},
+    )
+    # Effective area average = (179 + 176) / 2 = 177.5, not the pump 179.5.
+    assert base.price == 177.5
 
 
 def test_radius_filters_out_distant_stations():

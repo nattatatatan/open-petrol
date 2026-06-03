@@ -10,14 +10,16 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
 from app.advisor.service import AdvisorResult
+from app.engine.geo import haversine_km
 from app.engine.recommend import (
     DEFAULT_RADIUS_KM,
     DEFAULT_TANK_L,
+    DISCOUNT_PROGRAMS,
     RankResult,
     find_cheapest_stations,
 )
 from app.engine.route import RouteRankResult, recommend_along_route
-from app.models import FUEL_TYPE_LABELS, Freshness, classify_freshness
+from app.models import FUEL_TYPE_LABELS, classify_freshness
 
 router = APIRouter(prefix="/api")
 
@@ -59,9 +61,52 @@ async def meta(request: Request):
         "price_count": len(snap.prices) if snap else 0,
         "freshness_breakdown": counts,
         "fuel_types": FUEL_TYPE_LABELS,
+        "discount_programs": {
+            key: {"label": p.label, "note": p.note}
+            for key, p in DISCOUNT_PROGRAMS.items()
+        },
         "provider": "NSW FuelCheck",
         "now": datetime.now(timezone.utc),
     }
+
+
+@router.get("/stations/search")
+async def stations_search(
+    request: Request,
+    q: str = Query(..., min_length=2),
+    lat: float | None = Query(None),
+    lng: float | None = Query(None),
+    limit: int = Query(8, gt=0, le=25),
+):
+    """Typeahead for setting a usual station as the savings baseline (CLAUDE.md §7).
+
+    Lets the user anchor savings to their regular station without first running a
+    search and tapping it in the results. Name/address substring match; when we know
+    the user's location we surface the nearest matches first."""
+    snap = _require_snapshot(request)
+    needle = q.lower()
+    matches = [
+        s for s in snap.stations
+        if needle in s.name.lower() or (s.address and needle in s.address.lower())
+    ]
+    if lat is not None and lng is not None:
+        matches.sort(
+            key=lambda s: haversine_km(lat, lng, s.location.latitude, s.location.longitude)
+        )
+    return [
+        {
+            "code": s.code,
+            "name": s.name,
+            "brand": s.brand,
+            "address": s.address,
+            "distance_km": (
+                round(haversine_km(lat, lng, s.location.latitude, s.location.longitude), 1)
+                if lat is not None and lng is not None
+                else None
+            ),
+        }
+        for s in matches[:limit]
+    ]
 
 
 @router.get("/near-me", response_model=RankResult)
@@ -73,11 +118,13 @@ async def near_me(
     tank: float = Query(DEFAULT_TANK_L, gt=0, le=200),
     radius: float = Query(DEFAULT_RADIUS_KM, gt=0, le=50),
     usual_station: str | None = Query(None),
+    membership: str | None = Query(None),
 ) -> RankResult:
     snap = _require_snapshot(request)
     return find_cheapest_stations(
         snap, origin_lat=lat, origin_lng=lng, fuel_type=fuel,
         tank_l=tank, radius_km=radius, usual_station_code=usual_station,
+        membership=membership,
     )
 
 
@@ -89,6 +136,7 @@ async def on_my_way(
     fuel: str = Query("E10"),
     tank: float = Query(DEFAULT_TANK_L, gt=0, le=200),
     usual_station: str | None = Query(None),
+    membership: str | None = Query(None),
     dest: str | None = Query(None, description="Free-text destination (geocoded)"),
     dest_lat: float | None = Query(None),
     dest_lng: float | None = Query(None),
@@ -110,6 +158,7 @@ async def on_my_way(
             snap, request.app.state.routing,
             origin=(origin_lat, origin_lng), destination=destination,
             fuel_type=fuel, tank_l=tank, usual_station_code=usual_station,
+            membership=membership,
         )
     except RuntimeError as exc:
         raise HTTPException(502, f"Routing failed: {exc}")
