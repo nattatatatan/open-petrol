@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta, timezone
 
 from app.engine.geo import haversine_km
+from app.engine.discounts import MembershipSelection, resolve_discounts
 from app.engine.recommend import (
     Baseline,
     build_offer,
     compute_baseline,
-    discounts_for_stations,
     find_cheapest_stations,
 )
 from app.models import Freshness, Location, Price, Snapshot, Station
@@ -110,10 +110,34 @@ MEMBER_SNAP = Snapshot(captured_at=CAPTURED, stations=MEMBER_STATIONS, prices=ME
 
 
 def test_discounts_only_map_covered_brands():
-    d = discounts_for_stations(MEMBER_STATIONS, "woolworths")
-    assert d == {"AMPOL": 4.0}          # Metro isn't in the program
-    assert discounts_for_stations(MEMBER_STATIONS, None) == {}
-    assert discounts_for_stations(MEMBER_STATIONS, "bogus") == {}
+    sel = MembershipSelection(memberships=["everyday_rewards"])
+    d = resolve_discounts(MEMBER_STATIONS, "E10", sel)
+    assert d["AMPOL"] == (4.0, "Woolworths Everyday Rewards")
+    assert "METRO" not in d                                   # Metro isn't covered
+    assert resolve_discounts(MEMBER_STATIONS, "E10", MembershipSelection()) == {}
+
+
+def test_membership_best_single_no_stacking():
+    # Two cards both cover Ampol; we take the single best (5c), never the sum.
+    sel = MembershipSelection(memberships=["everyday_rewards", "racv"])
+    d = resolve_discounts(MEMBER_STATIONS, "E10", sel)
+    assert d["AMPOL"][0] == 5.0          # max(4, 5), NOT 9
+
+
+def test_membership_premium_tier_and_rate_override():
+    # NRMA pays 5c on premium fuel, 4c otherwise.
+    nrma = MembershipSelection(memberships=["nrma"])
+    assert resolve_discounts(MEMBER_STATIONS, "P98", nrma)["AMPOL"][0] == 5.0
+    assert resolve_discounts(MEMBER_STATIONS, "E10", nrma)["AMPOL"][0] == 4.0
+    # A user-owned rate override (e.g. a 10c docket week) replaces the default.
+    bumped = MembershipSelection(memberships=["everyday_rewards"], rate_overrides={"everyday_rewards": 10.0})
+    assert resolve_discounts(MEMBER_STATIONS, "E10", bumped)["AMPOL"][0] == 10.0
+
+
+def test_custom_rule_applies_to_its_brand():
+    sel = MembershipSelection(custom_rules=[("Metro Fuel", 7.0)])
+    d = resolve_discounts(MEMBER_STATIONS, "E10", sel)
+    assert d["METRO"] == (7.0, "Metro Fuel")
 
 
 def test_membership_flips_the_winner_via_effective_price():
@@ -124,16 +148,18 @@ def test_membership_flips_the_winner_via_effective_price():
     )
     assert plain.recommended.station_code == "METRO"
 
-    # With a Woolworths docket, Ampol's effective price is 176 — it should win.
+    # With Everyday Rewards, Ampol's effective price is 176 — it should win.
     member = find_cheapest_stations(
         MEMBER_SNAP, origin_lat=ORIGIN[0], origin_lng=ORIGIN[1],
-        fuel_type="E10", tank_l=55, radius_km=15, membership="woolworths",
+        fuel_type="E10", tank_l=55, radius_km=15,
+        membership=MembershipSelection(memberships=["everyday_rewards"]),
     )
     ampol = next(o for o in member.offers if o.station_code == "AMPOL")
     assert member.recommended.station_code == "AMPOL"
     assert ampol.discount == 4.0
     assert ampol.effective_price == 176.0
     assert ampol.price == 180.0          # pump price stays visible
+    assert ampol.discount_label == "Woolworths Everyday Rewards"
 
 
 def test_membership_baseline_uses_effective_prices():

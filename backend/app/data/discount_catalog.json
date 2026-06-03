@@ -1,0 +1,30 @@
+{
+  "_comment": "Brand-tied fuel-discount presets. Bundled for the demo; in production this is fetched once on launch from a small REMOTE JSON so base rates update without a new build (the ONLY fetch that makes sense — the shared catalog, never the user's personal cards). Rates are user-editable client-side; 'cents' is the default. 'premium' (P95/P98) overrides 'cents' for premium fuels where a program differs. Brand strings match FuelCheck's brand field. flybuys maps to Reddy Express ONLY (the former Coles Express network) — NOT generic Shell, which would over-claim.",
+  "presets": [
+    {
+      "key": "everyday_rewards",
+      "label": "Woolworths Everyday Rewards",
+      "brands": ["Ampol", "Ampol Foodary", "Ampol Breeze", "EG Ampol"],
+      "cents": 4
+    },
+    {
+      "key": "flybuys",
+      "label": "Coles / flybuys",
+      "brands": ["Reddy Express"],
+      "cents": 4
+    },
+    {
+      "key": "nrma",
+      "label": "NRMA membership",
+      "brands": ["NRMA", "Ampol", "EG Ampol"],
+      "cents": 4,
+      "premium": 5
+    },
+    {
+      "key": "racv",
+      "label": "RACV",
+      "brands": ["EG Ampol", "Ampol"],
+      "cents": 5
+    }
+  ]
+}

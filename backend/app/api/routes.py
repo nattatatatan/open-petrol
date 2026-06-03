@@ -10,11 +10,11 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
 from app.advisor.service import AdvisorResult
+from app.engine.discounts import MembershipSelection, load_catalog
 from app.engine.geo import haversine_km
 from app.engine.recommend import (
     DEFAULT_RADIUS_KM,
     DEFAULT_TANK_L,
-    DISCOUNT_PROGRAMS,
     RankResult,
     find_cheapest_stations,
 )
@@ -61,13 +61,62 @@ async def meta(request: Request):
         "price_count": len(snap.prices) if snap else 0,
         "freshness_breakdown": counts,
         "fuel_types": FUEL_TYPE_LABELS,
-        "discount_programs": {
-            key: {"label": p.label, "note": p.note}
-            for key, p in DISCOUNT_PROGRAMS.items()
-        },
         "provider": "NSW FuelCheck",
         "now": datetime.now(timezone.utc),
     }
+
+
+@router.get("/catalog")
+async def catalog():
+    """Membership/discount presets (CLAUDE.md §7 thread A). Bundled for the demo;
+    in production this is a small remote JSON fetched once on launch so base rates
+    update without a new build — the only fetch that makes sense (the shared catalog,
+    never the user's personal cards)."""
+    return {
+        "presets": [
+            {
+                "key": p.key,
+                "label": p.label,
+                "brands": p.brands,
+                "cents": p.cents,
+                "premium": p.premium,
+            }
+            for p in load_catalog()
+        ]
+    }
+
+
+def _membership_from_query(
+    memberships: str | None,
+    rate_overrides: str | None,
+    custom_discounts: str | None,
+) -> MembershipSelection:
+    """Parse the compact query encoding into a MembershipSelection.
+
+    memberships=everyday_rewards,nrma
+    rate_overrides=everyday_rewards:10,nrma:6
+    custom_discounts=Costco:5,My Servo:8
+    """
+    keys = [k for k in (memberships or "").split(",") if k]
+    overrides: dict[str, float] = {}
+    for item in (rate_overrides or "").split(","):
+        if ":" in item:
+            k, _, v = item.rpartition(":")
+            try:
+                overrides[k] = float(v)
+            except ValueError:
+                continue
+    custom: list[tuple[str, float]] = []
+    for item in (custom_discounts or "").split(","):
+        if ":" in item:
+            brand, _, v = item.rpartition(":")
+            try:
+                custom.append((brand, float(v)))
+            except ValueError:
+                continue
+    return MembershipSelection(
+        memberships=keys, rate_overrides=overrides, custom_rules=custom
+    )
 
 
 @router.get("/stations/search")
@@ -118,13 +167,15 @@ async def near_me(
     tank: float = Query(DEFAULT_TANK_L, gt=0, le=200),
     radius: float = Query(DEFAULT_RADIUS_KM, gt=0, le=50),
     usual_station: str | None = Query(None),
-    membership: str | None = Query(None),
+    memberships: str | None = Query(None),
+    rate_overrides: str | None = Query(None),
+    custom_discounts: str | None = Query(None),
 ) -> RankResult:
     snap = _require_snapshot(request)
     return find_cheapest_stations(
         snap, origin_lat=lat, origin_lng=lng, fuel_type=fuel,
         tank_l=tank, radius_km=radius, usual_station_code=usual_station,
-        membership=membership,
+        membership=_membership_from_query(memberships, rate_overrides, custom_discounts),
     )
 
 
@@ -136,7 +187,9 @@ async def on_my_way(
     fuel: str = Query("E10"),
     tank: float = Query(DEFAULT_TANK_L, gt=0, le=200),
     usual_station: str | None = Query(None),
-    membership: str | None = Query(None),
+    memberships: str | None = Query(None),
+    rate_overrides: str | None = Query(None),
+    custom_discounts: str | None = Query(None),
     dest: str | None = Query(None, description="Free-text destination (geocoded)"),
     dest_lat: float | None = Query(None),
     dest_lng: float | None = Query(None),
@@ -158,7 +211,7 @@ async def on_my_way(
             snap, request.app.state.routing,
             origin=(origin_lat, origin_lng), destination=destination,
             fuel_type=fuel, tank_l=tank, usual_station_code=usual_station,
-            membership=membership,
+            membership=_membership_from_query(memberships, rate_overrides, custom_discounts),
         )
     except RuntimeError as exc:
         raise HTTPException(502, f"Routing failed: {exc}")

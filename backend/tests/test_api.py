@@ -24,11 +24,13 @@ def test_meta_and_near_me_served_from_cache():
         assert body["recommended"]["fuel_type"] == "E10"
 
 
-def test_meta_exposes_membership_programs():
+def test_catalog_lists_membership_presets():
     with TestClient(create_app()) as client:
-        meta = client.get("/api/meta").json()
-        assert "woolworths" in meta["discount_programs"]
-        assert meta["discount_programs"]["woolworths"]["label"]
+        presets = client.get("/api/catalog").json()["presets"]
+        keys = {p["key"] for p in presets}
+        assert {"everyday_rewards", "flybuys", "nrma"} <= keys
+        nrma = next(p for p in presets if p["key"] == "nrma")
+        assert nrma["premium"] == 5  # fuel-tiered
 
 
 def test_near_me_applies_membership_discount():
@@ -37,13 +39,28 @@ def test_near_me_applies_membership_discount():
             "/api/near-me",
             params={
                 "lat": -33.8688, "lng": 151.2093, "fuel": "E10",
-                "radius": 10, "membership": "woolworths",
+                "radius": 10, "memberships": "everyday_rewards",
             },
         ).json()
         # At least one Ampol-family offer should carry the 4c docket discount.
-        assert any(o["discount"] == 4.0 for o in res["offers"])
+        discounted = [o for o in res["offers"] if o["discount"] == 4.0]
+        assert discounted
+        assert discounted[0]["discount_label"] == "Woolworths Everyday Rewards"
         for o in res["offers"]:
             assert o["effective_price"] == round(o["price"] - o["discount"], 1)
+
+
+def test_custom_discount_via_query():
+    with TestClient(create_app()) as client:
+        res = client.get(
+            "/api/near-me",
+            params={
+                "lat": -33.8688, "lng": 151.2093, "fuel": "E10",
+                "radius": 10, "custom_discounts": "Metro Fuel:6",
+            },
+        ).json()
+        metro = [o for o in res["offers"] if o["brand"] == "Metro Fuel"]
+        assert metro and all(o["discount"] == 6.0 for o in metro)
 
 
 def test_station_search_typeahead():

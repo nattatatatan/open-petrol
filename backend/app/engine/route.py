@@ -26,10 +26,10 @@ from app.engine.recommend import (
     StationOffer,
     build_offer,
     compute_baseline,
-    discounts_for_stations,
     rank_and_select,
     _prices_for_fuel,
 )
+from app.engine.discounts import MembershipSelection, resolve_discounts
 from app.models import Snapshot
 from app.routing.osrm import Point, RoutingService
 
@@ -60,7 +60,7 @@ async def recommend_along_route(
     fuel_type: str,
     tank_l: float = DEFAULT_TANK_L,
     usual_station_code: str | None = None,
-    membership: str | None = None,
+    membership: MembershipSelection | None = None,
     consumption_l_per_km: float = DEFAULT_CONSUMPTION_L_PER_KM,
     corridor_buffer_km: float = DEFAULT_CORRIDOR_BUFFER_KM,
     max_via_candidates: int = DEFAULT_MAX_VIA_CANDIDATES,
@@ -69,7 +69,10 @@ async def recommend_along_route(
     direct = (await routing.route([origin, destination], alternatives=False))[0]
 
     prices = _prices_for_fuel(snapshot, fuel_type)
-    discounts = discounts_for_stations(snapshot.stations, membership)
+    resolved = resolve_discounts(
+        snapshot.stations, fuel_type, membership or MembershipSelection()
+    )
+    discounts = {code: cents for code, (cents, _) in resolved.items()}
     baseline = compute_baseline(prices, usual_station_code, discounts)
     stations = {s.code: s for s in snapshot.stations}
 
@@ -102,6 +105,7 @@ async def recommend_along_route(
             tank_l=tank_l,
             consumption_l_per_km=consumption_l_per_km,
             discount=discounts.get(code, 0.0),
+            discount_label=resolved.get(code, (0.0, None))[1],
             detour_min=detour.extra_min,
             along_route_km=detour.along_route_km,
         )
