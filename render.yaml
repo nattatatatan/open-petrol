@@ -1,0 +1,14 @@
+# Render deploy (always-on web service so the scheduler stays warm — CLAUDE.md §9).
+# Railway/Fly work the same way off the Dockerfile.
+services:
+  - type: web
+    name: smart-petrol-finder
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    healthCheckPath: /api/health
+    envVars:
+      - key: SOURCE
+        value: snapshot # demo runs offline on the captured snapshot
+      # Set these in the dashboard to enable the live path / LLM advisor:
+      # FUELCHECK_API_KEY, FUELCHECK_API_SECRET, ANTHROPIC_API_KEY
