@@ -25,8 +25,13 @@ This was built as an AI-Native Engineer assessment; the design rationale lives i
 - **Ranks net of detour.** "Cheapest" means cheapest *after* the cost of getting
   there — we won't send you 14km to save 3c/L. Each option shows `+N min detour`.
 - **Real savings vs an explicit baseline.** Every "$X saved" is measured against
-  *your usual station* (set once) or, if unset, the *area average* — and we say
-  which.
+  *your usual station* (set once — by tapping "Set usual" or a nearest-first
+  typeahead) or, if unset, the *area average* — and we say which.
+- **Membership-aware (optional).** Name your discount program (Woolworths / Coles /
+  NRMA) and we rank on your **effective price** — a 4–5c/L card can beat the
+  pump-cheapest station. Pump price stays visible, and we only credit brands a
+  program actually honours (Coles → Reddy Express, not every Shell) — over-claiming
+  a discount would break the same trust as a stale price.
 - **Trustworthy by construction.** Prices show their **own** age (fresh / ageing /
   stale), stale prices are de-ranked, and the data's provenance + timestamp are
   always on screen.

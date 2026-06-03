@@ -113,6 +113,9 @@ the product. Don't drift into a generic price browser.
   on net benefit.
 - **Minimal user model:** fuel type, tank size (default 55L, editable), optional home/
   usual station (the baseline). This is what makes the saving THEIRS, not generic.
+  *(SHIPPED — thread D: the usual station can be set either by tapping "Set usual" on the
+  recommendation OR via a nearest-first typeahead in settings, so anchoring the baseline
+  never requires running a search first. `GET /api/stations/search`.)*
 - **Savings framing — lead with c/L (UX review).** Show the per-litre difference as the
   primary, unambiguous figure ("9.6c/L cheaper"); the dollar amount is a clearly-labelled
   estimate ("≈ $X off a ~55L fill"). c/L scales linearly in the head (half a tank = half
@@ -122,6 +125,13 @@ the product. Don't drift into a generic price browser.
   and can exceed the gap between our top stations — so our "cheapest" can be wrong for
   those users. v1 must show a one-line caveat (zero clicks). Modelling effective price
   (brand-keyed, one optional one-time setting) is a high-ROI STRETCH, not must-have.
+  *(SHIPPED — thread A: one optional setting names the user's program (Woolworths/Coles/
+  NRMA); the engine subtracts a brand-keyed discount to get an EFFECTIVE price and ranks
+  on that, so a 4–5c/L card can flip the winner. Pump price stays visible — we never hide
+  it. **Trust guard:** mappings only cover brands a program demonstrably honours — Coles/
+  flybuys maps to Reddy Express ONLY, not generic Shell (e.g. OTR sites are Shell-branded
+  but don't take the docket); over-claiming a discount breaks the same trust as a stale
+  price. The caveat copy switches to "showing your effective price with X" when set.)*
 - **Multi-fuel: single-select + an E10/91 nudge (UX review).** Keep fuel single-select.
   The common multi-fuel case is E10-or-91 (E10 = 91 + ethanol; most post-2005 cars take
   both, but E10 is ~3% less efficient) — surface the cheaper compatible option honestly

@@ -70,6 +70,14 @@ Evidence behind the product decisions in CLAUDE.md. Useful for the walkthrough
   top-ranked stations, so FuelCheck *pump* price can rank the wrong winner for these
   users. → must-have honesty caveat now; effective-price modelling (brand-keyed) is a
   high-ROI stretch. 7-Eleven lock is out of scope (separate app, 7-day lock).
+- **SHIPPED (stretch):** one optional setting (Woolworths/Coles/NRMA) → engine subtracts
+  a brand-keyed discount → ranks on EFFECTIVE price; pump price stays visible. Brand
+  mapping is deliberately conservative to avoid OVER-claiming: Coles/flybuys → Reddy
+  Express only (the former Coles Express network), NOT generic "Shell" — in the live
+  data, OTR sites are Shell-branded but don't honour the docket, and not every Shell is a
+  participating Coles Express. Claiming a discount that doesn't apply would break the same
+  trust as labelling a stale price fresh (CLAUDE.md §4), so we only map brands a program
+  demonstrably covers.
 
 ## EV charging (thread B)
 
