@@ -3,6 +3,7 @@ import type {
   Meta,
   NearMeResult,
   RouteResult,
+  StationHit,
 } from "./types";
 
 async function get<T>(path: string, params: Record<string, string | number | undefined>): Promise<T> {
@@ -22,23 +23,29 @@ export const api = {
   meta: () => get<Meta>("/api/meta", {}),
 
   nearMe: (p: {
-    lat: number; lng: number; fuel: string; tank: number; radius: number; usual?: string | null;
+    lat: number; lng: number; fuel: string; tank: number; radius: number;
+    usual?: string | null; membership?: string | null;
   }) =>
     get<NearMeResult>("/api/near-me", {
       lat: p.lat, lng: p.lng, fuel: p.fuel, tank: p.tank, radius: p.radius,
-      usual_station: p.usual ?? undefined,
+      usual_station: p.usual ?? undefined, membership: p.membership ?? undefined,
     }),
 
   onMyWay: (p: {
-    originLat: number; originLng: number; dest: string; fuel: string; tank: number; usual?: string | null;
+    originLat: number; originLng: number; dest: string; fuel: string; tank: number;
+    usual?: string | null; membership?: string | null;
   }) =>
     get<RouteResult>("/api/on-my-way", {
       origin_lat: p.originLat, origin_lng: p.originLng, dest: p.dest,
       fuel: p.fuel, tank: p.tank, usual_station: p.usual ?? undefined,
+      membership: p.membership ?? undefined,
     }),
 
   geocode: (q: string) =>
     get<{ latitude: number; longitude: number; display_name: string }>("/api/geocode", { q }),
+
+  searchStations: (p: { q: string; lat?: number; lng?: number }) =>
+    get<StationHit[]>("/api/stations/search", { q: p.q, lat: p.lat, lng: p.lng }),
 
   advisor: async (body: Record<string, unknown>): Promise<AdvisorResult> => {
     const res = await fetch("/api/advisor", {

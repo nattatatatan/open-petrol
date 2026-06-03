@@ -7,6 +7,8 @@ const DEFAULT_MODEL: UserModel = {
   fuelType: "E10",
   tankL: 55,
   usualStation: null,
+  usualStationName: null,
+  membership: null,
   theme: "dark",
 };
 

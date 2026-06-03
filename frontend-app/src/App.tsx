@@ -65,10 +65,12 @@ export default function App() {
           ? await api.onMyWay({
               originLat: geo.coords.lat, originLng: geo.coords.lng, dest: destination,
               fuel: model.fuelType, tank: model.tankL, usual: model.usualStation,
+              membership: model.membership,
             })
           : await api.nearMe({
               lat: geo.coords.lat, lng: geo.coords.lng, fuel: model.fuelType,
               tank: model.tankL, radius: 10, usual: model.usualStation,
+              membership: model.membership,
             });
       setResult(res);
       api.meta().then(setMeta).catch(() => {});
@@ -78,7 +80,7 @@ export default function App() {
     } finally {
       setLoading(false);
     }
-  }, [geo.coords, mode, destination, model.fuelType, model.tankL, model.usualStation]);
+  }, [geo.coords, mode, destination, model.fuelType, model.tankL, model.usualStation, model.membership]);
 
   // Live re-query when the user model changes (fuel / tank / baseline) and we
   // already have a result — keeps the answer scoped to their choices.
@@ -88,7 +90,7 @@ export default function App() {
   useEffect(() => {
     if (hasResult) searchRef.current();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [model.fuelType, model.tankL, model.usualStation]);
+  }, [model.fuelType, model.tankL, model.usualStation, model.membership]);
 
   // Near-me needs no destination, so once we have a location it can answer
   // immediately (1 tap: the tab). Route stays the primary, destination-driven flow.
@@ -170,17 +172,19 @@ export default function App() {
             reference={result.captured_at}
             isUsual={model.usualStation === recommended.station_code}
             onNavigate={() => navigate(recommended)}
-            onSetUsual={() =>
+            onSetUsual={() => {
+              const isUsual = model.usualStation === recommended.station_code;
               update({
-                usualStation:
-                  model.usualStation === recommended.station_code ? null : recommended.station_code,
-              })
-            }
+                usualStation: isUsual ? null : recommended.station_code,
+                usualStationName: isUsual ? null : recommended.name,
+              });
+            }}
           />
 
           <p className="px-1 text-xs text-text-secondary">
-            Pump prices from FuelCheck — member/docket discounts (e.g. RACV −5c, Coles/Woolies −4c)
-            aren’t included.
+            {model.membership && meta?.discount_programs[model.membership]
+              ? `Showing your effective price with ${meta.discount_programs[model.membership].label}. Pump prices from FuelCheck.`
+              : "Pump prices from FuelCheck — member/docket discounts (e.g. NRMA −5c, Coles/Woolies −4c) aren’t included. Add yours in settings."}
           </p>
 
           <Advisor fuel={model.fuelType} tank={model.tankL} />
@@ -219,6 +223,8 @@ export default function App() {
         open={settingsOpen}
         model={model}
         usualStationName={usualName}
+        discountPrograms={meta?.discount_programs ?? {}}
+        coords={geo.coords}
         onUpdate={update}
         onClose={() => setSettingsOpen(false)}
       />

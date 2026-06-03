@@ -50,10 +50,16 @@ export function ResultHero({
         <div>
           <div className="flex items-baseline gap-1">
             <span className="mono text-[44px] font-medium leading-none text-text-heading">
-              {formatCents(offer.price)}
+              {formatCents(offer.discount > 0 ? offer.effective_price : offer.price)}
             </span>
             <span className="mono text-base text-text-secondary">c/L</span>
           </div>
+          {offer.discount > 0 && (
+            <p className="mt-1 text-xs text-text-secondary">
+              <span className="mono line-through">{formatCents(offer.price)}</span> pump · −
+              {formatCents(offer.discount)}c member
+            </p>
+          )}
           <Pill className="mt-2 border border-border text-text-secondary">
             {offer.fuel_type}
           </Pill>

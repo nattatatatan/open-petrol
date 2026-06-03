@@ -52,8 +52,15 @@ export function OfferList({
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="mono text-sm text-text">
-                    {formatCents(o.price)}<span className="text-text-secondary">c</span>
+                  <div
+                    className="mono text-sm text-text"
+                    title={o.discount > 0 ? `${formatCents(o.price)}c pump − ${formatCents(o.discount)}c member` : undefined}
+                  >
+                    {formatCents(o.discount > 0 ? o.effective_price : o.price)}
+                    <span className="text-text-secondary">c</span>
+                    {o.discount > 0 && (
+                      <span className="ml-1 text-[10px] text-text-action">−{formatCents(o.discount)}</span>
+                    )}
                   </div>
                   <div
                     className="text-xs"
