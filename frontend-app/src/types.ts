@@ -99,6 +99,9 @@ export interface AdvisorResult {
 
 export interface UserModel {
   fuelType: string;
+  /** Has the user explicitly confirmed their fuel? Gates the one-time first-run
+   *  chooser (STYLE_GUIDE §7.2) — showing the wrong fuel's saving is unsafe. */
+  fuelChosen: boolean;
   tankL: number;
   usualStation: string | null;
   usualStationName: string | null;

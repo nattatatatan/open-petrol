@@ -32,12 +32,18 @@ export function MapView({
   destination,
   route,
   theme,
+  interactive = true,
+  heightClass = "h-[260px]",
 }: {
   offers: StationOffer[];
   origin: LatLng | null;
   destination: LatLng | null;
   route: LatLng[];
   theme: "dark" | "light";
+  /** Static strip mode (STYLE_GUIDE §7): all gestures off, used as a glanceable
+   *  preview that a parent overlays with a tap-to-expand affordance. */
+  interactive?: boolean;
+  heightClass?: string;
 }) {
   const stationPoints = offers.map((o) => [o.latitude, o.longitude] as LatLng);
   const allPoints: LatLng[] = [
@@ -58,8 +64,15 @@ export function MapView({
       center={center}
       zoom={12}
       scrollWheelZoom={false}
-      className="h-[260px] w-full rounded-lg"
-      style={{ zIndex: 0 }}
+      dragging={interactive}
+      doubleClickZoom={interactive}
+      touchZoom={interactive}
+      boxZoom={interactive}
+      keyboard={interactive}
+      zoomControl={interactive}
+      attributionControl={interactive}
+      className={`${heightClass} w-full`}
+      style={{ zIndex: 0, pointerEvents: interactive ? "auto" : "none" }}
     >
       <TileLayer
         url={tiles}

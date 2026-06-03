@@ -3,7 +3,8 @@ import { api } from "../api";
 import type { Coords } from "../hooks/useGeolocation";
 import type { CatalogPreset, StationHit, UserModel } from "../types";
 import { formatDistance } from "../lib/format";
-import { Button, InfoTooltip } from "./ui";
+import { Button, InfoTooltip, Input } from "./ui";
+import { BottomSheet } from "./BottomSheet";
 
 const PREMIUM_FUELS = ["P95", "P98"];
 
@@ -27,15 +28,9 @@ export function SettingsSheet({
   onUpdate: (patch: Partial<UserModel>) => void;
   onClose: () => void;
 }) {
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-[1000] flex items-end justify-center" role="dialog" aria-modal>
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative max-h-[88vh] w-full max-w-md overflow-y-auto rounded-t-xl border border-border bg-[color:var(--color-card)] p-lg pb-[calc(24px+env(safe-area-inset-bottom))]">
-        <div className="mx-auto mb-lg h-1 w-10 rounded-full bg-border" />
-        <h2 className="mb-lg text-lg font-bold text-text-heading">Your settings</h2>
-
+    <BottomSheet open={open} onClose={onClose} title="Your settings">
+      <div>
         <label className="mb-2 block text-sm text-text-secondary">
           Tank size — <span className="mono text-text">{model.tankL} L</span>
         </label>
@@ -111,7 +106,7 @@ export function SettingsSheet({
           Done
         </Button>
       </div>
-    </div>
+    </BottomSheet>
   );
 }
 
@@ -194,11 +189,13 @@ function MembershipPicker({
       {/* Custom "−Xc at [brand]" for anything off-catalog. */}
       {customRules.map((r, i) => (
         <div key={i} className="mt-2 flex items-center gap-2 text-sm">
-          <input
+          <Input
             value={r.brand}
             onChange={(e) => updateCustom(i, { brand: e.target.value })}
             placeholder="Brand (e.g. Costco)"
-            className="min-w-0 flex-1 rounded-md border border-border bg-[color:var(--color-card-raised)] px-2 py-1.5 text-text placeholder:text-text-secondary focus:border-border-strong focus:outline-none"
+            size="small"
+            raised
+            className="min-w-0 flex-1 text-sm"
           />
           <RateInput value={r.cents} onChange={(c) => updateCustom(i, { cents: c })} />
           <button
@@ -293,11 +290,13 @@ function UsualStationSearch({
 
   return (
     <div>
-      <input
+      <Input
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Search your usual station…"
-        className="w-full rounded-md border border-border bg-[color:var(--color-card-raised)] px-3 py-2 text-sm text-text placeholder:text-text-secondary focus:border-border-strong focus:outline-none"
+        size="small"
+        raised
+        className="text-sm"
       />
       {q.trim().length >= 2 && (
         <ul className="mt-2 max-h-48 overflow-y-auto rounded-md border border-border">

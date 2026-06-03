@@ -1,84 +1,102 @@
-import type { StationOffer } from "../types";
+import { useState } from "react";
+import type { Baseline, StationOffer } from "../types";
+import { Icon } from "./Icon";
 import { FRESHNESS_META, formatCents, formatDistance, formatDollars, formatMinutes } from "../lib/format";
 
-/** The comparison list — secondary to the hero (CLAUDE.md §8). Shows the
- *  underlying prices so the recommendation is transparent, not magic. */
+/** Tier-4 alternatives (STYLE_GUIDE §4, §7.5) — a single collapsed affordance, not
+ *  a compare grid. Ranked on NET BENEFIT (not raw price). The winner is repeated at
+ *  top (gold), the baseline is shown as an anchor row so savings are honest. Tapping
+ *  a row makes it the active answer. */
 export function OfferList({
   offers,
+  baseline,
   mode,
   usualStation,
   onSelect,
 }: {
   offers: StationOffer[];
+  baseline: Baseline;
   mode: "route" | "near";
   usualStation: string | null;
   onSelect: (o: StationOffer) => void;
 }) {
+  const [open, setOpen] = useState(false);
   if (offers.length <= 1) return null;
-  const rest = offers.filter((o) => !o.is_recommended);
-  if (rest.length === 0) return null;
 
   return (
     <div>
-      <h3 className="mb-2 px-1 text-xs font-semibold uppercase tracking-display text-text-secondary">
-        {mode === "route" ? "Other options on your route" : "Other options nearby"}
-      </h3>
-      <ul className="space-y-2">
-        {rest.map((o) => {
-          const fm = FRESHNESS_META[o.freshness];
-          const positive = o.net_benefit > 0.5;
-          return (
-            <li key={o.station_code}>
-              <button
-                onClick={() => onSelect(o)}
-                className="flex w-full items-center gap-3 rounded-lg border border-border bg-[color:var(--color-card)] px-3 py-3 text-left transition-colors hover:border-border-strong"
-              >
-                <span
-                  className="h-2 w-2 shrink-0 rounded-full"
-                  style={{ backgroundColor: fm.color }}
-                  title={fm.label}
-                />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5">
-                    <span className="truncate text-sm font-medium text-text">{o.name}</span>
-                    {usualStation === o.station_code && (
-                      <span className="text-xs text-text-action">★</span>
-                    )}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="flex w-full items-center justify-between rounded-lg border border-border bg-[color:var(--color-card)] px-md py-3 text-left"
+      >
+        <span className="text-sm font-medium text-text">
+          Other options {mode === "route" ? "on your route" : "nearby"}
+          <span className="ml-1 text-text-secondary">({offers.length})</span>
+        </span>
+        <Icon
+          name="arrow"
+          size={14}
+          rotate={open ? 180 : 90}
+          className="text-text-secondary"
+        />
+      </button>
+
+      {open && (
+        <ul className="mt-2 space-y-2">
+          {offers.map((o) => {
+            const fm = FRESHNESS_META[o.freshness];
+            const positive = o.net_benefit > 0.5;
+            return (
+              <li key={o.station_code}>
+                <button
+                  onClick={() => onSelect(o)}
+                  className={`flex w-full items-center gap-3 rounded-lg border bg-[color:var(--color-card)] px-3 py-3 text-left transition-colors hover:border-border-strong ${
+                    o.is_recommended ? "border-winner" : "border-border"
+                  }`}
+                >
+                  <span
+                    className="h-2 w-2 shrink-0 rounded-full"
+                    style={{ backgroundColor: fm.color }}
+                    title={fm.label}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="truncate text-sm font-medium text-text">{o.name}</span>
+                      {usualStation === o.station_code && (
+                        <Icon name="star" size={12} className="shrink-0 text-text-action" label="Your usual" />
+                      )}
+                    </div>
+                    <div className="text-xs text-text-secondary">
+                      {mode === "route" ? `${formatMinutes(o.detour_min)} detour` : formatDistance(o.distance_km)}
+                      {" · "}
+                      <span className="mono">{formatCents(o.discount > 0 ? o.effective_price : o.price)}c/L</span>
+                      {o.discount > 0 && <span className="ml-1 text-text-action">−{formatCents(o.discount)}</span>}
+                    </div>
                   </div>
-                  <div className="text-xs text-text-secondary">
-                    {mode === "route"
-                      ? `${formatMinutes(o.detour_min)} detour`
-                      : formatDistance(o.distance_km)}
-                  </div>
-                </div>
-                <div className="text-right">
                   <div
-                    className="mono text-sm text-text"
-                    title={o.discount > 0 ? `${formatCents(o.price)}c pump − ${formatCents(o.discount)}c ${o.discount_label ?? "member"}` : undefined}
-                  >
-                    {formatCents(o.discount > 0 ? o.effective_price : o.price)}
-                    <span className="text-text-secondary">c</span>
-                    {o.discount > 0 && (
-                      <span className="ml-1 text-[10px] text-text-action">−{formatCents(o.discount)}</span>
-                    )}
-                  </div>
-                  <div
-                    className="text-xs"
-                    style={{ color: positive ? "var(--color-success)" : "var(--color-text-bodySecondary)" }}
+                    className="shrink-0 text-right text-sm font-medium"
+                    style={{ color: positive ? "var(--saving-positive)" : "var(--color-text-bodySecondary)" }}
                     title={
                       positive
-                        ? "Saving vs your baseline, after the fuel + time to drive there"
+                        ? "Net saving vs your baseline, after the fuel + time to drive there"
                         : "The detour costs more than you'd save vs your baseline"
                     }
                   >
-                    {positive ? `save ${formatDollars(o.net_benefit)}` : "not worth the drive"}
+                    {positive ? `+${formatDollars(o.net_benefit)}` : "—"}
                   </div>
-                </div>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+                </button>
+              </li>
+            );
+          })}
+
+          {/* Baseline anchor — what "saving" is measured against (§7, §7.5). */}
+          <li className="flex items-center justify-between rounded-lg border border-dashed border-border px-3 py-2.5 text-xs text-text-secondary">
+            <span>{baseline.label}</span>
+            <span className="mono">{formatCents(baseline.price)}c/L · base</span>
+          </li>
+        </ul>
+      )}
     </div>
   );
 }
