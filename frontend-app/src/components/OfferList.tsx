@@ -26,7 +26,7 @@ export function OfferList({
       <ul className="space-y-2">
         {rest.map((o) => {
           const fm = FRESHNESS_META[o.freshness];
-          const positive = o.saving_per_tank > 0.5;
+          const positive = o.net_benefit > 0.5;
           return (
             <li key={o.station_code}>
               <button
@@ -52,12 +52,15 @@ export function OfferList({
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="mono text-sm text-text">{formatCents(o.price)}</div>
+                  <div className="mono text-sm text-text">
+                    {formatCents(o.price)}<span className="text-text-secondary">c</span>
+                  </div>
                   <div
                     className="text-xs"
                     style={{ color: positive ? "var(--color-success)" : "var(--color-text-bodySecondary)" }}
+                    title="Net saving after the fuel + time cost of the detour"
                   >
-                    {positive ? formatDollars(o.saving_per_tank) : "—"}
+                    {positive ? `net ${formatDollars(o.net_benefit)}` : "after detour —"}
                   </div>
                 </div>
               </button>

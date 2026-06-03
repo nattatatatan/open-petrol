@@ -14,6 +14,7 @@ export function ResultHero({
   offer,
   baseline,
   mode,
+  tankL,
   reference,
   isUsual,
   onNavigate,
@@ -22,6 +23,7 @@ export function ResultHero({
   offer: StationOffer;
   baseline: Baseline;
   mode: "route" | "near";
+  tankL: number;
   reference: string;
   isUsual: boolean;
   onNavigate: () => void;
@@ -60,9 +62,12 @@ export function ResultHero({
           {worthwhile ? (
             <>
               <div className="mono text-[28px] font-medium leading-none text-[color:var(--color-success)]">
-                {formatDollars(saving)}
+                {formatCents(offer.saving_per_litre)}
+                <span className="text-base">c/L</span>
               </div>
-              <div className="text-xs text-text-secondary">saved / full tank</div>
+              <div className="text-xs text-text-secondary">
+                cheaper · ≈ {formatDollars(saving)} off a ~{Math.round(tankL)}L fill
+              </div>
             </>
           ) : (
             <div className="max-w-[150px] text-sm text-text-secondary">
@@ -79,7 +84,7 @@ export function ResultHero({
           <span className="text-text">{formatDistance(offer.distance_km)} away</span>
         )}
         <span>·</span>
-        <span>{formatDollars(offer.detour_cost)} fuel to get there</span>
+        <span>{formatDollars(offer.detour_cost)} to get there</span>
         <FreshnessBadge
           freshness={offer.freshness}
           lastUpdated={offer.last_updated}

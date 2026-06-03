@@ -35,6 +35,13 @@ export default function App() {
     api.meta().then(setMeta).catch(() => setError("Couldn't reach the price service."));
   }, []);
 
+  // Least-clicks: ask for location on open so we can answer with zero taps
+  // (manual suburb fallback appears if denied). CLAUDE.md §8.
+  useEffect(() => {
+    geo.request();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleManualOrigin = useCallback(
     async (q: string) => {
       try {
@@ -82,6 +89,16 @@ export default function App() {
     if (hasResult) searchRef.current();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model.fuelType, model.tankL, model.usualStation]);
+
+  // Near-me needs no destination, so once we have a location it can answer
+  // immediately (1 tap: the tab). Route stays the primary, destination-driven flow.
+  const autoNearRef = useRef(false);
+  useEffect(() => {
+    if (geo.coords && mode === "near" && !autoNearRef.current) {
+      autoNearRef.current = true;
+      searchRef.current();
+    }
+  }, [geo.coords, mode]);
 
   const origin: [number, number] | null = geo.coords ? [geo.coords.lat, geo.coords.lng] : null;
   const destCoords = isRoute(result) ? result.destination : null;
@@ -149,6 +166,7 @@ export default function App() {
             offer={recommended}
             baseline={result.baseline}
             mode={mode}
+            tankL={model.tankL}
             reference={result.captured_at}
             isUsual={model.usualStation === recommended.station_code}
             onNavigate={() => navigate(recommended)}
@@ -160,7 +178,12 @@ export default function App() {
             }
           />
 
-          <Advisor fuel={model.fuelType} tank={model.tankL} recommended={recommended} />
+          <p className="px-1 text-xs text-text-secondary">
+            Pump prices from FuelCheck — member/docket discounts (e.g. RACV −5c, Coles/Woolies −4c)
+            aren’t included.
+          </p>
+
+          <Advisor fuel={model.fuelType} tank={model.tankL} />
 
           <MapView
             offers={offers}
