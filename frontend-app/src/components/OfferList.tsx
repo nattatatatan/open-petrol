@@ -53,9 +53,9 @@ export function OfferList({
             const fm = FRESHNESS_META[o.freshness];
             const cheaper = o.saving_per_litre > 0;   // beats the baseline at the pump
             const worthIt = o.net_benefit > 0.5;      // nets out ahead after fuel + time
-            // The proof line: we show BOTH sides so the verdict is self-evidently true
-            // (you save $S on fuel, but the trip costs $D) — never a black-box verdict.
-            const proof = `${formatDollars(o.saving_per_tank)} cheaper · ${formatDollars(o.detour_cost)} drive`;
+            // The saving-vs-drive bridge lives in the tooltip so the verdict still shows
+            // its work on inspection (no black box), without cluttering the glanceable row.
+            const bridge = `${formatDollars(o.saving_per_tank)} cheaper · ${formatDollars(o.detour_cost)} to drive · net ${formatDollars(o.net_benefit)}`;
             return (
               <li key={o.station_code}>
                 <button
@@ -84,6 +84,8 @@ export function OfferList({
                         {mode === "route" ? `${formatMinutes(o.detour_min)} detour` : formatDistance(o.distance_km)}
                         {" · "}
                         {formatCents(o.discount > 0 ? o.effective_price : o.price)}c/L
+                        {/* c/L cheaper — the secondary comparator, sharing the hero's grammar */}
+                        {cheaper && ` · ${formatCents(o.saving_per_litre)}c/L cheaper`}
                       </span>
                       {/* Discount is pre-applied (effective price above); the chip is the
                           indicator, never a "−Nc" the user must subtract. Pump price +
@@ -98,36 +100,26 @@ export function OfferList({
                       )}
                     </div>
                   </div>
-                  {/* The verdict is the NET outcome (the ranking key), and it shows its
-                      work on the line below so it's trustworthy even when the pump price
-                      looks cheaper. Distance lives once, on the left. */}
-                  <div className="w-[108px] shrink-0 text-right">
+                  {/* $-led verdict (the NET outcome / ranking key), single line to match
+                      the hero's grammar. The saving-vs-drive bridge is in the tooltip so
+                      it stays trustworthy on inspection. Distance + c/L live on the left. */}
+                  <div
+                    className="shrink-0 text-right"
+                    title={cheaper ? bridge : "Not cheaper than your baseline"}
+                  >
                     {!cheaper ? (
-                      <>
-                        <div className="text-sm font-medium leading-none text-text-secondary">
-                          pricier here
-                        </div>
-                        <div className="mt-1 text-[10px] text-text-secondary">
-                          not cheaper than your baseline
-                        </div>
-                      </>
+                      <span className="text-sm font-medium text-text-secondary">pricier here</span>
                     ) : worthIt ? (
-                      <>
-                        <div
-                          className="mono text-sm font-medium leading-none"
-                          style={{ color: "var(--saving-positive)" }}
-                        >
-                          save {formatDollars(o.net_benefit)}
-                        </div>
-                        <div className="mono mt-1 text-[10px] text-text-secondary">{proof}</div>
-                      </>
+                      <span
+                        className="mono text-sm font-medium"
+                        style={{ color: "var(--saving-positive)" }}
+                      >
+                        save {formatDollars(o.net_benefit)}
+                      </span>
                     ) : (
-                      <>
-                        <div className="text-sm font-medium leading-none text-text-secondary">
-                          {o.net_benefit < -0.5 ? `${formatDollars(-o.net_benefit)} worse` : "about even"}
-                        </div>
-                        <div className="mono mt-1 text-[10px] text-text-secondary">{proof}</div>
-                      </>
+                      <span className="text-sm font-medium text-text-secondary">
+                        {o.net_benefit < -0.5 ? `${formatDollars(-o.net_benefit)} worse` : "about even"}
+                      </span>
                     )}
                   </div>
                 </button>

@@ -91,15 +91,16 @@ export function AnswerCard({
         <div className="mt-lg">
           {worthwhile ? (
             <>
+              {/* $-led (CLAUDE.md §7): dollars are instantly evaluable; c/L is the
+                  tank-independent comparator beneath. */}
               <div className="flex items-baseline gap-1.5">
+                <span className="text-base text-text">save</span>
                 <span className="mono text-[42px] font-medium leading-none text-[color:var(--saving-positive)]">
-                  {formatCents(offer.saving_per_litre)}
-                  <span className="text-2xl">c/L</span>
+                  {formatDollars(offer.saving_per_tank)}
                 </span>
-                <span className="text-base text-text">cheaper</span>
               </div>
               <p className="cap mt-2 text-text-secondary">
-                ≈ {formatDollars(offer.saving_per_tank)} off a ~{Math.round(tankL)}L fill · vs {baseline.label}
+                {formatCents(offer.saving_per_litre)}c/L cheaper · ~{Math.round(tankL)}L fill · vs {baseline.label}
               </p>
             </>
           ) : (

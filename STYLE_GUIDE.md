@@ -275,8 +275,8 @@ Layout sketches are mobile (≈ 360–390 dp wide). Thumb-zone = bottom third.
 │ ├──────────────────────┤ │
 │ │ cheapest near you     │ │  Tier-1 label, thin grey
 │ │ ██ Shell Victoria Rd  │ │  Tier-1 station, Medium, (gold accent)
-│ │ ██ SAVE  $9.20        │ │  Tier-1 saving, big, GREEN
-│ │ 9.6c/L cheaper        │ │  primary saving framing (c/L leads)
+│ │ ██ SAVE  $9.20        │ │  Tier-1 saving, big, GREEN ($ leads)
+│ │ 9.6c/L cheaper · ~55L │ │  c/L secondary comparator
 │ │ ● fresh · 12m (i)     │ │  Tier-2 confidence chip + tooltip
 │ │ 1.2km · +3 min detour │ │  Tier-2 cost of acting
 │ │ 178.9c/L · vs usual   │ │  Tier-3 proof (DM Mono, quiet)
@@ -287,9 +287,10 @@ Layout sketches are mobile (≈ 360–390 dp wide). Thumb-zone = bottom third.
 │  U91 · change   ⚙         │  inline refine + settings
 └──────────────────────────┘
 ```
-- **Saving framing leads with c/L** ("9.6c/L cheaper"), dollar figure as a clearly-estimated
-  secondary ("≈ $9.20 off a ~55L fill"). c/L scales linearly in the head; the dollar is never a
-  required input.
+- **Saving framing leads with $** ("save $9.20"), c/L as the secondary comparator beneath
+  ("9.6c/L cheaper · ~55L · vs area avg"). Dollars are instantly *evaluable* and prime act-now
+  thinking; c/L is tank-independent and sits right where a careful user checks. (Reverses the
+  earlier c/L-led call — see CLAUDE.md §7 + RESEARCH.md.)
 - One gold element (the winner). One green number (the saving). Everything else recedes.
 
 ### 7.4 Answer screen — On my way to…
@@ -317,22 +318,23 @@ Layout sketches are mobile (≈ 360–390 dp wide). Thumb-zone = bottom third.
 ┌─────────────────────────────────────────────┐
 │ ‹ Other options                              │
 │ Ranked by what you'd save after fuel + time  │  ← framing line
-│ ● EG Ampol Corrimal            about even    │  verdict = NET outcome
-│   6.3 km · 164.9c/L ‹RACV›  $5.3 cheaper·$4.9 drive │  effective price + chip; proof
+│ ● EG Ampol Corrimal            about even    │  $-led verdict (NET outcome)
+│   +6 min · 164.9c/L ‹RACV› · 9.6c/L cheaper  │  detour · eff price + chip · c/L cheaper
 │ ● BP Ryde                      save $6.10    │  green when worth a trip
-│   2.1 km · 168.9c/L         $6.6 cheaper·$0.5 drive │
+│   +1 min · 168.9c/L · 6.6c/L cheaper         │
 │ ● 7-Eleven Top Ryde            pricier here  │  not cheaper than baseline
-│   0.4 km · 177.9c/L         not cheaper than your baseline │
+│   +0 min · 177.9c/L                          │
 │ Caltex (your usual)                    base  │  baseline anchor shown
 └─────────────────────────────────────────────┘
 ```
 - A list, not a compare grid. Ranked on **net benefit**. Tapping a row makes it the active answer.
 - **The winner is NOT repeated here** — it's the hero card above; this list is strictly the
   *other* options, and the count reflects that.
-- **Verdict = the net outcome**, not gross c/L (which would contradict the ranking). Three states:
-  `save $X` (green, net > $0.50) · `about even` / `$X worse` (cheaper but the drive offsets it) ·
-  `pricier here` (not cheaper than baseline). Each carries the **proof** line below it
-  (`$cheaper · $drive`) — the no-arithmetic / show-the-work rule (§1).
+- **Same grammar as the hero:** the **$ verdict leads** (right) — `save $X` (green, net > $0.50)
+  · `about even` / `$X worse` · `pricier here` — and the **c/L cheaper** comparator joins the
+  left subtitle (`detour · price · Xc/L cheaper`), mirroring the hero. The saving-vs-drive
+  bridge (`$cheaper · $drive · net`) lives in the row tooltip — show-the-work on inspection
+  without cluttering the glance (§1).
 - **Distance appears once** (left). Discounts are pre-applied to the shown price + a labelled
   chip; the pump price lives in the tooltip. Never "164.9 −5.0".
 
