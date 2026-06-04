@@ -289,7 +289,7 @@ export default function App() {
                   usualStationName: isUsual ? null : recommended.name,
                 });
               }}
-              map={{ offers, origin, destination: destCoords, route: isRoute(result) ? result.route_geometry : [], theme: model.theme }}
+              map={{ offers, origin, destination: destCoords, route: isRoute(result) ? result.route_geometry : [] }}
             />
 
             <OfferList

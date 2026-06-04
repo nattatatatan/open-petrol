@@ -6,16 +6,12 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
    *  text-button role (Figma "Tertiary button"). */
   hierarchy?: "primary" | "secondary" | "destructive" | "ghost";
   size?: "default" | "small";
-  /** Figma "Surface" axis — which surface the button sits on. Defaults to `dark`
-   *  (the app's page surface). Only changes the outlined/text hierarchies. */
-  surface?: "dark" | "light";
   loading?: boolean;
 };
 
 export function Button({
   hierarchy = "primary",
   size = "default",
-  surface = "dark",
   loading = false,
   className = "",
   children,
@@ -30,20 +26,14 @@ export function Button({
     default: "h-[60px] px-5 text-base",
     small: "h-[44px] px-4 text-sm",
   };
-  // On a light surface the outlined/text variants need dark ink + dark border.
-  const onLight = surface === "light";
   // Primary = a DARK RAISED surface with a WHITE label (reference "View offer →"),
   // NOT a gold fill. Gold is reserved for the winner pill, never button chrome.
   const hierarchies = {
     primary:
       "bg-[color:var(--color-card-raised)] text-text border border-white/10 hover:border-white/25",
-    secondary: onLight
-      ? "bg-transparent text-black border border-black/30 hover:border-black"
-      : "bg-transparent text-text border border-border hover:border-border-strong",
+    secondary: "bg-transparent text-text border border-border hover:border-border-strong",
     destructive: "bg-destructive text-white hover:brightness-110",
-    ghost: onLight
-      ? "bg-transparent text-black hover:text-text"
-      : "bg-transparent text-text-secondary hover:text-text",
+    ghost: "bg-transparent text-text-secondary hover:text-text",
   };
   return (
     <button

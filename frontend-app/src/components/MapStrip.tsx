@@ -14,13 +14,11 @@ export function MapStrip({
   origin,
   destination,
   route,
-  theme,
 }: {
   offers: StationOffer[];
   origin: LatLng | null;
   destination: LatLng | null;
   route: LatLng[];
-  theme: "dark" | "light";
 }) {
   const [open, setOpen] = useState(false);
 
@@ -39,7 +37,6 @@ export function MapStrip({
           origin={origin}
           destination={destination}
           route={route}
-          theme={theme}
           interactive={false}
           heightClass="h-[132px]"
         />
@@ -56,7 +53,6 @@ export function MapStrip({
           origin={origin}
           destination={destination}
           route={route}
-          theme={theme}
           heightClass="h-[60vh] rounded-lg"
         />
       </BottomSheet>

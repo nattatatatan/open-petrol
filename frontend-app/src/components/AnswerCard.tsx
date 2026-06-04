@@ -49,7 +49,6 @@ export function AnswerCard({
     origin: LatLng | null;
     destination: LatLng | null;
     route: LatLng[];
-    theme: "dark" | "light";
   };
 }) {
   const worthwhile = offer.net_benefit > 0.5;
@@ -172,7 +171,6 @@ export function AnswerCard({
           origin={map.origin}
           destination={map.destination}
           route={map.route}
-          theme={map.theme}
         />
       </div>
     </section>

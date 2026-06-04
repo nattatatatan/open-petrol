@@ -9,8 +9,8 @@ import { BottomSheet } from "./BottomSheet";
 const PREMIUM_FUELS = ["P95", "P98"];
 
 /** Bottom-sheet for the user model: tank size (makes saving-per-fill THEIRS), the
- *  usual-station baseline (set via typeahead — CLAUDE.md §7 thread D), membership
- *  effective pricing (thread A), and theme. */
+ *  usual-station baseline (set via typeahead — CLAUDE.md §7 thread D), and membership
+ *  effective pricing (thread A). */
 export function SettingsSheet({
   open,
   model,
@@ -83,26 +83,7 @@ export function SettingsSheet({
           />
         )}
 
-        <div className="mb-xl flex items-center justify-between">
-          <span className="text-sm text-text-secondary">Theme</span>
-          <div className="flex gap-2">
-            {(["dark", "light"] as const).map((t) => (
-              <button
-                key={t}
-                onClick={() => onUpdate({ theme: t })}
-                className={`inline-flex min-h-[44px] items-center rounded-full border px-4 text-sm capitalize ${
-                  model.theme === t
-                    ? "border-[color:var(--color-border-strong)] bg-[color:var(--color-card-raised)] text-text"
-                    : "border-border text-text-secondary"
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <Button className="w-full" onClick={onClose}>
+        <Button className="mt-xl w-full" onClick={onClose}>
           Done
         </Button>
       </div>

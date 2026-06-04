@@ -12,7 +12,6 @@ const DEFAULT_MODEL: UserModel = {
   memberships: [],
   rateOverrides: {},
   customRules: [],
-  theme: "dark",
 };
 
 function load(): UserModel {
@@ -36,14 +35,13 @@ function load(): UserModel {
   return DEFAULT_MODEL;
 }
 
-/** The user model (fuel, tank, usual station, theme) persisted to localStorage —
+/** The user model (fuel, tank, usual station, memberships) persisted to localStorage —
  *  this is what makes the savings THEIRS (CLAUDE.md §7). */
 export function useUserModel() {
   const [model, setModel] = useState<UserModel>(load);
 
   useEffect(() => {
     localStorage.setItem(KEY, JSON.stringify(model));
-    document.documentElement.setAttribute("data-theme", model.theme);
   }, [model]);
 
   const update = useCallback(

@@ -108,5 +108,4 @@ export interface UserModel {
   memberships: string[];
   rateOverrides: Record<string, number>;
   customRules: CustomRule[];
-  theme: "dark" | "light";
 }

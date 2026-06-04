@@ -1,13 +1,11 @@
-/* Design tokens from /frontend/design-tokens.json — the mapped (themeable) layer.
+/* Design tokens from /frontend/design-tokens.json — the mapped layer.
  *
- * Note (per implementation-notes): the system is only partially dual-themed —
- * surface.page is black and surface.secondary is white in BOTH modes. The app is
- * therefore dark-forward. We add a `--color-card` abstraction (dark card in dark
- * theme, white card in light theme) so a theme toggle reads correctly without
- * white-on-white; everything else uses the raw mapped values. */
+ * The app is dark-only: use context is a phone at the bowser, often in sunlight,
+ * and a single high-contrast dark surface is the legible, decisive look. The design
+ * system defines a light remap, but we deliberately don't ship a theme toggle —
+ * one less setting, nothing to get wrong (CLAUDE.md §8: smart defaults over settings). */
 
-:root,
-[data-theme="dark"] {
+:root {
   --color-text-headings: #ffffff;
   --color-text-body: #ffffff;
   --color-text-bodySecondary: #a8abb0;
@@ -69,65 +67,4 @@
   --confidence-ageing: var(--color-warning);
   --confidence-stale: var(--color-text-bodySecondary); /* cooled / neutral        */
   --detour-cost: var(--color-text-bodySecondary); /* never gold, never green      */
-}
-
-[data-theme="light"] {
-  --color-text-headings: #000000;
-  --color-text-body: #000000;
-  --color-text-bodySecondary: #5b5f65;
-  --color-text-action: #db8c32;
-  --color-text-onAction: #000000;
-  --color-text-actionHover: #6c4516;
-  --color-text-error: #e93c79;
-  --color-text-warning: #db8c32;
-  --color-text-alert: #fd5422;
-  --color-text-disabled: #72777e;
-
-  /* icon/* — action/warning/success use the darker gold/green for legibility on a
-   * light surface, mirroring the text/* light-theme adaptations above. */
-  --color-icon-primary: #000000;
-  --color-icon-disabled: #8f9197;
-  --color-icon-action: #db8c32;
-  --color-icon-actionHover: #6c4516;
-  --color-icon-error: #e93c79;
-  --color-icon-warning: #db8c32;
-  --color-icon-alert: #fd5422;
-  --color-icon-success: #5a9e1f;
-  --color-icon-onAction: #000000;
-
-  --color-surface-page: #d2d7df;
-  --color-surface-primary: #ffffff;
-  --color-surface-secondary: #ffffff;
-  --color-surface-tertiary: #f3f5f7;
-  --color-surface-error: #fbe1ea;
-  --color-surface-disabled: #c3c9cf;
-  --color-surface-brand: #f2ac59;
-  --color-surface-accent: #fd5422;
-  --color-surface-accentSecondary: #6b2f14;
-
-  --color-card: #ffffff;
-  --color-card-raised: #ffffff;
-
-  --color-border-default: #c3c9cf;
-  --color-border-strong: #000000;
-  --color-border-highlighted: #dd9128;
-  --color-border-error: #e93c79;
-  --color-border-alert: #fd5422;
-
-  --color-divider-default: #18191a;
-  --color-divider-subtle: #c3c9cf;
-
-  --color-brand: #f2ac59;
-  --color-accent: #fd5422;
-  --color-destructive: #e93c79;
-  --color-success: #5a9e1f;
-  --color-warning: #db8c32;
-
-  /* Product-semantic aliases (STYLE_GUIDE §6) — same intent names, light values. */
-  --decision-winner: var(--color-brand);
-  --saving-positive: var(--color-success);
-  --confidence-fresh: var(--color-brand);
-  --confidence-ageing: var(--color-warning);
-  --confidence-stale: var(--color-text-bodySecondary);
-  --detour-cost: var(--color-text-bodySecondary);
 }

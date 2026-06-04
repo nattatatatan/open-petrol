@@ -31,7 +31,6 @@ export function MapView({
   origin,
   destination,
   route,
-  theme,
   interactive = true,
   heightClass = "h-[260px]",
 }: {
@@ -39,7 +38,6 @@ export function MapView({
   origin: LatLng | null;
   destination: LatLng | null;
   route: LatLng[];
-  theme: "dark" | "light";
   /** Static strip mode (STYLE_GUIDE §7): all gestures off, used as a glanceable
    *  preview that a parent overlays with a tap-to-expand affordance. */
   interactive?: boolean;
@@ -54,10 +52,8 @@ export function MapView({
   ];
   const center: LatLng = origin ?? stationPoints[0] ?? [-33.8688, 151.2093];
 
-  const tiles =
-    theme === "dark"
-      ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-      : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+  // Dark-only app → always the dark basemap.
+  const tiles = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
 
   return (
     <MapContainer
