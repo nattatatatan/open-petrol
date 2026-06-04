@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 
-/** Shared bottom-sheet shell (STYLE_GUIDE §8: backdrop-blur, drag handle, dismiss
- *  on tap-away). Depth comes from a blurred backdrop + surface step, never a drop
- *  shadow (the design system defines no shadows). Backs Settings and the expanded
- *  map. Esc closes; body scroll is locked while open. */
+/** Shared centered modal shell (backdrop-blur, dismiss on tap-away). Centered —
+ *  not bottom-anchored — so it sits clear of mobile browser chrome / the home
+ *  indicator and never clips its own footer (e.g. the Settings "Done" button).
+ *  A fixed header (title + ✕) tops a scrollable body, so content is always fully
+ *  reachable. Depth is a blurred backdrop + surface step, never a drop shadow.
+ *  Backs Settings and the expanded map. Esc closes; body scroll locks while open. */
 export function BottomSheet({
   open,
   onClose,
@@ -33,19 +35,30 @@ export function BottomSheet({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-end justify-center" role="dialog" aria-modal aria-label={title}>
+    <div
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal
+      aria-label={title}
+    >
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       <div
-        className={`relative max-h-[88vh] w-full max-w-md overflow-y-auto rounded-t-xl border border-border bg-[color:var(--color-card)] p-lg pb-[calc(24px+env(safe-area-inset-bottom))] ${contentClassName}`}
+        className={`relative flex max-h-full w-full max-w-md flex-col overflow-hidden rounded-xl border border-border bg-[color:var(--color-card)] ${contentClassName}`}
       >
-        <button
-          type="button"
-          aria-label="Close"
-          onClick={onClose}
-          className="mx-auto mb-lg block h-1 w-10 rounded-full bg-border"
-        />
-        {title && <h2 className="mb-lg text-lg font-bold text-text-heading">{title}</h2>}
-        {children}
+        <div className="flex shrink-0 items-center justify-between gap-2 px-lg pt-lg pb-md">
+          {title && <h2 className="text-lg font-bold text-text-heading">{title}</h2>}
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={onClose}
+            className="-mr-1 ml-auto flex h-9 w-9 items-center justify-center rounded-full text-lg text-text-secondary hover:text-text"
+          >
+            ✕
+          </button>
+        </div>
+        <div className="overflow-y-auto px-lg pb-[calc(24px+env(safe-area-inset-bottom))]">
+          {children}
+        </div>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { api } from "../api";
 import type { Coords } from "../hooks/useGeolocation";
 import type { CatalogPreset, StationHit, UserModel } from "../types";
 import { formatDistance } from "../lib/format";
-import { Button, InfoTooltip, Input } from "./ui";
+import { Button, HScroll, InfoTooltip, Input } from "./ui";
 import { BottomSheet } from "./BottomSheet";
 
 const PREMIUM_FUELS = ["P95", "P98"];
@@ -143,7 +143,7 @@ function MembershipPicker({
         </InfoTooltip>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <HScroll fade="card">
         {catalog.map((p) => (
           <Chip
             key={p.key}
@@ -152,18 +152,26 @@ function MembershipPicker({
             label={p.label}
           />
         ))}
-      </div>
+      </HScroll>
 
-      {/* Editable rate per selected card — the user owns the number. */}
+      {/* Editable rate per selected card — same row shape as a custom rule (label,
+          rate, ×) so predefined and custom read consistently. The × deselects. */}
       {catalog
         .filter((p) => memberships.includes(p.key))
         .map((p) => (
-          <div key={p.key} className="mt-2 flex items-center justify-between gap-2 text-sm">
-            <span className="truncate text-text-secondary">{p.label}</span>
+          <div key={p.key} className="mt-2 flex items-center gap-2 text-sm">
+            <span className="min-w-0 flex-1 truncate text-text-secondary">{p.label}</span>
             <RateInput
               value={rateOverrides[p.key] ?? defaultRate(p)}
               onChange={(c) => setRate(p.key, c)}
             />
+            <button
+              onClick={() => toggle(p.key)}
+              aria-label={`Remove ${p.label}`}
+              className="px-1 text-text-secondary hover:text-text"
+            >
+              ×
+            </button>
           </div>
         ))}
 
@@ -182,7 +190,7 @@ function MembershipPicker({
           <button
             onClick={() => removeCustom(i)}
             aria-label="Remove discount"
-            className="text-text-secondary hover:text-text"
+            className="px-1 text-text-secondary hover:text-text"
           >
             ×
           </button>
@@ -228,7 +236,7 @@ function Chip({
     <button
       onClick={onClick}
       aria-pressed={active}
-      className={`inline-flex min-h-[44px] items-center rounded-full border px-4 text-sm ${
+      className={`inline-flex min-h-[44px] shrink-0 items-center whitespace-nowrap rounded-full border px-4 text-sm ${
         active
           ? "border-[color:var(--color-border-strong)] bg-[color:var(--color-card-raised)] text-text"
           : "border-border text-text-secondary"

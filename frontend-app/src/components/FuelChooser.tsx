@@ -1,3 +1,5 @@
+import { HScroll } from "./ui";
+
 /** Fuel type — first-class, persistent, a closed list (CLAUDE.md §7). The first-run
  *  variant (STYLE_GUIDE §7.2) is the ONLY upfront question, justified because showing
  *  the wrong fuel's saving is unsafe. The compact variant is the inline "change"
@@ -40,9 +42,10 @@ export function FuelChooser({
     );
   }
 
-  // Discrete set → wrapped chips, not a scrolling row (which reads as a slider).
+  // Inline refine: a single scrollable row (slider) — tidy, full-width-aligned,
+  // with an edge fade so it's obvious more fuels sit off-screen.
   return (
-    <div className="flex flex-wrap gap-2">
+    <HScroll fade="page">
       {entries.map(([code, label]) => {
         const active = code === value;
         return (
@@ -51,7 +54,7 @@ export function FuelChooser({
             onClick={() => onChange(code)}
             title={label}
             aria-pressed={active}
-            className={`inline-flex min-h-[44px] items-center rounded-full border px-4 text-sm font-medium transition-colors ${
+            className={`inline-flex min-h-[44px] shrink-0 items-center rounded-full border px-4 text-sm font-medium transition-colors ${
               active
                 ? "border-[color:var(--color-border-strong)] bg-[color:var(--color-card-raised)] text-text"
                 : "border-border text-text-secondary hover:border-border-strong hover:text-text"
@@ -61,6 +64,6 @@ export function FuelChooser({
           </button>
         );
       })}
-    </div>
+    </HScroll>
   );
 }

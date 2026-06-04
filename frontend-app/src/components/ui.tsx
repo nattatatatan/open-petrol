@@ -84,7 +84,7 @@ export function Input({
       : "border-border focus-within:border-border-highlighted";
     return (
       <div
-        className={`flex items-center gap-2 rounded-lg border transition-colors ${INPUT_SIZES[size]} ${bg} ${wrap} ${className}`}
+        className={`flex w-full items-center gap-2 rounded-lg border transition-colors ${INPUT_SIZES[size]} ${bg} ${wrap} ${className}`}
       >
         <input className={field} aria-invalid={invalid || undefined} {...rest} />
         <span className="shrink-0 text-text-secondary">{suffix}</span>
@@ -96,7 +96,7 @@ export function Input({
     : "border-border focus:border-border-highlighted";
   return (
     <input
-      className={`rounded-lg border transition-colors ${INPUT_SIZES[size]} ${bg} ${border} text-text placeholder:text-text-secondary focus:outline-none ${className}`}
+      className={`w-full rounded-lg border transition-colors ${INPUT_SIZES[size]} ${bg} ${border} text-text placeholder:text-text-secondary focus:outline-none ${className}`}
       aria-invalid={invalid || undefined}
       {...rest}
     />
@@ -162,6 +162,34 @@ export function Skeleton({ className = "" }: { className?: string }) {
       aria-hidden
       className={`animate-pulse-soft rounded-md bg-[color:var(--color-card-raised)] ${className}`}
     />
+  );
+}
+
+/** Horizontal "slider" row for chip groups (fuel, memberships). Single line,
+ *  scrollable, with a right-edge fade so it's OBVIOUS more sits off-screen — the
+ *  last chip deliberately peeks under the fade. `fade` matches the surface it sits
+ *  on (page vs card) so the gradient blends. Children should be `shrink-0`. */
+export function HScroll({
+  children,
+  fade = "page",
+  className = "",
+}: {
+  children: ReactNode;
+  fade?: "page" | "card";
+  className?: string;
+}) {
+  const from = fade === "card" ? "var(--color-card)" : "var(--color-surface-page)";
+  return (
+    <div className={`relative ${className}`}>
+      <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {children}
+      </div>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 right-0 w-8"
+        style={{ background: `linear-gradient(to left, ${from}, transparent)` }}
+      />
+    </div>
   );
 }
 

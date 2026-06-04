@@ -217,7 +217,7 @@ export default function App() {
             </div>
           </div>
         ) : geo.coords ? (
-          <div className="flex items-center justify-between rounded-md border border-border px-3 py-2.5 text-sm">
+          <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5 text-sm">
             <span className="inline-flex items-center gap-2 text-text">
               <Icon name="location" size={15} className="text-[color:var(--color-success)]" />
               {geo.coords.label}
@@ -230,7 +230,7 @@ export default function App() {
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-2 rounded-md border border-border px-3 py-2.5 text-sm text-text-secondary">
+          <div className="flex items-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm text-text-secondary">
             <Spinner /> Finding your location…
           </div>
         )}
@@ -241,7 +241,7 @@ export default function App() {
             onChange={(v) => { setDestination(v); setDestPlace(null); }}
             onPick={setDestPlace}
             onEnter={() => geo.coords && destination.trim() && runSearch()}
-            placeholder="Where are you headed? (e.g. Parramatta)"
+            placeholder="Where are you headed?"
             suffix={
               <button
                 aria-label="Find fill-up on the way"
