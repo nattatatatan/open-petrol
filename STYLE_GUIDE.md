@@ -81,7 +81,7 @@ Answer screen  ◀── home / cold-open default (Near me now)
 ├─ Other options  (collapsed; secondary ranked list, tap to expand)
 ├─ See on map     (static strip → expand to full map on tap)
 └─ Settings       (bottom sheet; progressive personalisation:
-                   baseline · tank size · memberships · theme)
+                   baseline · tank size · memberships)
 ```
 
 - **One primary surface:** the Answer screen. Everything else is a modifier of it.
@@ -146,7 +146,7 @@ The palette is fixed by the design system; what matters is the *meaning* we assi
 | Meaning | Token | Hex (dark) | Rule |
 |---|---|---|---|
 | **The chosen winner** | `brand` / gold | `#F2AC59` | Reserved. Only ONE element per screen is gold — the recommendation. |
-| **Saving magnitude** | `success` / green | `#78B83E` (`#5A9E1F` light) | The dollar/cent saving figure. Bigger save → it's the green number that grows. |
+| **Saving magnitude** | `success` / green | `#78B83E` | The dollar/cent saving figure. Bigger save → it's the green number that grows. |
 | **Alert / "act with care"** | `accent` orange | `#FD5422` | Ageing prices, "fill only what you need," soft warnings. |
 | **Error / wrong** | `destructive` pink | `#E93C79` | Failures, invalid input, hard errors only. |
 | **Body / surfaces** | grey ramp | `#000`→`#FFF` | Page `#000`, card `#18191A`, raised `#232426`. |
@@ -192,18 +192,23 @@ primitive (grey/gold/orange/pink/green…)   ── static
    ↓ referenced by
 semantic (brand · accent · destructive · success · visualization)   ── single-mode
    ↓ referenced by
-mapped (text/* · surface/* · icon/* · border/* · divider/*)   ── light + dark, themeable
+mapped (text/* · surface/* · icon/* · border/* · divider/*)   ── dark-only (shipped)
 ```
+
+> **Dark-only.** The design system defines a light remap, but the app ships **dark only** —
+> use context is a phone at the bowser in sunlight, and one high-contrast surface is the more
+> legible, decisive look (and one fewer setting, §8). The mapped tokens live under `:root`;
+> there is no theme toggle.
 
 Shipped CSS variables live in `frontend-app/src/styles/tokens.css` and are surfaced to Tailwind
 in `tailwind.config.js` (`text-*`, `surface-*`, `icon-*`, `border-*`, `bg-brand`, `text-success`,
 `fontSize` type ramp, `blur` scale).
 
 **Documented divergences from raw Figma (intentional, keep):**
-- `text/icon.onAction` stays **black** in both themes — our action surfaces are gold in both
-  modes and black-on-gold is the legible, shipped look (Figma's dark `#FFF` would be low-contrast).
-- Light theme **remaps surfaces** to be genuinely light (Figma's "light" mode surfaces are dark
-  in both); `action/warning/success` use darker gold/green in light mode for contrast on white.
+- `text/icon.onAction` stays **black** — our action surfaces are gold and black-on-gold is the
+  legible, shipped look (Figma's dark `#FFF` would be low-contrast).
+- The Figma light remap is **not shipped** (see "Dark-only" above); only the dark mapped values
+  are emitted, under `:root`.
 
 **Product-semantic aliases to add (so intent is named, not hardcoded):**
 
@@ -314,7 +319,7 @@ Layout sketches are mobile (≈ 360–390 dp wide). Thumb-zone = bottom third.
 ### 7.6 Settings (bottom sheet, progressive)
 - Reached from the answer, never before it. Sections: **Savings baseline** (usual-station
   typeahead; defaults to area average), **Tank size** (slider, default 55L), **Memberships**
-  (multi-select chips → effective price), **Theme**.
+  (multi-select chips → effective price). *(No theme control — the app is dark-only, §6.)*
 - Each setting states its effect ("Add your rewards card — a 4c/L docket can change the winner").
 
 ### 7.7 Stale / low-confidence variant
@@ -409,7 +414,7 @@ last-good banner.
   guarantee.
 - **Contrast.** Verdict atoms are heavy weight precisely to clear WCAG AA on the dark surface.
   Audit thin type on `#000`/`#18191A`: body text uses `#FFF`/`#A8ABB0` (passes); avoid thin grey
-  below `body-sm` for essential info. Saving green on dark passes; on light use `#5A9E1F`.
+  below `body-sm` for essential info. Saving green (`#78B83E`) on the dark surface passes.
 - **Focus.** Visible focus ring on all interactive elements — the shipped highlighted-border focus
   on inputs and `focus-visible:ring-brand` on buttons.
 - **Screen-reader order = decision first.** DOM order: verdict → saving → confidence → proof →
