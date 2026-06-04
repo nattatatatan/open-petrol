@@ -51,7 +51,11 @@ export function AnswerCard({
     route: LatLng[];
   };
 }) {
-  const worthwhile = offer.net_benefit > 0.5;
+  // Route: lead with the saving only if the DETOUR is worth it (net of detour).
+  // Near-me: you're filling up nearby anyway, so lead with the price advantage
+  // whenever this pick is genuinely cheaper than your baseline — the small cost to
+  // reach it is shown separately ("$X to get there"), not used to hide the saving.
+  const worthwhile = mode === "route" ? offer.net_benefit > 0.5 : offer.saving_per_litre > 0;
   const fresh = offer.freshness === "fresh";
   const winnerPrice = offer.discount > 0 ? offer.effective_price : offer.price;
 
@@ -100,11 +104,11 @@ export function AnswerCard({
             </>
           ) : (
             <p className="text-base text-text">
-              Your cheapest convenient option —{" "}
+              {mode === "route" ? "Best value on your way —" : "Your cheapest option nearby —"}{" "}
               <span className="text-text-secondary">
                 {mode === "route"
                   ? "nothing further along saves enough to beat the detour."
-                  : "any cheaper station nearby costs more in fuel + time to reach than it saves."}
+                  : `nothing nearby beats ${baseline.label}.`}
               </span>
             </p>
           )}

@@ -319,14 +319,16 @@ Layout sketches are mobile (≈ 360–390 dp wide). Thumb-zone = bottom third.
 │ Ranked by what you'd save after fuel + time  │  ← framing line
 │ ● EG Ampol Corrimal            about even    │  verdict = NET outcome
 │   6.3 km · 164.9c/L ‹RACV›  $5.3 cheaper·$4.9 drive │  effective price + chip; proof
-│ ● Shell Victoria Rd            save $9.20    │  green when worth a trip
-│   2.1 km · 168.9c/L         $9.6 cheaper·$0.4 drive │
+│ ● BP Ryde                      save $6.10    │  green when worth a trip
+│   2.1 km · 168.9c/L         $6.6 cheaper·$0.5 drive │
 │ ● 7-Eleven Top Ryde            pricier here  │  not cheaper than baseline
 │   0.4 km · 177.9c/L         not cheaper than your baseline │
 │ Caltex (your usual)                    base  │  baseline anchor shown
 └─────────────────────────────────────────────┘
 ```
 - A list, not a compare grid. Ranked on **net benefit**. Tapping a row makes it the active answer.
+- **The winner is NOT repeated here** — it's the hero card above; this list is strictly the
+  *other* options, and the count reflects that.
 - **Verdict = the net outcome**, not gross c/L (which would contradict the ranking). Three states:
   `save $X` (green, net > $0.50) · `about even` / `$X worse` (cheaper but the drive offsets it) ·
   `pricier here` (not cheaper than baseline). Each carries the **proof** line below it

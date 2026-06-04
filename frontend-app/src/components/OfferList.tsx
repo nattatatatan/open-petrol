@@ -4,9 +4,9 @@ import { Icon } from "./Icon";
 import { FRESHNESS_META, formatCents, formatDistance, formatDollars, formatMinutes } from "../lib/format";
 
 /** Tier-4 alternatives (STYLE_GUIDE §4, §7.5) — a single collapsed affordance, not
- *  a compare grid. Ranked on NET BENEFIT (not raw price). The winner is repeated at
- *  top (gold), the baseline is shown as an anchor row so savings are honest. Tapping
- *  a row makes it the active answer. */
+ *  a compare grid. Ranked on NET BENEFIT (not raw price). Excludes the winner (it's
+ *  the hero card above); the baseline is shown as an anchor row so savings are honest.
+ *  Tapping a row makes it the active answer. */
 export function OfferList({
   offers,
   baseline,
@@ -21,7 +21,9 @@ export function OfferList({
   onSelect: (o: StationOffer) => void;
 }) {
   const [open, setOpen] = useState(false);
-  if (offers.length <= 1) return null;
+  // The winner is the hero card above — don't repeat it here.
+  const rest = offers.filter((o) => !o.is_recommended);
+  if (rest.length === 0) return null;
 
   return (
     <div>
@@ -32,7 +34,7 @@ export function OfferList({
       >
         <span className="text-sm font-medium text-text">
           Other options {mode === "route" ? "on your route" : "nearby"}
-          <span className="ml-1 text-text-secondary">({offers.length})</span>
+          <span className="ml-1 text-text-secondary">({rest.length})</span>
         </span>
         <Icon
           name="arrow"
@@ -47,7 +49,7 @@ export function OfferList({
           <li className="px-1 pb-1 text-[11px] text-text-secondary">
             Ranked by what you’d save after the fuel + time to drive there.
           </li>
-          {offers.map((o) => {
+          {rest.map((o) => {
             const fm = FRESHNESS_META[o.freshness];
             const cheaper = o.saving_per_litre > 0;   // beats the baseline at the pump
             const worthIt = o.net_benefit > 0.5;      // nets out ahead after fuel + time
@@ -58,9 +60,7 @@ export function OfferList({
               <li key={o.station_code}>
                 <button
                   onClick={() => onSelect(o)}
-                  className={`flex w-full items-center gap-3 rounded-lg border bg-[color:var(--color-card)] px-3 py-3 text-left transition-colors hover:border-border-strong ${
-                    o.is_recommended ? "border-winner" : "border-border"
-                  }`}
+                  className="flex w-full items-center gap-3 rounded-lg border border-border bg-[color:var(--color-card)] px-3 py-3 text-left transition-colors hover:border-border-strong"
                 >
                   <span
                     className="h-2 w-2 shrink-0 rounded-full"
