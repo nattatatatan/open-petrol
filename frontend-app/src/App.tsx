@@ -166,10 +166,10 @@ export default function App() {
     <div className="mx-auto flex min-h-full max-w-md flex-col px-md pb-[env(safe-area-inset-bottom)]">
       <header className="flex items-center justify-between pt-[calc(16px+env(safe-area-inset-top))] pb-md">
         <div>
-          <h1 className="text-xl font-bold tracking-display text-text-heading">
+          <h1 className="font-heading text-[32px] font-bold leading-none tracking-display text-text-heading">
             Petrol<span className="text-text-action">·</span>Finder
           </h1>
-          <p className="text-xs text-text-secondary">Your best fill-up, right now</p>
+          <p className="cap mt-1.5 text-text-secondary">Your best fill-up, right now</p>
         </div>
         <button
           onClick={() => setSettingsOpen(true)}
@@ -201,7 +201,7 @@ export default function App() {
             />
             <div className="flex items-center justify-between px-1">
               <button
-                className="inline-flex items-center gap-1 text-xs text-text-action hover:underline"
+                className="inline-flex items-center gap-1 text-xs text-text hover:underline"
                 onClick={() => { setEditingOrigin(false); setOriginQuery(""); geo.request(); }}
               >
                 <Icon name="location" size={12} /> Use current location
@@ -223,7 +223,7 @@ export default function App() {
               {geo.coords.label}
             </span>
             <button
-              className="text-xs text-text-action hover:underline"
+              className="text-xs text-text hover:underline"
               onClick={() => setEditingOrigin(true)}
             >
               Change
@@ -247,7 +247,7 @@ export default function App() {
                 aria-label="Find fill-up on the way"
                 disabled={!geo.coords || !destination.trim()}
                 onClick={runSearch}
-                className="text-text-action disabled:opacity-40"
+                className="text-text disabled:opacity-40"
               >
                 <Icon name="arrow" size={16} rotate={90} />
               </button>
@@ -334,7 +334,7 @@ export default function App() {
         <TrustBar meta={meta} />
       </div>
 
-      <footer className="mt-auto pt-2xl pb-md text-center text-xs text-text-secondary">
+      <footer className="cap mt-auto pt-2xl pb-md text-center text-text-secondary">
         Prices from NSW FuelCheck · Routing © OpenStreetMap, CARTO, OSRM
       </footer>
 
@@ -359,15 +359,15 @@ function placeLabel(p: GeoPlace): string {
 /** Cold-open / loading placeholder — never a blank screen (STYLE_GUIDE §10). */
 function SkeletonAnswer() {
   return (
-    <section className="overflow-hidden rounded-lg border border-border bg-[color:var(--color-card)]">
+    <section className="overflow-hidden rounded-xl border border-border bg-[color:var(--color-card)]">
       <Skeleton className="h-[132px] rounded-none" />
       <div className="space-y-3 p-lg">
         <Skeleton className="h-3 w-24" />
         <Skeleton className="h-6 w-3/4" />
         <Skeleton className="h-10 w-1/2" />
         <Skeleton className="h-3 w-2/3" />
-        <Skeleton className="h-[60px] w-full rounded-full" />
-        <p className="text-center text-xs text-text-secondary">Finding your best fill-up…</p>
+        <Skeleton className="h-[60px] w-full rounded-lg" />
+        <p className="cap text-center text-text-secondary">Finding your best fill-up…</p>
       </div>
     </section>
   );

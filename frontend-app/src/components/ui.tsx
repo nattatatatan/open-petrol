@@ -22,24 +22,28 @@ export function Button({
   disabled,
   ...rest
 }: ButtonProps) {
+  // 16px radius (rounded-lg) per the design scale — buttons are not pills.
   const base =
-    "inline-flex items-center justify-center gap-2 font-medium rounded-full transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface-page)] focus-visible:ring-brand";
+    "inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface-page)] focus-visible:ring-white/40";
   // Heights per the finalized spec (Large button: default 60, small 40).
   const sizes = {
-    default: "h-[60px] px-6 text-base",
-    small: "h-[40px] px-4 text-sm",
+    default: "h-[60px] px-5 text-base",
+    small: "h-[44px] px-4 text-sm",
   };
   // On a light surface the outlined/text variants need dark ink + dark border.
   const onLight = surface === "light";
+  // Primary = a DARK RAISED surface with a WHITE label (reference "View offer →"),
+  // NOT a gold fill. Gold is reserved for the winner pill, never button chrome.
   const hierarchies = {
-    primary: "bg-brand text-[color:var(--color-text-onAction)] hover:brightness-105",
+    primary:
+      "bg-[color:var(--color-card-raised)] text-text border border-white/10 hover:border-white/25",
     secondary: onLight
       ? "bg-transparent text-black border border-black/30 hover:border-black"
       : "bg-transparent text-text border border-border hover:border-border-strong",
     destructive: "bg-destructive text-white hover:brightness-110",
     ghost: onLight
-      ? "bg-transparent text-black hover:text-text-action"
-      : "bg-transparent text-text-action hover:text-text",
+      ? "bg-transparent text-black hover:text-text"
+      : "bg-transparent text-text-secondary hover:text-text",
   };
   return (
     <button
@@ -90,7 +94,7 @@ export function Input({
       : "border-border focus-within:border-border-highlighted";
     return (
       <div
-        className={`flex items-center gap-2 rounded-md border transition-colors ${INPUT_SIZES[size]} ${bg} ${wrap} ${className}`}
+        className={`flex items-center gap-2 rounded-lg border transition-colors ${INPUT_SIZES[size]} ${bg} ${wrap} ${className}`}
       >
         <input className={field} aria-invalid={invalid || undefined} {...rest} />
         <span className="shrink-0 text-text-secondary">{suffix}</span>
@@ -102,7 +106,7 @@ export function Input({
     : "border-border focus:border-border-highlighted";
   return (
     <input
-      className={`rounded-md border transition-colors ${INPUT_SIZES[size]} ${bg} ${border} text-text placeholder:text-text-secondary focus:outline-none ${className}`}
+      className={`rounded-lg border transition-colors ${INPUT_SIZES[size]} ${bg} ${border} text-text placeholder:text-text-secondary focus:outline-none ${className}`}
       aria-invalid={invalid || undefined}
       {...rest}
     />

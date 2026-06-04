@@ -64,14 +64,14 @@ export function OfferList({
                     <div className="flex items-center gap-1.5">
                       <span className="truncate text-sm font-medium text-text">{o.name}</span>
                       {usualStation === o.station_code && (
-                        <Icon name="star" size={12} className="shrink-0 text-text-action" label="Your usual" />
+                        <Icon name="star" size={12} className="shrink-0 text-text-secondary" label="Your usual" />
                       )}
                     </div>
-                    <div className="text-xs text-text-secondary">
+                    <div className="mono mt-0.5 text-[11px] text-text-secondary">
                       {mode === "route" ? `${formatMinutes(o.detour_min)} detour` : formatDistance(o.distance_km)}
                       {" · "}
-                      <span className="mono">{formatCents(o.discount > 0 ? o.effective_price : o.price)}c/L</span>
-                      {o.discount > 0 && <span className="ml-1 text-text-action">−{formatCents(o.discount)}</span>}
+                      {formatCents(o.discount > 0 ? o.effective_price : o.price)}c/L
+                      {o.discount > 0 && <span className="ml-1">−{formatCents(o.discount)}</span>}
                     </div>
                   </div>
                   <div

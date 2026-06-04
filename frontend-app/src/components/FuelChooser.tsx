@@ -26,10 +26,10 @@ export function FuelChooser({
               onClick={() => onChange(code)}
               title={label}
               aria-pressed={active}
-              className={`flex h-[56px] flex-col items-center justify-center rounded-md border text-base font-medium transition-colors ${
+              className={`flex h-[56px] flex-col items-center justify-center rounded-lg border text-base font-medium transition-colors ${
                 active
-                  ? "border-brand bg-brand text-[color:var(--color-text-onAction)]"
-                  : "border-border text-text hover:border-border-strong"
+                  ? "border-[color:var(--color-border-strong)] bg-[color:var(--color-card-raised)] text-text"
+                  : "border-border text-text-secondary hover:border-border-strong hover:text-text"
               }`}
             >
               {code}
@@ -51,9 +51,9 @@ export function FuelChooser({
             onClick={() => onChange(code)}
             title={label}
             aria-pressed={active}
-            className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+            className={`inline-flex min-h-[44px] items-center rounded-full border px-4 text-sm font-medium transition-colors ${
               active
-                ? "border-brand bg-brand text-[color:var(--color-text-onAction)]"
+                ? "border-[color:var(--color-border-strong)] bg-[color:var(--color-card-raised)] text-text"
                 : "border-border text-text-secondary hover:border-border-strong hover:text-text"
             }`}
           >

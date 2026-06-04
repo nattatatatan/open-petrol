@@ -26,6 +26,18 @@ body {
   font-feature-settings: "tnum" 1;
 }
 
+/* DM Mono caption for ALL labels/metadata (the reference sets these in mono):
+ * eyebrows, freshness, distance/cost, fuel badge, footer. 11/16, uppercase,
+ * letter-spaced. Use `.mono` (not this) for mixed-case data like addresses. */
+.cap {
+  font-family: "DM Mono", ui-monospace, monospace;
+  font-feature-settings: "tnum" 1;
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 /* Headings track ~4% per implementation-notes. */
 .tracking-display {
   letter-spacing: 0.04em;

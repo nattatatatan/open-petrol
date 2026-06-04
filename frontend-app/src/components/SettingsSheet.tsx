@@ -41,7 +41,7 @@ export function SettingsSheet({
           step={5}
           value={model.tankL}
           onChange={(e) => onUpdate({ tankL: Number(e.target.value) })}
-          className="mb-lg w-full accent-[color:var(--color-brand)]"
+          className="mb-lg w-full accent-[color:var(--color-text-body)]"
         />
 
         <div className="mb-lg">
@@ -52,7 +52,7 @@ export function SettingsSheet({
                 Usual: <span className="font-medium text-text">{model.usualStationName ?? usualStationName ?? model.usualStation}</span>
               </span>
               <button
-                className="text-xs text-text-action hover:underline"
+                className="text-xs text-text hover:underline"
                 onClick={() => onUpdate({ usualStation: null, usualStationName: null })}
               >
                 Clear
@@ -90,9 +90,9 @@ export function SettingsSheet({
               <button
                 key={t}
                 onClick={() => onUpdate({ theme: t })}
-                className={`rounded-full border px-3 py-1.5 text-xs capitalize ${
+                className={`inline-flex min-h-[44px] items-center rounded-full border px-4 text-sm capitalize ${
                   model.theme === t
-                    ? "border-brand text-text-action"
+                    ? "border-[color:var(--color-border-strong)] bg-[color:var(--color-card-raised)] text-text"
                     : "border-border text-text-secondary"
                 }`}
               >
@@ -209,7 +209,7 @@ function MembershipPicker({
       ))}
       <button
         onClick={addCustom}
-        className="mt-2 text-xs text-text-action hover:underline"
+        className="mt-3 text-xs text-text hover:underline"
       >
         + Add a custom discount
       </button>
@@ -247,8 +247,10 @@ function Chip({
     <button
       onClick={onClick}
       aria-pressed={active}
-      className={`rounded-full border px-3 py-1.5 text-xs ${
-        active ? "border-brand text-text-action" : "border-border text-text-secondary"
+      className={`inline-flex min-h-[44px] items-center rounded-full border px-4 text-sm ${
+        active
+          ? "border-[color:var(--color-border-strong)] bg-[color:var(--color-card-raised)] text-text"
+          : "border-border text-text-secondary"
       }`}
     >
       {label}

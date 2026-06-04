@@ -59,46 +59,44 @@ export function AnswerCard({
   return (
     <section
       aria-label="Recommended station"
-      className={`flex flex-col overflow-hidden rounded-lg border bg-[color:var(--color-card)] transition-colors ${
+      className={`flex flex-col overflow-hidden rounded-xl border bg-[color:var(--color-card)] transition-colors ${
         fresh ? "border-winner" : "border-border"
       }`}
     >
       {/* ── Decision (DOM-first for screen readers; rendered below the map) ── */}
       <div aria-live="polite" className="order-2 px-lg pb-lg pt-md">
+        {/* Eyebrow (mono caption) + the ONE gold accent: the winner status pill */}
+        <div className="flex items-start justify-between gap-2">
+          <p className="cap pt-1 text-text-secondary">
+            {mode === "route" ? "Best on your way" : "Cheapest near you"}
+          </p>
+          <Pill color="var(--color-brand)" className="cap shrink-0">
+            {worthwhile ? (mode === "route" ? "Best value" : "Cheapest") : "Nearest"}
+          </Pill>
+        </div>
+
         {/* T1 verdict — station */}
-        <p
-          className={`text-xs font-semibold uppercase tracking-display ${
-            fresh ? "text-text-action" : "text-text-secondary"
-          }`}
-        >
-          {mode === "route" ? "Best value on your way" : "Cheapest near you"}
-        </p>
         <h2 className="mt-1 flex items-start gap-1.5 text-2xl font-medium leading-tight text-text-heading">
-          <Icon
-            name="pin"
-            size={20}
-            className={`mt-0.5 ${fresh ? "text-[color:var(--decision-winner)]" : "text-text-secondary"}`}
-          />
+          <Icon name="pin" size={20} className="mt-0.5 text-text-secondary" />
           <span>{offer.name}</span>
         </h2>
         {offer.address && (
-          <p className="mt-0.5 pl-[26px] text-sm text-text-secondary">{offer.address}</p>
+          <p className="mono mt-1 pl-[26px] text-xs text-text-secondary">{offer.address}</p>
         )}
 
-        {/* T1 verdict — saving (the big GREEN number; c/L leads, $ is an estimate) */}
-        <div className="mt-md">
+        {/* T1 verdict — saving (the big GREEN hero; c/L leads, $ is an estimate) */}
+        <div className="mt-lg">
           {worthwhile ? (
             <>
               <div className="flex items-baseline gap-1.5">
-                <span className="mono text-[40px] font-medium leading-none text-[color:var(--saving-positive)]">
+                <span className="mono text-[42px] font-medium leading-none text-[color:var(--saving-positive)]">
                   {formatCents(offer.saving_per_litre)}
-                  <span className="text-xl">c/L</span>
+                  <span className="text-2xl">c/L</span>
                 </span>
                 <span className="text-base text-text">cheaper</span>
               </div>
-              <p className="mt-1 text-sm text-text-secondary">
-                ≈ {formatDollars(offer.saving_per_tank)} off a ~{Math.round(tankL)}L fill ·
-                vs {baseline.label}
+              <p className="cap mt-2 text-text-secondary">
+                ≈ {formatDollars(offer.saving_per_tank)} off a ~{Math.round(tankL)}L fill · vs {baseline.label}
               </p>
             </>
           ) : (
@@ -109,14 +107,14 @@ export function AnswerCard({
           )}
         </div>
 
-        {/* T2 cost of acting — confidence + detour */}
-        <div className="mt-md flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+        {/* T2 cost of acting — confidence + detour (mono captions) */}
+        <div className="mt-md flex flex-wrap items-center gap-x-4 gap-y-1">
           <ConfidenceChip
             freshness={offer.freshness}
             lastUpdated={offer.last_updated}
             reference={reference}
           />
-          <span className="text-[color:var(--detour-cost)]">
+          <span className="cap text-[color:var(--detour-cost)]">
             {mode === "route"
               ? `${formatMinutes(offer.detour_min)} detour`
               : `${formatDistance(offer.distance_km)} away`}
@@ -132,38 +130,37 @@ export function AnswerCard({
         )}
 
         {/* T3 proof — pump price (quiet), demoted from hero to evidence */}
-        <div className="mt-md flex items-center gap-2 border-t border-divider-subtle pt-md text-sm text-text-secondary">
-          <Pill className="border border-border text-text-secondary">{offer.fuel_type}</Pill>
-          <span className="mono">
+        <div className="mt-md flex items-center gap-2 border-t border-divider-subtle pt-md">
+          <Pill className="cap border border-border text-text-secondary">{offer.fuel_type}</Pill>
+          <span className="mono text-sm text-text-secondary">
             {formatCents(winnerPrice)}c/L
             {offer.discount > 0 && (
               <>
                 {" "}
                 <span className="line-through opacity-60">{formatCents(offer.price)}</span>{" "}
-                <span className="text-text-action">−{formatCents(offer.discount)}c {offer.discount_label ?? "member"}</span>
+                <span>−{formatCents(offer.discount)}c {offer.discount_label ?? "member"}</span>
               </>
             )}
           </span>
         </div>
 
-        {/* Close the loop — thumb-zone primary action */}
-        <div className="mt-lg flex items-center gap-3">
-          <Button className="flex-1" onClick={onNavigate}>
+        {/* Close the loop — thumb-zone primary action (dark raised, label left,
+            arrow right; no wrap). Set-usual is a compact icon toggle. */}
+        <div className="mt-lg flex items-center gap-2">
+          <Button className="flex-1 whitespace-nowrap !justify-between" onClick={onNavigate}>
+            <span>Navigate {mode === "route" ? "via stop" : "here"}</span>
             <Icon name="navigate" size={18} />
-            Navigate {mode === "route" ? "via this stop" : "here"}
           </Button>
           <Button
             hierarchy="secondary"
             size="small"
             onClick={onSetUsual}
             aria-pressed={isUsual}
+            aria-label={isUsual ? "Your usual station" : "Set as usual station"}
+            title={isUsual ? "Your usual station" : "Set as usual station"}
+            className="!w-[44px] shrink-0 !px-0"
           >
-            <Icon
-              name="star"
-              size={15}
-              className={isUsual ? "text-[color:var(--color-brand)]" : ""}
-            />
-            {isUsual ? "Usual" : "Set usual"}
+            <Icon name="star" size={18} className={isUsual ? "text-text" : "text-text-secondary"} />
           </Button>
         </div>
       </div>
