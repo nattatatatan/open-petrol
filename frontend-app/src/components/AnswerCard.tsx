@@ -155,11 +155,24 @@ export function AnswerCard({
             size="small"
             onClick={onSetUsual}
             aria-pressed={isUsual}
-            aria-label={isUsual ? "Your usual station" : "Set as usual station"}
-            title={isUsual ? "Your usual station" : "Set as usual station"}
-            className="!w-[44px] shrink-0 !px-0"
+            aria-label={
+              isUsual
+                ? "Your usual station — the savings baseline. Tap to unset."
+                : "Set as your usual station — used as your savings baseline"
+            }
+            title={
+              isUsual
+                ? "Your usual station — your savings baseline. Tap to unset."
+                : "Set as your usual station — your savings baseline"
+            }
+            className="shrink-0 whitespace-nowrap"
           >
-            <Icon name="star" size={18} className={isUsual ? "text-text" : "text-text-secondary"} />
+            <Icon
+              name="star"
+              size={16}
+              className={isUsual ? "text-[color:var(--color-brand)]" : "text-text-secondary"}
+            />
+            {isUsual ? "Usual" : "Set usual"}
           </Button>
         </div>
       </div>

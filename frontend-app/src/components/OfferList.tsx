@@ -64,7 +64,12 @@ export function OfferList({
                     <div className="flex items-center gap-1.5">
                       <span className="truncate text-sm font-medium text-text">{o.name}</span>
                       {usualStation === o.station_code && (
-                        <Icon name="star" size={12} className="shrink-0 text-text-secondary" label="Your usual" />
+                        <Icon
+                          name="star"
+                          size={12}
+                          className="shrink-0 text-[color:var(--color-brand)]"
+                          label="Your usual station (savings baseline)"
+                        />
                       )}
                     </div>
                     <div className="mono mt-0.5 text-[11px] text-text-secondary">
