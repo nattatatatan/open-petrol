@@ -79,16 +79,33 @@ export function OfferList({
                       {o.discount > 0 && <span className="ml-1">−{formatCents(o.discount)}</span>}
                     </div>
                   </div>
+                  {/* Mirror the hero: lead with c/L cheaper (green), $/fill as the
+                      quiet estimate. Same units as the AnswerCard so the winner's
+                      figures match its row. Ranked net-of-detour (the order). */}
                   <div
-                    className="shrink-0 text-right text-sm font-medium"
-                    style={{ color: positive ? "var(--saving-positive)" : "var(--color-text-bodySecondary)" }}
+                    className="shrink-0 text-right"
                     title={
                       positive
-                        ? "Net saving vs your baseline, after the fuel + time to drive there"
+                        ? "Cheaper per litre vs your baseline — ranked net of the detour to get there"
                         : "The detour costs more than you'd save vs your baseline"
                     }
                   >
-                    {positive ? `+${formatDollars(o.net_benefit)}` : "—"}
+                    {positive ? (
+                      <>
+                        <div
+                          className="mono text-sm font-medium leading-none"
+                          style={{ color: "var(--saving-positive)" }}
+                        >
+                          {formatCents(o.saving_per_litre)}
+                          <span className="text-xs">c/L</span>
+                        </div>
+                        <div className="mono mt-1 text-[10px] text-text-secondary">
+                          ≈ {formatDollars(o.saving_per_tank)}
+                        </div>
+                      </>
+                    ) : (
+                      <span className="text-xs text-text-secondary">not worth the drive</span>
+                    )}
                   </div>
                 </button>
               </li>
