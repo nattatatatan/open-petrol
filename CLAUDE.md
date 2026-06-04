@@ -200,6 +200,13 @@ v1 cut: single destination, single best stop; multi-stop "how much to buy at eac
 - **One glance, one action.** The answer (go *here* → save $X on your tank) visually
   dominates; the comparison list is secondary. Do NOT build a cluttered two-panel
   compare tool — that's the ChatGPT-paragraph experience we're beating.
+- **Never make the user do arithmetic (north star).** Show precomputed *effective*
+  prices (discount already applied) and *net* outcomes — never a "−Nc" the user has to
+  subtract or a raw figure they must compare in their head. A discount is shown as a
+  labelled indicator (chip/colour), not an equation. And a verdict must **show its work**:
+  when we say a visibly-cheaper station is "about even / not worth it," display the
+  saving-vs-drive-cost bridge ($X cheaper · $Y to drive) so the verdict is self-evidently
+  true, not a black box that looks wrong against the price.
 - **Close the loop with action.** One-tap "Navigate" (open Apple/Google Maps). A
   recommendation you can't act on is just data.
 - Follow the design system in `/frontend`; build only the components the flow needs.

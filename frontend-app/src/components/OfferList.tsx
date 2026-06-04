@@ -49,10 +49,11 @@ export function OfferList({
           </li>
           {offers.map((o) => {
             const fm = FRESHNESS_META[o.freshness];
-            const positive = o.net_benefit > 0.5;
-            const cheaperPerL = o.saving_per_litre > 0;  // beats the baseline at the pump
-            const farLabel =
-              mode === "route" ? `${formatMinutes(o.detour_min)} off route` : `${formatDistance(o.distance_km)} away`;
+            const cheaper = o.saving_per_litre > 0;   // beats the baseline at the pump
+            const worthIt = o.net_benefit > 0.5;      // nets out ahead after fuel + time
+            // The proof line: we show BOTH sides so the verdict is self-evidently true
+            // (you save $S on fuel, but the trip costs $D) — never a black-box verdict.
+            const proof = `${formatDollars(o.saving_per_tank)} cheaper · ${formatDollars(o.detour_cost)} drive`;
             return (
               <li key={o.station_code}>
                 <button
@@ -78,53 +79,55 @@ export function OfferList({
                         />
                       )}
                     </div>
-                    <div className="mono mt-0.5 text-[11px] text-text-secondary">
-                      {mode === "route" ? `${formatMinutes(o.detour_min)} detour` : formatDistance(o.distance_km)}
-                      {" · "}
-                      {formatCents(o.discount > 0 ? o.effective_price : o.price)}c/L
-                      {o.discount > 0 && <span className="ml-1">−{formatCents(o.discount)}</span>}
+                    <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-text-secondary">
+                      <span className="mono">
+                        {mode === "route" ? `${formatMinutes(o.detour_min)} detour` : formatDistance(o.distance_km)}
+                        {" · "}
+                        {formatCents(o.discount > 0 ? o.effective_price : o.price)}c/L
+                      </span>
+                      {/* Discount is pre-applied (effective price above); the chip is the
+                          indicator, never a "−Nc" the user must subtract. Pump price +
+                          exact discount stay available in the tooltip (transparency). */}
+                      {o.discount > 0 && (
+                        <span
+                          className="max-w-[92px] shrink-0 truncate rounded-full border border-[color:var(--color-success)]/40 px-1.5 text-[9px] text-[color:var(--color-success)]"
+                          title={`Includes ${o.discount_label ?? "member"} −${formatCents(o.discount)}c · pump ${formatCents(o.price)}c`}
+                        >
+                          {o.discount_label ?? "member"}
+                        </span>
+                      )}
                     </div>
                   </div>
-                  {/* Mirror the hero: lead with c/L cheaper (green), $/fill as the
-                      quiet estimate. Same units as the AnswerCard so the winner's
-                      figures match its row. Ranked net-of-detour (the order). */}
-                  <div
-                    className="w-[88px] shrink-0 text-right"
-                    title={
-                      positive
-                        ? "Cheaper per litre vs your baseline — ranked net of the detour to get there"
-                        : cheaperPerL
-                          ? `Cheaper at the pump, but the ${farLabel} drive (fuel + time) costs more than the saving`
-                          : "Not cheaper than your baseline"
-                    }
-                  >
-                    {positive ? (
+                  {/* The verdict is the NET outcome (the ranking key), and it shows its
+                      work on the line below so it's trustworthy even when the pump price
+                      looks cheaper. Distance lives once, on the left. */}
+                  <div className="w-[108px] shrink-0 text-right">
+                    {!cheaper ? (
+                      <>
+                        <div className="text-sm font-medium leading-none text-text-secondary">
+                          pricier here
+                        </div>
+                        <div className="mt-1 text-[10px] text-text-secondary">
+                          not cheaper than your baseline
+                        </div>
+                      </>
+                    ) : worthIt ? (
                       <>
                         <div
                           className="mono text-sm font-medium leading-none"
                           style={{ color: "var(--saving-positive)" }}
                         >
-                          {formatCents(o.saving_per_litre)}
-                          <span className="text-xs">c/L</span>
+                          save {formatDollars(o.net_benefit)}
                         </div>
-                        <div className="mono mt-1 text-[10px] text-text-secondary">
-                          ≈ {formatDollars(o.saving_per_tank)}
-                        </div>
-                      </>
-                    ) : cheaperPerL ? (
-                      // Cheaper per litre, but the drive eats it — name the reason
-                      // (distance), not a bare "not worth it".
-                      <>
-                        <div className="mono text-sm leading-none text-text-secondary">
-                          {formatCents(o.saving_per_litre)}
-                          <span className="text-xs">c/L</span>
-                        </div>
-                        <div className="mt-1 text-[10px] text-text-secondary">
-                          but {farLabel}
-                        </div>
+                        <div className="mono mt-1 text-[10px] text-text-secondary">{proof}</div>
                       </>
                     ) : (
-                      <span className="text-xs text-text-secondary">pricier here</span>
+                      <>
+                        <div className="text-sm font-medium leading-none text-text-secondary">
+                          {o.net_benefit < -0.5 ? `${formatDollars(-o.net_benefit)} worse` : "about even"}
+                        </div>
+                        <div className="mono mt-1 text-[10px] text-text-secondary">{proof}</div>
+                      </>
                     )}
                   </div>
                 </button>

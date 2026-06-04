@@ -40,6 +40,14 @@ The winner simply **looks** like the winner.
 Every colour-coded signal also carries a label or icon **and** a tap-to-reveal tooltip explaining
 it. The confidence/freshness indicator is the canonical example (see §5.3, §9, §10).
 
+**The no-arithmetic rule (trust):** *The user never does maths.* Show the precomputed
+**effective** price (discount already applied) and the **net** outcome — never a "−Nc" to
+subtract, nor a raw figure to compare in their head. A discount is a labelled indicator
+(chip/colour), not an equation on the price. And a verdict **shows its work**: when a
+visibly-cheaper station reads "about even / not worth it," display the bridge that proves it
+(`$X cheaper · $Y to drive`) — otherwise the verdict looks wrong against the price and trust
+collapses.
+
 ---
 
 ## 2. Product Stance — What This Is *Not*
@@ -306,15 +314,25 @@ Layout sketches are mobile (≈ 360–390 dp wide). Thumb-zone = bottom third.
 
 ### 7.5 Other options (expanded)
 ```
-┌──────────────────────────┐
-│ ‹ Other options           │
-│ Shell Victoria Rd  +$9.20 │  winner repeated at top, gold
-│ BP Ryde            +$6.10 │  net figures, ranked
-│ 7-Eleven Top Ryde  +$4.80 │
-│ Caltex (your usual)  base │  baseline anchor shown
-└──────────────────────────┘
+┌─────────────────────────────────────────────┐
+│ ‹ Other options                              │
+│ Ranked by what you'd save after fuel + time  │  ← framing line
+│ ● EG Ampol Corrimal            about even    │  verdict = NET outcome
+│   6.3 km · 164.9c/L ‹RACV›  $5.3 cheaper·$4.9 drive │  effective price + chip; proof
+│ ● Shell Victoria Rd            save $9.20    │  green when worth a trip
+│   2.1 km · 168.9c/L         $9.6 cheaper·$0.4 drive │
+│ ● 7-Eleven Top Ryde            pricier here  │  not cheaper than baseline
+│   0.4 km · 177.9c/L         not cheaper than your baseline │
+│ Caltex (your usual)                    base  │  baseline anchor shown
+└─────────────────────────────────────────────┘
 ```
 - A list, not a compare grid. Ranked on **net benefit**. Tapping a row makes it the active answer.
+- **Verdict = the net outcome**, not gross c/L (which would contradict the ranking). Three states:
+  `save $X` (green, net > $0.50) · `about even` / `$X worse` (cheaper but the drive offsets it) ·
+  `pricier here` (not cheaper than baseline). Each carries the **proof** line below it
+  (`$cheaper · $drive`) — the no-arithmetic / show-the-work rule (§1).
+- **Distance appears once** (left). Discounts are pre-applied to the shown price + a labelled
+  chip; the pump price lives in the tooltip. Never "164.9 −5.0".
 
 ### 7.6 Settings (bottom sheet, progressive)
 - Reached from the answer, never before it. Sections: **Savings baseline** (usual-station
