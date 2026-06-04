@@ -44,9 +44,15 @@ export function OfferList({
 
       {open && (
         <ul className="mt-2 space-y-2">
+          <li className="px-1 pb-1 text-[11px] text-text-secondary">
+            Ranked by what you’d save after the fuel + time to drive there.
+          </li>
           {offers.map((o) => {
             const fm = FRESHNESS_META[o.freshness];
             const positive = o.net_benefit > 0.5;
+            const cheaperPerL = o.saving_per_litre > 0;  // beats the baseline at the pump
+            const farLabel =
+              mode === "route" ? `${formatMinutes(o.detour_min)} off route` : `${formatDistance(o.distance_km)} away`;
             return (
               <li key={o.station_code}>
                 <button
@@ -83,11 +89,13 @@ export function OfferList({
                       quiet estimate. Same units as the AnswerCard so the winner's
                       figures match its row. Ranked net-of-detour (the order). */}
                   <div
-                    className="shrink-0 text-right"
+                    className="w-[88px] shrink-0 text-right"
                     title={
                       positive
                         ? "Cheaper per litre vs your baseline — ranked net of the detour to get there"
-                        : "The detour costs more than you'd save vs your baseline"
+                        : cheaperPerL
+                          ? `Cheaper at the pump, but the ${farLabel} drive (fuel + time) costs more than the saving`
+                          : "Not cheaper than your baseline"
                     }
                   >
                     {positive ? (
@@ -103,8 +111,20 @@ export function OfferList({
                           ≈ {formatDollars(o.saving_per_tank)}
                         </div>
                       </>
+                    ) : cheaperPerL ? (
+                      // Cheaper per litre, but the drive eats it — name the reason
+                      // (distance), not a bare "not worth it".
+                      <>
+                        <div className="mono text-sm leading-none text-text-secondary">
+                          {formatCents(o.saving_per_litre)}
+                          <span className="text-xs">c/L</span>
+                        </div>
+                        <div className="mt-1 text-[10px] text-text-secondary">
+                          but {farLabel}
+                        </div>
+                      </>
                     ) : (
-                      <span className="text-xs text-text-secondary">not worth the drive</span>
+                      <span className="text-xs text-text-secondary">pricier here</span>
                     )}
                   </div>
                 </button>

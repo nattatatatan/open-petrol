@@ -101,7 +101,11 @@ export function AnswerCard({
           ) : (
             <p className="text-base text-text">
               Your cheapest convenient option —{" "}
-              <span className="text-text-secondary">no detour worth the drive vs {baseline.label}.</span>
+              <span className="text-text-secondary">
+                {mode === "route"
+                  ? "nothing further along saves enough to beat the detour."
+                  : "any cheaper station nearby costs more in fuel + time to reach than it saves."}
+              </span>
             </p>
           )}
         </div>
