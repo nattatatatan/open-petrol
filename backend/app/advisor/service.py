@@ -58,33 +58,33 @@ def build_deterministic(
     station = rec["name"] if rec else "the cheapest station"
 
     if cycle.verdict == "fill_now":
-        headline = "Good time to fill up"
-        detail = f"{label} is near its recent low and starting to climb — worth filling at {station} now."
+        headline = "Looks like a good time to fill up"
+        detail = f"{label} is in the cheaper part of its cycle and edging up, so it could be worth filling at {station} while you're here."
 
     elif cycle.verdict == "wait":
         save = cycle.expected_saving_per_tank
-        headline = "Cheapest today — but prices look high"
+        headline = "Cheapest today — though prices look a bit high"
         detail = (
-            f"{station} is the best {label} price right now, but the area is near its cycle peak"
+            f"{station} has the best {label} price right now, but the area looks close to its cycle peak"
             + (
-                f"; waiting could save about ${save:.2f} on a {tank:.0f}L fill if it drops as usual."
+                f"; holding off might save around ${save:.2f} on a {tank:.0f}L fill if it eases off as it usually does."
                 if save and save > 0
-                else " and may fall soon — top up only if you need to."
+                else " and could ease soon — maybe just top up if you need to."
             )
         )
 
     elif cycle.verdict == "fill_only_needed":
-        headline = "Fill if you need to"
+        headline = "Fine to fill if you need to"
         detail = (
-            f"{label} prices are mid-cycle — no clear win from timing it. "
+            f"{label} prices are mid-cycle, so there's no real timing edge either way. "
             f"{station} is your cheapest option if you're filling today."
         )
 
     else:  # uncertain
-        headline = "Just grab the cheapest now"
+        headline = "Just grab the cheapest for now"
         detail = (
-            f"Not enough recent {label} price history to call the cycle — "
-            f"{station} is your cheapest option right now."
+            f"Not enough recent {label} price history to read the cycle, so "
+            f"{station} is simply your cheapest option right now."
         )
 
     return AdvisorResult(

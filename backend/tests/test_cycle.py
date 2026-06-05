@@ -1,6 +1,6 @@
 """Unit tests for the deterministic price-cycle classifier (CLAUDE.md §6).
 
-Each verdict and each signal is exercised against a FIXED, hand-built series (a
+Each verdict, phase, and signal is exercised against a FIXED, hand-built series (a
 realistic sawtooth, never random noise) so the expected output is knowable by hand —
 the whole point of a deterministic, no-ML classifier.
 """
@@ -12,8 +12,10 @@ import pytest
 from app.engine.cycle import (
     CycleConfig,
     assess_cycle,
+    classify_phase,
     days_since_extrema,
     percentile_rank,
+    robust_zscore,
     running_streaks,
     trend_over,
 )
@@ -62,8 +64,34 @@ def test_days_since_extrema_uses_most_recent_extremum():
     assert days_since_extrema([170, 165, 180, 175, 160, 170]) == (1, 3)
 
 
+def test_robust_zscore_flags_an_outlier_not_a_legit_extremum():
+    history = [170, 172, 168, 171, 169, 173, 167, 170, 172, 168]
+    # A normal-ish high reads as a small z; a wild value reads as a huge one.
+    assert robust_zscore(history, 175) < 3.0
+    assert robust_zscore(history, 400) > CycleConfig.ANOMALY_Z_SCORE
+    assert robust_zscore([170, 170, 170], 170) == 0.0          # no spread => 0
+
+
 # --------------------------------------------------------------------------- #
-# Verdict: uncertain — the three honest fallbacks (CLAUDE.md §10).
+# Phase classifier (pure) — the turning points are detected asymmetrically.
+# --------------------------------------------------------------------------- #
+
+def test_phase_peak_needs_the_downturn_confirmed():
+    # At a fresh high (since_max=0) but still rising (micro>0) is NOT yet a peak.
+    assert classify_phase(micro=2, seven=8, rising=3, falling=0,
+                          since_min=20, since_max=0) == "rising"
+    # Same high, now rolling over (micro<0) -> peak.
+    assert classify_phase(micro=-3, seven=5, rising=0, falling=1,
+                          since_min=20, since_max=1) == "peak"
+
+
+def test_phase_trough_fires_on_price_alone_when_turning_up():
+    assert classify_phase(micro=1, seven=-2, rising=1, falling=0,
+                          since_min=1, since_max=20) == "trough"
+
+
+# --------------------------------------------------------------------------- #
+# Verdict: uncertain — the honest fallbacks (CLAUDE.md §10).
 # --------------------------------------------------------------------------- #
 
 def test_insufficient_history_is_uncertain():
@@ -94,93 +122,140 @@ def test_stale_data_is_uncertain():
     assert "old" in a.basis.lower()
 
 
-# --------------------------------------------------------------------------- #
-# Verdict: fill_now — cheap (percentile < 25) AND rising (7-day trend > 0).
-# --------------------------------------------------------------------------- #
-
-FILL_NOW_SERIES = (
-    [176.0 + i for i in range(22)]            # tail of a long climb 176..197
-    + [168.0]                                 # sharp drop to the trough
-    + [169.0, 170.0, 171.0, 172.0, 173.0, 174.0, 175.0]  # 7 days rising from trough
+# P0 fix: a clean, fresh, ample series that is simply mid-cycle and barely moving must
+# be UNCERTAIN — the old (data-quality-only) confidence shipped this at 1.0.
+WEAK_SIGNAL_SERIES = (
+    [168, 170, 172, 174, 176, 178, 180, 182, 184, 186, 188, 190, 192, 194, 195]
+    + [182] * 15  # today = 182, flat for a fortnight: no 3/7/14-day movement
 )
 
 
-def test_fill_now_when_cheap_and_rising():
-    a = assess_cycle(_lows(FILL_NOW_SERIES), tank_l=55)
+def test_clean_but_weak_signal_is_uncertain_not_overconfident():
+    a = assess_cycle(_lows(WEAK_SIGNAL_SERIES), tank_l=55)
+    assert a.history_days == 30           # plenty of history
+    assert a.amplitude >= CycleConfig.MIN_CYCLE_AMPLITUDE_CENTS  # real cycle amplitude
+    assert 0.0 < a.confidence < CycleConfig.MIN_CONFIDENCE       # data fine, signal weak
+    assert a.verdict == "uncertain"
+    assert "barely moved" in a.basis.lower()
+
+
+def test_anomalous_latest_price_is_uncertain():
+    # A healthy ramp, then a garbage final reading (parse error / stuck price).
+    a = assess_cycle(_lows([168.0 + i for i in range(25)] + [400.0]), tank_l=55)
+    assert a.verdict == "uncertain"
+    assert a.confidence == 0.0
+    assert "data looks off" in a.basis.lower()
+
+
+# --------------------------------------------------------------------------- #
+# Verdict: fill_now — at the trough, OR cheap-and-rising (uses the extrema +
+# slope signals, not just a percentile gate).
+# --------------------------------------------------------------------------- #
+
+TROUGH_SERIES = (
+    [170, 173, 176, 179, 182, 185, 188, 191, 194, 197, 199]  # climb to a high
+    + [195, 191, 187, 183, 179, 175, 171, 167]               # sharp drop to the trough (167)
+    + [168, 170, 171]                                         # turning up; today = 171
+)
+
+
+def test_fill_now_at_the_trough():
+    a = assess_cycle(_lows(TROUGH_SERIES), tank_l=55)
+    assert a.phase == "trough"
     assert a.verdict == "fill_now"
     assert a.confidence >= CycleConfig.MIN_CONFIDENCE
-    assert a.cycle_percentile < CycleConfig.LOW_PERCENTILE
-    assert a.seven_day_trend > 0
-    assert a.consecutive_rising_days == 7
-    assert "cheaper than" in a.basis and "running" in a.basis
-
-
-# --------------------------------------------------------------------------- #
-# Verdict: wait — expensive (percentile > 75) AND falling (7-day trend < 0).
-# A low base, a hump that peaked ~a week ago, now easing back but still high.
-# --------------------------------------------------------------------------- #
-
-WAIT_SERIES = (
-    [168.0 + 0.5 * i for i in range(22)]      # 22 low days 168.0..178.5
-    + [190.0, 192.0, 191.0, 189.0, 187.0, 184.0]  # hump (day 23 = 190, 7 back from today)
-    + [181.0, 182.0]                          # easing back; today = 182.0
-)
-
-
-def test_wait_when_expensive_and_falling():
-    a = assess_cycle(_lows(WAIT_SERIES), tank_l=55)
-    assert a.verdict == "wait"
-    assert a.confidence >= CycleConfig.MIN_CONFIDENCE
-    assert a.cycle_percentile > CycleConfig.HIGH_PERCENTILE
-    assert a.seven_day_trend < 0
-    # expected saving = (current - window_low) * tank / 100 = (182 - 168) * 55 / 100
-    assert a.expected_saving_per_tank == pytest.approx(7.70)
-    assert "dearer than" in a.basis and "fallen" in a.basis
-
-
-# --------------------------------------------------------------------------- #
-# Verdict: fill_only_needed — confident, but neither trigger fires (mid-cycle).
-# Here: near the trough but still falling, so no rush either way.
-# --------------------------------------------------------------------------- #
-
-ONLY_NEEDED_SERIES = (
-    [168.0 + i for i in range(23)]            # climb 168..190
-    + [187.0, 184.0, 181.0, 178.0, 176.0, 174.0, 172.0]  # 7 days falling; today = 172
-)
-
-
-def test_fill_only_needed_when_confident_but_no_trigger():
-    a = assess_cycle(_lows(ONLY_NEEDED_SERIES), tank_l=55)
-    assert a.verdict == "fill_only_needed"
-    assert a.confidence >= CycleConfig.MIN_CONFIDENCE
-    # cheap-ish but FALLING (not rising) -> not fill_now; not expensive -> not wait.
-    assert a.seven_day_trend < 0
+    assert a.days_since_local_minimum <= CycleConfig.EXTREMA_RECENT_DAYS
+    assert a.cycle_percentile < 25
     assert a.expected_saving_per_tank is None
-    assert "mid-cycle" in a.basis
+    assert "cheapest" in a.basis.lower()
+
+
+# Mid-range (percentile between 25 and 50) but clearly climbing out of a recent trough:
+# the OLD percentile<25 gate would miss this; the phase model calls it correctly.
+RISING_MID_SERIES = (
+    [188, 190, 189, 191, 190, 192, 190, 191, 189, 190,
+     188, 190, 189, 191, 190, 192, 190, 191, 189]            # 19 high days
+    + [185, 180, 175, 170, 168]                              # drop to the trough (168)
+    + [170, 172, 174, 176, 178, 180]                         # 6 rising days; today = 180
+)
+
+
+def test_fill_now_when_cheap_and_rising_above_the_old_gate():
+    a = assess_cycle(_lows(RISING_MID_SERIES), tank_l=55)
+    assert a.phase == "rising"
+    assert a.verdict == "fill_now"
+    assert 25 < a.cycle_percentile < 50          # beyond the old "cheap" gate
+    assert a.seven_day_trend > 0
+    assert a.confidence >= CycleConfig.MIN_CONFIDENCE
+    assert "climbing" in a.basis.lower()
 
 
 # --------------------------------------------------------------------------- #
-# Boundary cases at the percentile / trend thresholds.
+# Verdict: wait — at the peak (fresh high, turning down), OR dear-and-falling.
 # --------------------------------------------------------------------------- #
 
-def test_low_percentile_but_not_rising_is_not_fill_now():
-    # Cheap (percentile < 25) but the 7-day trend is exactly flat -> falls through
-    # to fill_only_needed, because fill_now strictly requires trend > 0.
-    flat_then_cheap = [196.0 - i for i in range(22)] + [172.0] * 8
-    a = assess_cycle(_lows(flat_then_cheap), tank_l=55)
-    assert a.cycle_percentile < CycleConfig.LOW_PERCENTILE
-    assert a.seven_day_trend == 0
+PEAK_SERIES = (
+    [168.0 + 0.5 * i for i in range(18)]   # 18 low days 168.0..176.5
+    + [182, 188, 194, 198]                 # sharp climb to the peak (198)
+    + [196, 193, 190]                      # rolling over; today = 190
+)
+
+
+def test_wait_at_the_peak():
+    a = assess_cycle(_lows(PEAK_SERIES), tank_l=55)
+    assert a.phase == "peak"
+    assert a.verdict == "wait"
+    assert a.days_since_local_maximum <= CycleConfig.EXTREMA_RECENT_DAYS
+    assert a.three_day_trend < 0           # the micro-slope is what catches the turn
+    assert a.cycle_percentile > 75
+    # expected saving = (current - window_low) * tank / 100 = (190 - 168) * 55 / 100
+    assert a.expected_saving_per_tank == pytest.approx(12.10)
+    assert "turned down" in a.basis.lower()
+
+
+WAIT_FALLING_SERIES = (
+    [168.0 + 0.5 * i for i in range(12)]   # 12 low days
+    + [178, 184, 190, 196]                 # climb to the peak (196)
+    + [193, 190, 187, 184, 182, 180]       # well into the fall; today = 180
+)
+
+
+def test_wait_when_dear_and_falling_past_the_peak():
+    a = assess_cycle(_lows(WAIT_FALLING_SERIES), tank_l=55)
+    assert a.phase == "falling"
+    assert a.verdict == "wait"
+    assert a.days_since_local_maximum > CycleConfig.EXTREMA_RECENT_DAYS  # not a fresh peak
+    assert a.seven_day_trend < 0
+    assert a.cycle_percentile >= CycleConfig.MID_PERCENTILE
+    assert a.expected_saving_per_tank == pytest.approx(6.60)  # (180 - 168) * 55 / 100
+    assert "keep dropping" in a.basis.lower()
+
+
+# --------------------------------------------------------------------------- #
+# Verdict: fill_only_needed — confident, but no actionable timing edge.
+# --------------------------------------------------------------------------- #
+
+def test_fill_only_needed_when_rising_but_already_dear():
+    # A long, steady climb: today is dear and still rising — past the cheap window, but
+    # no reason to wait (prices going up). Confident (the position signal is strong).
+    a = assess_cycle(_lows([168.0 + i for i in range(30)]), tank_l=55)
+    assert a.phase == "rising"
     assert a.verdict == "fill_only_needed"
+    assert a.cycle_percentile > CycleConfig.MID_PERCENTILE
+    assert a.confidence >= CycleConfig.MIN_CONFIDENCE
+    assert a.expected_saving_per_tank is None
+    assert "still rising" in a.basis.lower()
 
 
-def test_confidence_just_below_threshold_is_uncertain():
-    # 21 days (history score 0.7) and amplitude exactly 8c (amplitude score 0.5):
-    # 0.7 * 0.5 = 0.35 < MIN_CONFIDENCE -> uncertain even though history is "enough".
-    series = []
-    for i in range(21):
-        series.append(168.0 if i % 2 == 0 else 176.0)  # range exactly 8c
-    a = assess_cycle(_lows(series), tank_l=55)
-    assert a.history_days == 21
-    assert a.amplitude == 8.0
-    assert a.confidence < CycleConfig.MIN_CONFIDENCE
-    assert a.verdict == "uncertain"
+# --------------------------------------------------------------------------- #
+# Every computed signal is load-bearing (regression guard against "decorative
+# signals" — the audit finding the redesign fixed).
+# --------------------------------------------------------------------------- #
+
+def test_all_slopes_and_extrema_are_populated_on_a_real_call():
+    a = assess_cycle(_lows(RISING_MID_SERIES), tank_l=55)
+    for field in (
+        a.three_day_trend, a.seven_day_trend, a.fourteen_day_trend,
+        a.cycle_percentile, a.days_since_local_minimum, a.days_since_local_maximum,
+    ):
+        assert field is not None
