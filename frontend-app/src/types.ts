@@ -84,17 +84,19 @@ export interface CustomRule {
   cents: number;
 }
 
+/** Output of the deterministic cycle classifier (backend engine/cycle.py). The
+ *  verdict modifies the finder's recommendation; `basis` quotes the real numbers
+ *  it was computed from (the trust mechanism). No LLM — see CLAUDE.md §6. */
+export type Verdict = "fill_now" | "fill_only_needed" | "wait" | "uncertain";
+
 export interface AdvisorResult {
-  verdict: "fill_now" | "wait" | "cheapest_now";
+  verdict: Verdict;
   headline: string;
   detail: string;
-  confidence: "high" | "low";
-  phase: string | null;
-  wait_days: number | null;
-  expected_saving_per_tank: number | null;
   basis: string;
-  source: "llm" | "deterministic";
-  recommended_station: StationOffer | null;
+  confidence: number; // 0..1
+  expected_saving_per_tank: number | null;
+  recommended_station: { name: string; price: number } | null;
 }
 
 export interface UserModel {

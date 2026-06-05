@@ -82,17 +82,29 @@ the product. Don't drift into a generic price browser.
 - Core primitive is "cheapest near me." Use geolocation with a manual location fallback.
   `stationId` + lat/lng are first-class fields.
 
-### 6. AI-native product feature — "Fill up now or wait?" advisor (CONFIRMED)
-- Advisor layered on top of the always-available "cheapest near me, now" core. Simple,
-  explainable cycle heuristic — NOT ML. Three layers: deterministic engine (source of
-  truth) → Claude as a language-only layer (parse + phrase, tool-use, never invents a
-  number) → presentation that shows the basis. Server-side key only; full deterministic
-  fallback if the LLM is missing/down.
-- **The LLM only earns its keep if there's a real free-text entry point.** A genuine NL
-  input must exist in the UI (e.g. "is it worth driving 5km for U91?") — otherwise Claude
-  is just templating a deterministic verdict and the key/latency/cost buy nothing, which
-  a sharp reviewer will catch. If we cut to heuristic-only (see Cut-line), that's fine
-  and defensible — but then drop the LLM entirely rather than faking value.
+### 6. AI-native product feature — "Fill up now or wait?" advisor (DECIDED: deterministic, no LLM/ML)
+- **Timing is a prediction problem, not a language problem — we use an explainable
+  rule-based cycle classifier; generated copy is a pure presentation layer. No LLM/ML.**
+  The classifier (`backend/app/engine/cycle.py`) reasons over the cached daily area-low
+  series and returns one of four verdicts — `fill_now | fill_only_needed | wait |
+  uncertain` — the confidence it reached them with (0..1, biased LOW), the signals
+  (7-/14-day trend, percentile in a 30-day window, days since local min/max, streaks),
+  and a factual `basis` string that always quotes the real numbers that drove the verdict.
+  That basis IS the trust mechanism; it never reads as "AI thinks…".
+- **Why no LLM here.** A driver at the bowser won't type free-text questions, so there's
+  no genuine NL entry point — and without one, an LLM would only re-phrase a deterministic
+  verdict, buying nothing for its key/latency/cost while adding a failure mode. So we
+  dropped the language layer entirely (rather than fake its value) — see the deleted
+  `advisor/llm.py`. The advisor needs no Anthropic key and has no network on its path.
+- **Integration (see §7.5): the verdict is a MODIFIER on the finder's recommendation,
+  not a separate screen.** `fill_now` reinforces the picked station, `wait` softens it
+  ("cheapest today, but prices look high — consider waiting"), `fill_only_needed` adds a
+  "top up only" nuance, and `uncertain` shows nothing (never invents a signal). Surfaced
+  inline on the result, glanceable, with the basis available on tap.
+- Conservative bias is deliberate (CLAUDE.md §10): Sydney's cycle is irregular and
+  lengthening, so a confident-but-wrong "wait" before a hike is the worst outcome —
+  confidence is a product of independent data-quality factors (enough history, detectable
+  amplitude, fresh data) so any weak factor collapses it to `uncertain`.
 - Needs a HISTORICAL daily-lows series (current v1/v2 API has no trends endpoint). See §10.
 
 ### 7. Product model — the decisions the brief leaves implicit (DON'T skip)
@@ -188,9 +200,10 @@ v1 cut: single destination, single best stop; multi-stop "how much to buy at eac
   "cheapest right now" fallback.
 
 ### 11. Security hardening (cheap, reads as rigor)
-- NL advisor endpoint is a public-facing LLM call: short max_tokens, one call per
-  question, scope-limiting system prompt, basic length cap / rate guard against
-  injection + cost abuse.
+- The advisor is deterministic (§6) — no LLM call, no public-facing prompt, so the prompt-
+  injection / token-cost attack surface that an NL endpoint would add simply doesn't exist.
+  The `/advisor` endpoint takes only typed params (fuel/area/tank/station) and reads from
+  cache; keep its inputs validated and bounded like the rest of the API.
 - Geocoding for manual-entry fallback (suburb → lat/lng): use Nominatim/OSM (no key).
 
 

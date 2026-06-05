@@ -43,27 +43,31 @@ export function FuelChooser({
   }
 
   // Inline refine: a single scrollable row (slider) — tidy, full-width-aligned,
-  // with an edge fade so it's obvious more fuels sit off-screen.
+  // with an edge fade so it's obvious more fuels sit off-screen. A label tells the
+  // user the bare fuel codes (E10, U91…) ARE the fuel-type selector — scanability.
   return (
-    <HScroll fade="none">
-      {entries.map(([code, label]) => {
-        const active = code === value;
-        return (
-          <button
-            key={code}
-            onClick={() => onChange(code)}
-            title={label}
-            aria-pressed={active}
-            className={`inline-flex min-h-[44px] shrink-0 items-center rounded-full border px-4 text-sm font-medium transition-colors ${
-              active
-                ? "border-transparent bg-[color:var(--color-surface-secondary)] text-[color:var(--color-surface-page)]"
-                : "border-border text-text-secondary hover:border-border-strong hover:text-text"
-            }`}
-          >
-            {code}
-          </button>
-        );
-      })}
-    </HScroll>
+    <div>
+      <p className="cap mb-1.5 px-1 text-text-secondary">Fuel type</p>
+      <HScroll fade="none">
+        {entries.map(([code, label]) => {
+          const active = code === value;
+          return (
+            <button
+              key={code}
+              onClick={() => onChange(code)}
+              title={label}
+              aria-pressed={active}
+              className={`inline-flex min-h-[44px] shrink-0 items-center rounded-full border px-4 text-sm font-medium transition-colors ${
+                active
+                  ? "border-transparent bg-[color:var(--color-surface-secondary)] text-[color:var(--color-surface-page)]"
+                  : "border-border text-text-secondary hover:border-border-strong hover:text-text"
+              }`}
+            >
+              {code}
+            </button>
+          );
+        })}
+      </HScroll>
+    </div>
   );
 }

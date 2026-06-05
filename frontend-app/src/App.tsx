@@ -5,6 +5,7 @@ import { useUserModel } from "./hooks/useUserModel";
 import type { CatalogPreset, Meta, NearMeResult, RouteResult, StationOffer } from "./types";
 import { navigateUrl } from "./lib/navigate";
 import { AnswerCard } from "./components/AnswerCard";
+import { Advisor } from "./components/Advisor";
 import { FuelChooser } from "./components/FuelChooser";
 import { OfferList } from "./components/OfferList";
 import { SettingsSheet } from "./components/SettingsSheet";
@@ -267,6 +268,15 @@ export default function App() {
                 });
               }}
               map={{ offers, origin, destination: destCoords, route: isRoute(result) ? result.route_geometry : [] }}
+            />
+
+            {/* Timing verdict — a glanceable modifier directly under the answer,
+                styled per the provided design (brand mark + mono caption).
+                Hidden when the signal is too weak to act on (CLAUDE.md §6, §7.5). */}
+            <Advisor
+              fuel={model.fuelType}
+              tank={model.tankL}
+              recommendedCode={recommended.station_code}
             />
 
             <OfferList

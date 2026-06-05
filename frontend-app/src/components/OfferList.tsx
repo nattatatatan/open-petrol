@@ -55,7 +55,6 @@ export function OfferList({
             const fm = FRESHNESS_META[o.freshness];
             const cheaper = o.saving_per_litre > 0;   // beats the baseline at the pump
             const worthIt = o.net_benefit > 0.5;      // nets out ahead after fuel + time
-            const bridge = `${formatDollars(o.saving_per_tank)} cheaper · ${formatDollars(o.detour_cost)} to drive · net ${formatDollars(o.net_benefit)}`;
             const expanded = expandedRow === o.station_code;
             return (
               <li key={o.station_code}>
@@ -82,11 +81,15 @@ export function OfferList({
                           />
                         )}
                       </div>
-                      <div className="mt-0.5 flex min-w-0 items-center gap-1.5 text-[11px] text-text-secondary">
-                        <span className="mono min-w-0 flex-1 truncate">
+                      <div className="mt-0.5 flex min-w-0 items-center gap-2">
+                        {/* Pump price leads — gold + heavier so it's the first number
+                            scanned in the row (many drivers choose on pump price). */}
+                        <span className="mono shrink-0 text-[15px] font-medium leading-none text-[color:var(--color-brand)]">
+                          {formatCents(o.discount > 0 ? o.effective_price : o.price)}
+                          <span className="text-[10px] font-normal">c/L</span>
+                        </span>
+                        <span className="mono min-w-0 flex-1 truncate text-[11px] text-text-secondary">
                           {mode === "route" ? `${formatMinutes(o.detour_min)} detour` : formatDistance(o.distance_km)}
-                          {" · "}
-                          {formatCents(o.discount > 0 ? o.effective_price : o.price)}c/L
                           {worthIt
                             ? ` · ${formatCents(o.saving_per_litre)}c/L cheaper`
                             : cheaper

@@ -42,10 +42,6 @@ class Settings(BaseSettings):
     fuelcheck_api_secret: str = ""
     fuelcheck_base_url: str = "https://api.onegov.nsw.gov.au"
 
-    # Anthropic (advisor language layer only; server-side)
-    anthropic_api_key: str = ""
-    anthropic_model: str = "claude-haiku-4-5-20251001"
-
     # External geometry services (keyless)
     osrm_base_url: str = "https://router.project-osrm.org"
     nominatim_base_url: str = "https://nominatim.openstreetmap.org"

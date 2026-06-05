@@ -16,12 +16,14 @@ type LatLng = [number, number];
 /** The hero — the whole product (STYLE_GUIDE §4, the Decision-Atom Model).
  *
  *  Hierarchy is encoded in position/colour/weight, not words:
- *   T1 verdict  — station name (gold-marked winner) + the saving (big, GREEN, c/L leads)
- *   T2 cost     — confidence chip + detour + cost-to-get-there (mid-grey, smaller)
- *   T3 proof    — pump price c/L + baseline (quiet DM Mono)
- *  One gold element (the winner), one green number (the saving). Confidence
- *  modulates Tier-1 strength: a stale card visibly cools (gold→neutral). We stay
- *  decisive even with no worthwhile detour — we just don't fake a saving.
+ *   T1 verdict  — station name + the NET-of-detour $ saving (big, GREEN; $-led per
+ *                 §7), explicitly labelled with a fuel-saving − detour breakdown so
+ *                 the user never re-does the math
+ *   T2 cost     — confidence chip + spatial detour (mid-grey, smaller)
+ *   T3 proof    — fuel type + the pump price c/L the saving rests on (gold, bumped
+ *                 up from a quiet caption since drivers sanity-check on pump price)
+ *  Confidence modulates Tier-1 strength: a stale card visibly cools (gold→neutral).
+ *  We stay decisive even with no worthwhile detour — we just don't fake a saving.
  *
  *  DOM order is decision-first (§11): verdict→saving→confidence→proof→Navigate,
  *  with the map placed last in DOM but first visually (CSS order). */
@@ -51,11 +53,10 @@ export function AnswerCard({
     route: LatLng[];
   };
 }) {
-  // Route: lead with the saving only if the DETOUR is worth it (net of detour).
-  // Near-me: you're filling up nearby anyway, so lead with the price advantage
-  // whenever this pick is genuinely cheaper than your baseline — the small cost to
-  // reach it is shown separately ("$X to get there"), not used to hide the saving.
-  const worthwhile = mode === "route" ? offer.net_benefit > 0.5 : offer.saving_per_litre > 0;
+  // The headline saving is NET of detour in both modes (the truth the user would
+  // otherwise have to compute themselves), so we only claim a saving when the pick
+  // genuinely nets ahead. Otherwise we stay honest: cheapest/nearest, no faked $.
+  const worthwhile = offer.net_benefit > 0.5;
   const fresh = offer.freshness === "fresh";
   const winnerPrice = offer.discount > 0 ? offer.effective_price : offer.price;
 
@@ -87,21 +88,30 @@ export function AnswerCard({
           <p className="mono mt-1 pl-[26px] text-xs text-text-secondary">{offer.address}</p>
         )}
 
-        {/* T1 verdict — saving (the big GREEN hero; c/L leads, $ is an estimate) */}
+        {/* T1 saving — the NET-of-detour dollar saving leads (CLAUDE.md §7: $ is
+            instantly evaluable). Explicitly labelled, with the fuel-saving − detour
+            breakdown spelled out, so the user never re-does the math (north star:
+            the app computes; the UI explains). */}
         <div className="mt-lg">
           {worthwhile ? (
             <>
-              {/* $-led (CLAUDE.md §7): dollars are instantly evaluable; c/L is the
-                  tank-independent comparator beneath. */}
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-base font-light text-text">save</span>
+              <p className="cap text-text-secondary">You save · after detour</p>
+              <div className="mt-1.5 flex items-baseline gap-1.5">
                 <span className="mono text-[46px] font-light leading-none text-[color:var(--saving-positive)]">
-                  {formatDollars(offer.saving_per_tank)}
+                  +{formatDollars(offer.net_benefit)}
+                </span>
+                <span className="text-sm font-light text-text-secondary">
+                  on a ~{Math.round(tankL)}L fill · vs {baseline.label}
                 </span>
               </div>
-              <p className="cap mt-2 text-text-secondary">
-                {formatCents(offer.saving_per_litre)}c/L cheaper · ~{Math.round(tankL)}L fill · vs {baseline.label}
-              </p>
+              {offer.detour_cost >= 0.01 && (
+                <p className="cap mt-2 text-text-secondary">
+                  fuel saving{" "}
+                  <span className="text-[color:var(--saving-positive)]">+{formatDollars(offer.saving_per_tank)}</span>
+                  {" · "}detour{" "}
+                  <span className="text-[color:var(--detour-cost)]">−{formatDollars(offer.detour_cost)}</span>
+                </p>
+              )}
             </>
           ) : (
             <p className="text-base text-text">
@@ -115,19 +125,19 @@ export function AnswerCard({
           )}
         </div>
 
-        {/* T2 cost of acting — confidence + detour (mono captions) */}
-        <div className="mt-md flex flex-wrap items-center gap-x-4 gap-y-1">
+        {/* T2 cost of acting — confidence + the spatial detour. The dollar cost of
+            that detour lives inside the saving breakdown above, so it's stated once,
+            never double-counted. */}
+        <div className="mt-md flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-divider-subtle pt-md">
           <ConfidenceChip
             freshness={offer.freshness}
             lastUpdated={offer.last_updated}
             reference={reference}
           />
-          <span className="cap text-[color:var(--detour-cost)]">
+          <span className="cap text-text-secondary">
             {mode === "route"
               ? `${formatMinutes(offer.detour_min)} detour`
               : `${formatDistance(offer.distance_km)} away`}
-            {" · "}
-            {formatDollars(offer.detour_cost)} to get there
           </span>
         </div>
 
@@ -137,19 +147,23 @@ export function AnswerCard({
           </p>
         )}
 
-        {/* T3 proof — pump price (quiet), demoted from hero to evidence */}
-        <div className="mt-md flex items-center gap-2 border-t border-divider-subtle pt-md">
+        {/* T3 proof — the pump price the saving rests on. Stays below the $ hero,
+            but bumped up (larger, gold) since many drivers sanity-check on the pump
+            price itself. Fuel type sits beside it (the price is only right for one). */}
+        <div className="mt-md flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-divider-subtle pt-md">
           <Pill className="cap border border-border text-text-secondary">{offer.fuel_type}</Pill>
-          <span className="mono text-sm text-text-secondary">
-            {formatCents(winnerPrice)}c/L
-            {offer.discount > 0 && (
-              <>
-                {" "}
-                <span className="line-through opacity-60">{formatCents(offer.price)}</span>{" "}
-                <span>−{formatCents(offer.discount)}c {offer.discount_label ?? "member"}</span>
-              </>
-            )}
-          </span>
+          <div className="flex items-baseline gap-1">
+            <span className="mono text-[22px] font-light leading-none text-[color:var(--color-brand)]">
+              {formatCents(winnerPrice)}
+            </span>
+            <span className="mono text-xs font-light text-[color:var(--color-brand)]">c/L</span>
+          </div>
+          {offer.discount > 0 && (
+            <span className="mono text-xs text-text-secondary">
+              <span className="line-through opacity-60">{formatCents(offer.price)}c</span>
+              {" · "}−{formatCents(offer.discount)}c {offer.discount_label ?? "member"} applied
+            </span>
+          )}
         </div>
 
         {/* Close the loop — thumb-zone primary action (dark raised, label left,

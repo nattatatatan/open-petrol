@@ -1,14 +1,18 @@
-"""Advisor service — the three-layer "fill up now or wait?" feature (CLAUDE.md §6).
+"""Advisor service — the "fill up now or wait?" feature (CLAUDE.md §6).
 
-Layer 1 (here + engine/cycle.py): deterministic facts — the source of truth.
-Layer 2 (llm.py): Claude phrases / answers free-text using ONLY those facts.
-Layer 3 (frontend): shows the verdict + the basis.
+Two layers, no LLM:
+  1. engine/cycle.py — the deterministic classifier: the source of truth. It returns
+     a verdict, the confidence it was reached with, the signals, and a factual `basis`.
+  2. here — a PURE PRESENTATION layer: it maps the verdict to glanceable headline +
+     detail copy and passes the classifier's `basis` through untouched.
 
-The deterministic layer always produces a complete answer, so the feature works
-fully with no Anthropic key; the LLM is a pure enhancement for free-text questions.
+Timing is a prediction problem, not a language problem, so there is no model and no
+network on this path — the verdict reads only from the cached daily-low series.
 """
 
 from __future__ import annotations
+
+from datetime import date, datetime, timezone
 
 from pydantic import BaseModel
 
@@ -21,15 +25,12 @@ from app.sources.base import FuelSource
 
 
 class AdvisorResult(BaseModel):
-    verdict: str                              # fill_now | wait | cheapest_now
+    verdict: str                              # fill_now | fill_only_needed | wait | uncertain
     headline: str
     detail: str
-    confidence: str
-    phase: str | None
-    wait_days: int | None
+    basis: str                               # the real numbers behind the verdict
+    confidence: float                        # 0..1
     expected_saving_per_tank: float | None
-    basis: str
-    source: str                               # "deterministic" | "llm"
     recommended_station: dict | None = None
 
 
@@ -46,56 +47,54 @@ def _recommended_info(cache: PriceCache, fuel: str, code: str | None) -> dict | 
     return {"name": station.name, "price": price.price}
 
 
+# Verdict -> glanceable copy. The advisor is a MODIFIER on the finder's
+# recommendation (CLAUDE.md §7.5): it reinforces, softens, or qualifies the picked
+# station — it is never a separate answer. `uncertain` is rendered as nothing by the
+# UI; we still return honest copy for completeness/testing.
 def build_deterministic(
     cycle: CycleAssessment, *, fuel: str, tank: float, rec: dict | None
 ) -> AdvisorResult:
     label = FUEL_TYPE_LABELS.get(fuel, fuel)
+    station = rec["name"] if rec else "the cheapest station"
 
-    if cycle.verdict == "cheapest_now":
-        detail = "Not enough recent price history to call the cycle confidently."
-        if rec:
-            detail += f" Right now the best option is {rec['name']} at {rec['price']:.1f}c/L."
-        return AdvisorResult(
-            verdict="cheapest_now",
-            headline="Just grab the cheapest now",
-            detail=detail,
-            confidence="low",
-            phase=cycle.phase,
-            wait_days=None,
-            expected_saving_per_tank=None,
-            basis="Based on the cheapest current price — not a timing prediction.",
-            source="deterministic",
-            recommended_station=rec,
-        )
+    if cycle.verdict == "fill_now":
+        headline = "Good time to fill up"
+        detail = f"{label} is near its recent low and starting to climb — worth filling at {station} now."
 
-    basis = (
-        f"Based on the last few weeks of {label} area lows "
-        f"(low {cycle.recent_low}c, high {cycle.recent_high}c, today {cycle.current_low}c)."
-    )
-
-    if cycle.verdict == "wait":
+    elif cycle.verdict == "wait":
         save = cycle.expected_saving_per_tank
-        headline = f"Worth waiting ~{cycle.wait_days} days" if cycle.wait_days else "Worth waiting"
+        headline = "Cheapest today — but prices look high"
         detail = (
-            f"Prices are near their recent peak ({cycle.current_low}c). "
-            + (f"Waiting could save about ${save:.2f} on a {tank:.0f}L tank if the cycle drops as usual."
-               if save and save > 0 else "They typically fall soon from here.")
-        )
-        return AdvisorResult(
-            verdict="wait", headline=headline, detail=detail, confidence=cycle.confidence,
-            phase=cycle.phase, wait_days=cycle.wait_days, expected_saving_per_tank=save,
-            basis=basis, source="deterministic", recommended_station=rec,
+            f"{station} is the best {label} price right now, but the area is near its cycle peak"
+            + (
+                f"; waiting could save about ${save:.2f} on a {tank:.0f}L fill if it drops as usual."
+                if save and save > 0
+                else " and may fall soon — top up only if you need to."
+            )
         )
 
-    # fill_now
-    if cycle.phase == "near_trough":
-        detail = f"Prices are near their recent low ({cycle.current_low}c) and usually climb from here."
-    else:
-        detail = "Prices are on the way up — fill before they climb further."
+    elif cycle.verdict == "fill_only_needed":
+        headline = "Fill if you need to"
+        detail = (
+            f"{label} prices are mid-cycle — no clear win from timing it. "
+            f"{station} is your cheapest option if you're filling today."
+        )
+
+    else:  # uncertain
+        headline = "Just grab the cheapest now"
+        detail = (
+            f"Not enough recent {label} price history to call the cycle — "
+            f"{station} is your cheapest option right now."
+        )
+
     return AdvisorResult(
-        verdict="fill_now", headline="Fill up now", detail=detail, confidence=cycle.confidence,
-        phase=cycle.phase, wait_days=None, expected_saving_per_tank=None,
-        basis=basis, source="deterministic", recommended_station=rec,
+        verdict=cycle.verdict,
+        headline=headline,
+        detail=detail,
+        basis=cycle.basis,
+        confidence=cycle.confidence,
+        expected_saving_per_tank=cycle.expected_saving_per_tank,
+        recommended_station=rec,
     )
 
 
@@ -111,28 +110,17 @@ class AdvisorService:
         fuel: str,
         area: str,
         tank: float,
-        question: str | None = None,
         recommended_station_code: str | None = None,
     ) -> AdvisorResult:
         lows = await self._source.get_historical_lows(fuel, area, days=42)
-        cycle = assess_cycle(lows, tank)
+        # Anchor staleness to the snapshot's day for the demo; live data is "today".
+        now = self._reference_date()
+        cycle = assess_cycle(lows, tank, now=now)
         rec = _recommended_info(self._cache, fuel, recommended_station_code)
-        deterministic = build_deterministic(cycle, fuel=fuel, tank=tank, rec=rec)
+        return build_deterministic(cycle, fuel=fuel, tank=tank, rec=rec)
 
-        # The LLM only earns its keep on free-text (CLAUDE.md §6). No question, or no
-        # key -> deterministic. Any LLM failure -> deterministic.
-        if question and self._settings.anthropic_api_key:
-            from app.advisor.llm import phrase_with_claude
-
-            try:
-                return await phrase_with_claude(
-                    settings=self._settings,
-                    question=question,
-                    cycle=cycle,
-                    deterministic=deterministic,
-                    fuel=fuel,
-                    tank=tank,
-                )
-            except Exception:  # noqa: BLE001 - degrade to deterministic on ANY failure
-                return deterministic
-        return deterministic
+    def _reference_date(self) -> date:
+        snap = self._cache.get_snapshot()
+        if snap is not None:
+            return snap.captured_at.date()
+        return datetime.now(timezone.utc).date()

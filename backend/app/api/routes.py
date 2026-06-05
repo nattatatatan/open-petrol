@@ -240,14 +240,14 @@ class AdvisorRequest(BaseModel):
     fuel: str = "E10"
     area: str = "Sydney"
     tank: float = Field(55, gt=0, le=200)
-    question: str | None = Field(None, max_length=280)  # length cap (CLAUDE.md §11)
     recommended_station_code: str | None = None
 
 
 @router.post("/advisor", response_model=AdvisorResult)
 async def advisor(request: Request, body: AdvisorRequest) -> AdvisorResult:
-    """'Fill up now or wait?' — grounded in the cached price-cycle (CLAUDE.md §6)."""
+    """'Fill up now or wait?' — a deterministic cycle classifier over the cached
+    daily lows; the verdict modifies the finder's recommendation (CLAUDE.md §6)."""
     return await request.app.state.advisor.advise(
         fuel=body.fuel, area=body.area, tank=body.tank,
-        question=body.question, recommended_station_code=body.recommended_station_code,
+        recommended_station_code=body.recommended_station_code,
     )
