@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { api, type GeoPlace } from "../api";
-import { Input } from "./ui";
+import { Input, SearchIcon } from "./ui";
 
 /** Geocoded location entry with a debounced suggestions dropdown (CLAUDE.md §5, §11).
  *  Powers both the origin override ("pick a location instead of current") and the
@@ -82,13 +82,15 @@ export function PlaceSearch({
         }}
         onFocus={() => hits.length > 0 && setOpen(true)}
         placeholder={placeholder}
+        prefix={<SearchIcon />}
+        onClear={value ? () => { onChange(""); setHits([]); setOpen(false); } : undefined}
         suffix={suffix}
         size={size}
         raised={raised}
         autoFocus={autoFocus}
       />
       {open && hits.length > 0 && (
-        <ul className="absolute z-20 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-border bg-[color:var(--color-card-raised)] shadow-lg">
+        <ul className="absolute z-20 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-border bg-[color:color-mix(in_srgb,var(--color-card-raised)_92%,transparent)] backdrop-blur-md">
           {hits.map((p, i) => (
             <li key={`${p.latitude},${p.longitude},${i}`}>
               <button

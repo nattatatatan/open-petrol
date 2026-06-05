@@ -27,9 +27,9 @@ export function ModeToggle({
             role="tab"
             aria-selected={active}
             onClick={() => onChange(m)}
-            className={`flex min-h-[44px] items-center justify-center rounded-full text-sm font-semibold transition-colors ${
+            className={`flex min-h-[44px] items-center justify-center rounded-full text-sm font-medium transition-colors ${
               active
-                ? "bg-[color:var(--color-card-raised)] text-text"
+                ? "bg-white text-black"
                 : "text-text-secondary hover:text-text"
             }`}
           >

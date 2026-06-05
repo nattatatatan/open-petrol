@@ -52,70 +52,32 @@ Evidence behind the product decisions in CLAUDE.md. Useful for the walkthrough
 3. Tank level gates the decision (must-stop-now vs can-wait / future trip).
 4. Low detour + tangible dollar value is what overcomes habit and the no-search default.
 
-## Loyalty / membership pricing (UX review — thread A)
-
-- Supermarket fuel dockets are **capped at 4c/L** by an ACCC undertaking (since 2013):
-  Coles+Shell/Reddy Express and Woolworths+Ampol, on a $30 spend.
-  Sources: https://www.accc.gov.au/media-release/coles-and-woolworths-undertake-to-cease-supermarket-subsidised-fuel-discounts
-  · https://fueldaddy.com.au/blog/fuel-loyalty-programs-australia/
-- Motoring clubs: **RACV 5c/L** at EG Ampol (stackable to ~13c with Woolies + in-store
-  spend); **NRMA 5c premium / 4c regular**; **RACQ 4c** at Puma.
-  Sources: https://www.racv.com.au/membership/member-discounts/motoring/fuel-vouchers.html
-  · https://acapmag.com.au/2025/01/best-fuel-discount-programs-in-australia/
-- **7-Eleven Fuel Lock** is a different mechanic: lock the cheapest of your 5 nearest
-  stores for 7 days, up to 150L, **max 25c/L** saving — a tool, not a fixed discount.
-  Source: https://www.7eleven.com.au/get-to-know-us/stories/news/My-7-Eleven-App-Fuel-Price-Lock-feature-saves-Australian-drivers-when-filling-up.html
-- **Costco** ~a few c/L cheaper; $65/yr membership.
-- Implication: a 4–5c/L member discount (~$2.50/tank) can exceed the gap between our
-  top-ranked stations, so FuelCheck *pump* price can rank the wrong winner for these
-  users. → must-have honesty caveat now; effective-price modelling (brand-keyed) is a
-  high-ROI stretch. 7-Eleven lock is out of scope (separate app, 7-day lock).
-- **SHIPPED (stretch):** multi-select card catalog (Everyday Rewards / flybuys / NRMA /
-  RACV) → engine applies the **single best** brand-tied discount per station (no stacking)
-  → ranks on EFFECTIVE price; pump price stays visible. NRMA is fuel-tiered (4c regular /
-  5c premium). Rates are **user-editable** and a **custom "−Xc at [brand]"** rule is
-  supported.
-- **Why user-editable rates (the load-bearing insight):** there is NO API for discount
-  rates, for which cards a user holds, or for active dockets — that data is inherently
-  private. So user input was always required; making the rate editable is a tiny
-  extension. Crucially, **the user owns the number**, which is exactly why we can defer
-  the stacking engine, docket tracking, and eligibility entirely (all CUT for v1) — a user
-  can express a 10c docket week by bumping the rate, with zero modelling on our side.
-  7-Eleven Fuel Lock is also out (different mechanic — a 7-day price lock, not a rate).
-- **Anti-over-claim mapping:** Coles/flybuys → Reddy Express only (the former Coles Express
-  network), NOT generic "Shell" — in the live data, OTR sites are Shell-branded but don't
-  honour the docket, and not every Shell is a participating Coles Express. Claiming a
-  discount that doesn't apply would break the same trust as labelling a stale price fresh
-  (CLAUDE.md §4). **Costco is excluded** entirely: its FuelCheck pump price already IS the
-  member price, so modelling a "Costco discount" would double-count. **RACQ deferred** —
-  it maps to Puma, which is near-absent in the NSW dataset (the preset would be inert).
-- Production note: the preset catalog is a small REMOTE JSON fetched once on launch (base
-  rates update without a new build) — the only fetch that makes sense (the shared catalog,
-  never the user's personal cards). Bundled JSON for the demo.
-
-## EV charging (thread B)
-
-- FuelCheck's real-time feed tags "EV" as a fuel type (our live pull returned ~900 EV
-  rows) but it is **not c/L-comparable** (priced per kWh/session).
-- Charger **type, plug, and power** live in a **separate, quarterly** TfNSW *EV Charging
-  Locations* dataset — different unit, source, and cadence than the price feed.
-  Source: https://data.nsw.gov.au/data/dataset/2-ev-charging-locations
-- Implication: including EV breaks the c/L savings + detour story, the real-time
-  freshness model, and the value prop (EV is about speed/availability, not price).
-  → cut for v1; a sibling EV mode is future work.
-
-## Multi-fuel vehicles (thread H)
-
-- The common "multi-fuel" reality is **E10-or-91**: E10 is just 91 + ≤10% ethanol, and
-  most petrol cars built from ~2005 are E10-compatible. E10 carries ~3% less energy, so
-  "cheaper per litre" is closer to break-even on cost/km.
-  Sources: https://www.nsw.gov.au/driving-boating-and-transport/e10-fuel/e10-facts
-  · https://www.carsguide.com.au/car-advice/can-my-car-use-e10-ethanol-fuel-23625
-- True dual-fuel (LPG) is a **shrinking ~2% niche**: autogas "cards" fell ~60% (≈500k →
-  ≈200k), ~51k LPG-only cars, and no new LPG cars sold since 2018.
-  Sources: https://www.goauto.com.au/news/market-insight/market-insight-2024/market-insight-the-rise-and-fall-of-lpg/2024-04-15/93585.html
-  · https://www.mynrma.com.au/cars-and-driving/fuel-resources/the-story-behind-the-rise-and-fall-of-lpg
-- Implication: keep fuel single-select; add an E10/91-equivalence nudge (0 clicks);
-  full multi-select is unjustified (mixes units; only the 2% LPG niche needs it).
-
 _All claims paraphrased from the listed sources; see URLs for originals._
+
+## Savings framing — lead with $ (net), not c/L
+
+Decision (CLAUDE.md §7): the hero AND list lead with the dollar saving; c/L is secondary.
+Evidence:
+
+- **Evaluability.** People rely on whichever attribute is easiest to judge and avoid ones
+  needing computation; a hard-to-evaluate option gets judged on the easy attribute. "$3.46"
+  is instantly meaningful; "6.3c/L" needs a ×tank-size step a driver won't do.
+  Source: Caviola et al., evaluability bias. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4179876/
+- **Concreteness / construal.** Dollar-off framing induces concrete, low-level (act-now)
+  construal; percent-off induces abstract construal. Dollars fit the "where do I pull in
+  now" decision. Source: "Dollar-Off or Percent-Off?" (Bryant).
+  https://digitalcommons.bryant.edu/cgi/viewcontent.cgi?article=1106&context=mark_jou
+- **Reference points sharpen magnitude judgments** — so anchor the $ ("vs area avg / your
+  usual"). Source: Kreiner (2026), JBDM. https://onlinelibrary.wiley.com/doi/10.1002/bdm.70079
+- **Unit pricing is underused** — ~1/3 don't understand it, ~1/3 don't bother looking — so
+  c/L is a poor primary decision number. Source: Consumer Awareness/Usage of Unit Pricing.
+  https://www.researchgate.net/publication/228137037
+- **Counter-current (doesn't flip it):** proportion dominance — people sometimes prefer
+  *relative* savings, and an absolute amount feels bigger as a larger share of the bill.
+  That argues for %, not c/L; and $3–9 on a ~$90 fill is already a healthy proportion.
+  Sources: Bartels (2006) https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1938519 ;
+  mental accounting https://www.sciencedirect.com/science/article/abs/pii/S0167268199000037
+
+Wrong-tank guard: label fill size ("on a ~55L fill") + keep c/L visible beneath — neutralises
+the original §7 concern that full-tank $ misleads partial-fill users.
+

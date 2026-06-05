@@ -5,7 +5,7 @@ const KEY = "spf.user.v1";
 
 const DEFAULT_MODEL: UserModel = {
   fuelType: "E10",
-  fuelChosen: false,
+  fuelChosen: true,
   tankL: 55,
   usualStation: null,
   usualStationName: null,

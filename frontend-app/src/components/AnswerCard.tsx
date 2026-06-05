@@ -78,9 +78,9 @@ export function AnswerCard({
           </Pill>
         </div>
 
-        {/* T1 verdict — station */}
-        <h2 className="mt-1 flex items-start gap-1.5 text-2xl font-medium leading-tight text-text-heading">
-          <Icon name="pin" size={20} className="mt-0.5 text-text-secondary" />
+        {/* T1 verdict — station (thin display type; the brand signature) */}
+        <h2 className="mt-1.5 flex items-start gap-1.5 text-[28px] font-extralight leading-tight tracking-display text-text-heading">
+          <Icon name="pin" size={20} className="mt-1.5 text-text-secondary" />
           <span>{offer.name}</span>
         </h2>
         {offer.address && (
@@ -94,8 +94,8 @@ export function AnswerCard({
               {/* $-led (CLAUDE.md §7): dollars are instantly evaluable; c/L is the
                   tank-independent comparator beneath. */}
               <div className="flex items-baseline gap-1.5">
-                <span className="text-base text-text">save</span>
-                <span className="mono text-[42px] font-medium leading-none text-[color:var(--saving-positive)]">
+                <span className="text-base font-light text-text">save</span>
+                <span className="mono text-[46px] font-light leading-none text-[color:var(--saving-positive)]">
                   {formatDollars(offer.saving_per_tank)}
                 </span>
               </div>

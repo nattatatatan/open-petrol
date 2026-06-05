@@ -30,7 +30,7 @@ export function FuelChooser({
               aria-pressed={active}
               className={`flex h-[56px] flex-col items-center justify-center rounded-lg border text-base font-medium transition-colors ${
                 active
-                  ? "border-[color:var(--color-border-strong)] bg-[color:var(--color-card-raised)] text-text"
+                  ? "border-transparent bg-[color:var(--color-surface-secondary)] text-[color:var(--color-surface-page)]"
                   : "border-border text-text-secondary hover:border-border-strong hover:text-text"
               }`}
             >
@@ -45,7 +45,7 @@ export function FuelChooser({
   // Inline refine: a single scrollable row (slider) — tidy, full-width-aligned,
   // with an edge fade so it's obvious more fuels sit off-screen.
   return (
-    <HScroll fade="page">
+    <HScroll fade="none">
       {entries.map(([code, label]) => {
         const active = code === value;
         return (
@@ -56,7 +56,7 @@ export function FuelChooser({
             aria-pressed={active}
             className={`inline-flex min-h-[44px] shrink-0 items-center rounded-full border px-4 text-sm font-medium transition-colors ${
               active
-                ? "border-[color:var(--color-border-strong)] bg-[color:var(--color-card-raised)] text-text"
+                ? "border-transparent bg-[color:var(--color-surface-secondary)] text-[color:var(--color-surface-page)]"
                 : "border-border text-text-secondary hover:border-border-strong hover:text-text"
             }`}
           >

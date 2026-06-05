@@ -5,7 +5,17 @@ export const formatCents = (c: number) => c.toFixed(1);
 
 export const formatDollars = (d: number) => {
   const sign = d < 0 ? "-" : "";
-  return `${sign}$${Math.abs(d).toFixed(2)}`;
+  const abs = Math.abs(d);
+  const fixed = abs.toFixed(2);
+  return `${sign}$${fixed.endsWith(".00") ? Math.round(abs) : fixed}`;
+};
+
+/** Casual, visibly-rounded figure for an inline cost-to-act ("~$5", "~$0.86").
+ *  Whole dollars once ≥ $1; cents below. Distinct from formatDollars (exact),
+ *  which carries the precise verdict and the saved − drive = net breakdown. */
+export const formatApproxDollars = (d: number) => {
+  const abs = Math.abs(d);
+  return abs >= 1 ? `~$${Math.round(abs)}` : `~$${abs.toFixed(2)}`;
 };
 
 export const formatDistance = (km: number) =>

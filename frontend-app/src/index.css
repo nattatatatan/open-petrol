@@ -15,9 +15,21 @@ body {
   margin: 0;
   background: var(--color-surface-page);
   color: var(--color-text-body);
-  font-family: "Inter", "NeueHaasGrotDispRD", system-ui, sans-serif;
+  font-family: "NeueHaasGrotDispRD", "Inter", system-ui, sans-serif;
+  /* Type IS the brand here: ultra-thin display, light body. NeueHaasGrotDispRD
+   * (the Figma face) leads; Inter is the shipped fallback and carries the same
+   * thin→light→roman weight logic. Default body weight is Light (300); only step
+   * up to Roman/Medium for genuine emphasis (VISUAL-LANGUAGE §3). */
+  font-weight: 300;
   -webkit-font-smoothing: antialiased;
   letter-spacing: 0.01em;
+}
+
+/* The signature: large display type rendered ultra-thin (35Thin → 200), with the
+ * editorial ~4% tracking. Use for the wordmark and hero headings — never bold. */
+.display {
+  font-weight: 200;
+  letter-spacing: 0.04em;
 }
 
 /* Tabular figures for prices/savings — DM Mono per the design system. */
@@ -31,6 +43,7 @@ body {
  * letter-spaced. Use `.mono` (not this) for mixed-case data like addresses. */
 .cap {
   font-family: "DM Mono", ui-monospace, monospace;
+  font-weight: 300; /* DM Mono Light — the systematic metadata weight (§3) */
   font-feature-settings: "tnum" 1;
   font-size: 11px;
   line-height: 16px;
@@ -69,3 +82,5 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+

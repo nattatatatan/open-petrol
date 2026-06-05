@@ -94,7 +94,7 @@ export default {
         xs: "4px", sm: "8px", md: "16px", lg: "24px", xl: "32px",
         "2xl": "40px", "3xl": "48px", "4xl": "56px",
       },
-      borderRadius: { none: "0px", DEFAULT: "4px", md: "8px", lg: "16px", xl: "24px", full: "9999px" },
+      borderRadius: { none: "0px", DEFAULT: "4px", md: "8px", lg: "4px", xl: "4px", full: "9999px" },
       borderWidth: { DEFAULT: "1px", md: "2px" },
       /* Effect-style blur scale (md=12, no 4xl) — no drop shadows exist in the system. */
       blur: {

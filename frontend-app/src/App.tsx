@@ -10,6 +10,7 @@ import { OfferList } from "./components/OfferList";
 import { SettingsSheet } from "./components/SettingsSheet";
 import { TrustBar } from "./components/TrustBar";
 import { ModeToggle, type Mode } from "./components/ModeToggle";
+import { Logo } from "./components/Logo";
 import { Icon } from "./components/Icon";
 import { PlaceSearch } from "./components/PlaceSearch";
 import { Card, Skeleton, Spinner } from "./components/ui";
@@ -132,28 +133,6 @@ export default function App() {
   const navigate = (o: StationOffer) =>
     window.open(navigateUrl(o, origin, destCoords), "_blank", "noopener");
 
-  // ── First-run fuel gate — the only upfront question (STYLE_GUIDE §7.2) ──
-  if (!model.fuelChosen) {
-    return (
-      <div className="mx-auto flex min-h-full max-w-md flex-col justify-center px-lg pb-[env(safe-area-inset-bottom)]">
-        <h1 className="text-xl font-bold tracking-display text-text-heading">
-          Petrol<span className="text-text-action">·</span>Finder
-        </h1>
-        <h2 className="mt-2xl text-2xl font-medium text-text-heading">Which fuel do you use?</h2>
-        <p className="mb-lg mt-1 text-sm text-text-secondary">
-          We scope every saving to your fuel — showing the wrong one would be unsafe.
-        </p>
-        <FuelChooser
-          variant="firstrun"
-          fuelTypes={fuelTypes}
-          value={model.fuelType}
-          onChange={(fuelType) => update({ fuelType, fuelChosen: true })}
-        />
-        <p className="mt-md text-xs text-text-secondary">You can change this any time.</p>
-      </div>
-    );
-  }
-
   const needsManual = geo.status === "denied" || geo.status === "unavailable";
   // Skeleton only while we're genuinely about to answer: a search is running, or
   // near-me is waiting on a location we can still get. Never when location is
@@ -166,9 +145,7 @@ export default function App() {
     <div className="mx-auto flex min-h-full max-w-md flex-col px-md pb-[env(safe-area-inset-bottom)]">
       <header className="flex items-center justify-between pt-[calc(16px+env(safe-area-inset-top))] pb-md">
         <div>
-          <h1 className="font-heading text-[32px] font-bold leading-none tracking-display text-text-heading">
-            Petrol<span className="text-text-action">·</span>Finder
-          </h1>
+          <h1 className="leading-none"><Logo /></h1>
           <p className="cap mt-1.5 text-text-secondary">Your best fill-up, right now</p>
         </div>
         <button
@@ -217,7 +194,7 @@ export default function App() {
             </div>
           </div>
         ) : geo.coords ? (
-          <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5 text-sm">
+          <div className="flex min-h-[44px] items-center justify-between rounded-lg border border-border px-4 py-2.5 text-sm">
             <span className="inline-flex items-center gap-2 text-text">
               <Icon name="location" size={15} className="text-[color:var(--color-success)]" />
               {geo.coords.label}
@@ -230,7 +207,7 @@ export default function App() {
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm text-text-secondary">
+          <div className="flex min-h-[44px] items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm text-text-secondary">
             <Spinner /> Finding your location…
           </div>
         )}
@@ -255,6 +232,12 @@ export default function App() {
           />
         )}
 
+        {error && (
+          <p className="text-sm text-[color:var(--color-text-error)]">
+            {error}
+          </p>
+        )}
+
         {/* Inline fuel refine — one tap, re-queries live (STYLE_GUIDE §7.3) */}
         <FuelChooser
           fuelTypes={fuelTypes}
@@ -262,12 +245,6 @@ export default function App() {
           onChange={(fuelType) => update({ fuelType })}
         />
       </div>
-
-      {error && (
-        <p className="mt-md rounded-md border border-[color:var(--color-border-error)] px-3 py-2 text-sm text-[color:var(--color-text-error)]">
-          {error}
-        </p>
-      )}
 
       <main className="mt-lg">
         {showSkeleton ? (

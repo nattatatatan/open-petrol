@@ -318,23 +318,32 @@ Layout sketches are mobile (≈ 360–390 dp wide). Thumb-zone = bottom third.
 ┌─────────────────────────────────────────────┐
 │ ‹ Other options                              │
 │ Ranked by what you'd save after fuel + time  │  ← framing line
-│ ● EG Ampol Corrimal            about even    │  $-led verdict (NET outcome)
-│   +6 min · 164.9c/L ‹RACV› · 9.6c/L cheaper  │  detour · eff price + chip · c/L cheaper
-│ ● BP Ryde                      save $6.10    │  green when worth a trip
-│   +1 min · 168.9c/L · 6.6c/L cheaper         │
-│ ● 7-Eleven Top Ryde            pricier here  │  not cheaper than baseline
-│   +0 min · 177.9c/L                          │
-│ Caltex (your usual)                    base  │  baseline anchor shown
-└─────────────────────────────────────────────┘
+│ ● EG Ampol Corrimal       about even  ⓘ │  $-led verdict (NET outcome)
+│   +6 min · 164.9c/L ‹RACV› · ~$5 to drive│  non-win: lead with the cost to act
+│ ● BP Ryde                 save $6.10   ⓘ │  green when worth a trip
+│   +1 min · 168.9c/L · 6.6c/L cheaper     │  clear win: lead with c/L cheaper
+│ ● 7-Eleven Top Ryde       pricier here   │  not cheaper than baseline (no toggle)
+│   +0 min · 177.9c/L                      │
+│ Caltex (your usual)               base   │  baseline anchor shown
+└─────────────────────────────────────────┘
+   tap ⓘ →  cheaper at the pump      $5.23
+            − fuel + time to drive   $5.36
+            = net                   -$0.13
 ```
 - A list, not a compare grid. Ranked on **net benefit**. Tapping a row makes it the active answer.
 - **The winner is NOT repeated here** — it's the hero card above; this list is strictly the
   *other* options, and the count reflects that.
 - **Same grammar as the hero:** the **$ verdict leads** (right) — `save $X` (green, net > $0.50)
-  · `about even` / `$X worse` · `pricier here` — and the **c/L cheaper** comparator joins the
-  left subtitle (`detour · price · Xc/L cheaper`), mirroring the hero. The saving-vs-drive
-  bridge (`$cheaper · $drive · net`) lives in the row tooltip — show-the-work on inspection
-  without cluttering the glance (§1).
+  · `about even` / `$X worse` · `pricier here`.
+- **The left subtitle leads with whichever number explains the verdict.** A clear win
+  (net > $0.50) leads with the **c/L cheaper** comparator (`detour · price · Xc/L cheaper`),
+  mirroring the hero. A cheaper-but-not-worth-it row leads instead with the **cost to drive
+  there** (`detour · price · ~$X to drive there`) — the offset that *causes* the verdict — so
+  "about even" never sits next to an unexplained "Xc/L cheaper". Pricier rows add nothing.
+- **The saving-vs-drive bridge is tap-revealable, not hover-only.** A per-row `ⓘ` toggle
+  (shown wherever there's a saving to weigh) expands the math — `cheaper − drive = net` —
+  beneath the row. The hover tooltip is dead on touch (phone-at-the-bowser); the tap panel
+  is show-the-work for real (§1), kept off the glance until asked for.
 - **Distance appears once** (left). Discounts are pre-applied to the shown price + a labelled
   chip; the pump price lives in the tooltip. Never "164.9 −5.0".
 

@@ -3,7 +3,7 @@ import { api } from "../api";
 import type { Coords } from "../hooks/useGeolocation";
 import type { CatalogPreset, StationHit, UserModel } from "../types";
 import { formatDistance } from "../lib/format";
-import { Button, HScroll, InfoTooltip, Input } from "./ui";
+import { Button, HScroll, InfoTooltip, Input, SearchIcon } from "./ui";
 import { BottomSheet } from "./BottomSheet";
 
 const PREMIUM_FUELS = ["P95", "P98"];
@@ -236,10 +236,10 @@ function Chip({
     <button
       onClick={onClick}
       aria-pressed={active}
-      className={`inline-flex min-h-[44px] shrink-0 items-center whitespace-nowrap rounded-full border px-4 text-sm ${
+      className={`inline-flex min-h-[44px] shrink-0 items-center whitespace-nowrap rounded-full border px-4 text-sm transition-colors ${
         active
-          ? "border-[color:var(--color-border-strong)] bg-[color:var(--color-card-raised)] text-text"
-          : "border-border text-text-secondary"
+          ? "border-transparent bg-[color:var(--color-surface-secondary)] font-medium text-[color:var(--color-surface-page)]"
+          : "border-border text-text-secondary hover:border-border-strong hover:text-text"
       }`}
     >
       {label}
@@ -284,7 +284,9 @@ function UsualStationSearch({
       <Input
         value={q}
         onChange={(e) => setQ(e.target.value)}
+        onClear={q ? () => setQ("") : undefined}
         placeholder="Search your usual station…"
+        prefix={<SearchIcon />}
         size="small"
         raised
         className="text-sm"

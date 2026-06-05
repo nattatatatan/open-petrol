@@ -46,7 +46,7 @@ export function BottomSheet({
         className={`relative flex max-h-full w-full max-w-md flex-col overflow-hidden rounded-xl border border-border bg-[color:var(--color-card)] ${contentClassName}`}
       >
         <div className="flex shrink-0 items-center justify-between gap-2 px-lg pt-lg pb-md">
-          {title && <h2 className="text-lg font-bold text-text-heading">{title}</h2>}
+          {title && <h2 className="text-[22px] font-extralight tracking-display text-text-heading">{title}</h2>}
           <button
             type="button"
             aria-label="Close"

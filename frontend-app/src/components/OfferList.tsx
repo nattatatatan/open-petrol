@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Baseline, StationOffer } from "../types";
 import { Icon } from "./Icon";
-import { FRESHNESS_META, formatCents, formatDistance, formatDollars, formatMinutes } from "../lib/format";
+import { FRESHNESS_META, formatApproxDollars, formatCents, formatDistance, formatDollars, formatMinutes } from "../lib/format";
 
 /** Tier-4 alternatives (STYLE_GUIDE §4, §7.5) — a single collapsed affordance, not
  *  a compare grid. Ranked on NET BENEFIT (not raw price). Excludes the winner (it's
@@ -21,6 +21,8 @@ export function OfferList({
   onSelect: (o: StationOffer) => void;
 }) {
   const [open, setOpen] = useState(false);
+  // Which row has its saving-vs-drive math revealed (tap, not hover — touch context).
+  const [expandedRow, setExpandedRow] = useState<string | null>(null);
   // The winner is the hero card above — don't repeat it here.
   const rest = offers.filter((o) => !o.is_recommended);
   if (rest.length === 0) return null;
@@ -30,9 +32,9 @@ export function OfferList({
       <button
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center justify-between rounded-lg border border-border bg-[color:var(--color-card)] px-md py-3 text-left"
+        className="flex w-full items-center justify-between rounded-md border border-border bg-[color:var(--color-card)] px-4 py-4 text-left backdrop-blur-[24px]"
       >
-        <span className="text-sm font-medium text-text">
+        <span className="text-base font-light text-text">
           Other options {mode === "route" ? "on your route" : "nearby"}
           <span className="ml-1 text-text-secondary">({rest.length})</span>
         </span>
@@ -53,76 +55,107 @@ export function OfferList({
             const fm = FRESHNESS_META[o.freshness];
             const cheaper = o.saving_per_litre > 0;   // beats the baseline at the pump
             const worthIt = o.net_benefit > 0.5;      // nets out ahead after fuel + time
-            // The saving-vs-drive bridge lives in the tooltip so the verdict still shows
-            // its work on inspection (no black box), without cluttering the glanceable row.
             const bridge = `${formatDollars(o.saving_per_tank)} cheaper · ${formatDollars(o.detour_cost)} to drive · net ${formatDollars(o.net_benefit)}`;
+            const expanded = expandedRow === o.station_code;
             return (
               <li key={o.station_code}>
-                <button
-                  onClick={() => onSelect(o)}
-                  className="flex w-full items-center gap-3 rounded-lg border border-border bg-[color:var(--color-card)] px-3 py-3 text-left transition-colors hover:border-border-strong"
-                >
-                  <span
-                    className="h-2 w-2 shrink-0 rounded-full"
-                    style={{ backgroundColor: fm.color }}
-                    title={fm.label}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="truncate text-sm font-medium text-text">{o.name}</span>
-                      {usualStation === o.station_code && (
-                        <Icon
-                          name="star"
-                          size={12}
-                          className="shrink-0 text-[color:var(--color-brand)]"
-                          label="Your usual station (savings baseline)"
-                        />
-                      )}
+                <div className={`flex items-stretch rounded-lg border bg-black transition-colors ${expanded ? "border-border-strong" : "border-border"}`}>
+                  {/* Left zone — selects this station as the active answer */}
+                  <button
+                    onClick={() => onSelect(o)}
+                    className="flex min-w-0 flex-1 items-center gap-3 rounded-l-lg px-3 py-3 text-left transition-colors hover:bg-white/5"
+                  >
+                    <span
+                      className="h-2 w-2 shrink-0 rounded-full"
+                      style={{ backgroundColor: fm.color }}
+                      title={fm.label}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="truncate text-sm font-normal text-text">{o.name}</span>
+                        {usualStation === o.station_code && (
+                          <Icon
+                            name="star"
+                            size={12}
+                            className="shrink-0 text-[color:var(--color-brand)]"
+                            label="Your usual station (savings baseline)"
+                          />
+                        )}
+                      </div>
+                      <div className="mt-0.5 flex min-w-0 items-center gap-1.5 text-[11px] text-text-secondary">
+                        <span className="mono min-w-0 flex-1 truncate">
+                          {mode === "route" ? `${formatMinutes(o.detour_min)} detour` : formatDistance(o.distance_km)}
+                          {" · "}
+                          {formatCents(o.discount > 0 ? o.effective_price : o.price)}c/L
+                          {worthIt
+                            ? ` · ${formatCents(o.saving_per_litre)}c/L cheaper`
+                            : cheaper
+                              ? ` · ${formatApproxDollars(o.detour_cost)} to drive there`
+                              : ""}
+                        </span>
+                        {o.discount > 0 && (
+                          <span
+                            className="max-w-[92px] shrink-0 truncate rounded-full border border-[color:var(--color-success)]/40 px-1.5 text-[9px] text-[color:var(--color-success)]"
+                            title={`Includes ${o.discount_label ?? "member"} −${formatCents(o.discount)}c · pump ${formatCents(o.price)}c`}
+                          >
+                            {o.discount_label ?? "member"}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-text-secondary">
-                      <span className="mono">
-                        {mode === "route" ? `${formatMinutes(o.detour_min)} detour` : formatDistance(o.distance_km)}
-                        {" · "}
-                        {formatCents(o.discount > 0 ? o.effective_price : o.price)}c/L
-                        {/* c/L cheaper — the secondary comparator, sharing the hero's grammar */}
-                        {cheaper && ` · ${formatCents(o.saving_per_litre)}c/L cheaper`}
-                      </span>
-                      {/* Discount is pre-applied (effective price above); the chip is the
-                          indicator, never a "−Nc" the user must subtract. Pump price +
-                          exact discount stay available in the tooltip (transparency). */}
-                      {o.discount > 0 && (
-                        <span
-                          className="max-w-[92px] shrink-0 truncate rounded-full border border-[color:var(--color-success)]/40 px-1.5 text-[9px] text-[color:var(--color-success)]"
-                          title={`Includes ${o.discount_label ?? "member"} −${formatCents(o.discount)}c · pump ${formatCents(o.price)}c`}
-                        >
-                          {o.discount_label ?? "member"}
+                  </button>
+
+                  {/* Right zone — verdict + chevron; tapping expands the math breakdown */}
+                  {cheaper ? (
+                    <button
+                      onClick={() => setExpandedRow((c) => (c === o.station_code ? null : o.station_code))}
+                      aria-expanded={expanded}
+                      aria-label="Show saving vs drive breakdown"
+                      className="relative flex w-24 shrink-0 items-center justify-center rounded-r-lg border-l border-border px-3 py-3 transition-colors hover:bg-white/5"
+                    >
+                      {worthIt ? (
+                        <span className="mono text-center text-sm font-medium" style={{ color: "var(--saving-positive)" }}>
+                          save {formatDollars(o.net_benefit)}
+                        </span>
+                      ) : (
+                        <span className="text-center text-sm font-medium text-text-secondary">
+                          {o.net_benefit < -0.5 ? `${formatDollars(-o.net_benefit)} worse` : "about even"}
                         </span>
                       )}
+                      <span
+                        className={`absolute bottom-2 right-2.5 inline-block text-[11px] font-bold leading-none transition-transform ${expanded ? "rotate-180" : ""} ${expanded ? "text-text" : "text-text-secondary"}`}
+                      >
+                        ^
+                      </span>
+                    </button>
+                  ) : (
+                    <div className="flex w-24 shrink-0 items-center justify-center border-l border-border px-3">
+                      <span className="text-center text-sm font-medium text-text-secondary">pricier here</span>
+                    </div>
+                  )}
+                </div>
+                {/* The math, made plain: saving at the pump minus the cost to fetch it. */}
+                {expanded && cheaper && (
+                  <div className="mono mt-1 rounded-lg border border-divider-subtle bg-black px-3 py-2.5 text-[11px] text-text-secondary">
+                    <div className="flex items-center justify-between">
+                      <span>cheaper at the pump</span>
+                      <span className="text-text">{formatDollars(o.saving_per_tank)}</span>
+                    </div>
+                    <div className="mt-1 flex items-center justify-between">
+                      <span>− fuel + time to drive there</span>
+                      <span className="text-[color:var(--detour-cost)]">{formatDollars(o.detour_cost)}</span>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between border-t border-divider-subtle pt-2">
+                      <span>= net</span>
+                      <span
+                        className="font-medium"
+                        style={{ color: worthIt ? "var(--saving-positive)" : undefined }}
+                      >
+                        {formatDollars(o.net_benefit)}
+                      </span>
                     </div>
                   </div>
-                  {/* $-led verdict (the NET outcome / ranking key), single line to match
-                      the hero's grammar. The saving-vs-drive bridge is in the tooltip so
-                      it stays trustworthy on inspection. Distance + c/L live on the left. */}
-                  <div
-                    className="shrink-0 text-right"
-                    title={cheaper ? bridge : "Not cheaper than your baseline"}
-                  >
-                    {!cheaper ? (
-                      <span className="text-sm font-medium text-text-secondary">pricier here</span>
-                    ) : worthIt ? (
-                      <span
-                        className="mono text-sm font-medium"
-                        style={{ color: "var(--saving-positive)" }}
-                      >
-                        save {formatDollars(o.net_benefit)}
-                      </span>
-                    ) : (
-                      <span className="text-sm font-medium text-text-secondary">
-                        {o.net_benefit < -0.5 ? `${formatDollars(-o.net_benefit)} worse` : "about even"}
-                      </span>
-                    )}
-                  </div>
-                </button>
+                )}
               </li>
             );
           })}
