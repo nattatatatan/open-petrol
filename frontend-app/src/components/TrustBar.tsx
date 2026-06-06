@@ -13,13 +13,13 @@ export function TrustBar({ meta }: { meta: Meta | null }) {
           {relativeFromNow(meta.last_success_at)}.
         </div>
       )}
-      <div className="flex items-center justify-between text-xs text-text-secondary">
-        <span className="inline-flex items-center gap-1.5">
+      <div className="flex items-center gap-2 text-xs text-text-secondary">
+        <span className="inline-flex shrink-0 items-center gap-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-success)]" />
-          {meta.station_count} stations · source: {meta.provider}
-          {meta.source === "snapshot" && " (snapshot)"}
+          {meta.station_count} stations
         </span>
-        <span className="mono">prices as of {relativeFromNow(meta.captured_at)}</span>
+        <span className="min-w-0 truncate">· {meta.provider}{meta.source === "snapshot" ? " (snapshot)" : ""}</span>
+        <span className="ml-auto shrink-0">prices as of {relativeFromNow(meta.captured_at)}</span>
       </div>
     </div>
   );

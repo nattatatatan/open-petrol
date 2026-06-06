@@ -3,7 +3,7 @@ import { api } from "../api";
 import type { Coords } from "../hooks/useGeolocation";
 import type { CatalogPreset, StationHit, UserModel } from "../types";
 import { formatDistance } from "../lib/format";
-import { Button, HScroll, InfoTooltip, Input, SearchIcon } from "./ui";
+import { Button, FuelPumpIcon, HScroll, InfoTooltip, Input, SearchIcon } from "./ui";
 import { BottomSheet } from "./BottomSheet";
 
 const PREMIUM_FUELS = ["P95", "P98"];
@@ -28,20 +28,38 @@ export function SettingsSheet({
   onUpdate: (patch: Partial<UserModel>) => void;
   onClose: () => void;
 }) {
+  const [tankRaw, setTankRaw] = useState(String(model.tankL));
+
+  useEffect(() => {
+    setTankRaw(String(model.tankL));
+  }, [model.tankL]);
+
+  const commitTank = () => {
+    const v = Math.round(Number(tankRaw));
+    if (!isNaN(v) && v >= 30 && v <= 180) {
+      onUpdate({ tankL: v });
+    } else {
+      setTankRaw(String(model.tankL));
+    }
+  };
+
   return (
     <BottomSheet open={open} onClose={onClose} title="Your settings">
       <div>
-        <label className="mb-2 block text-sm text-text-secondary">
-          Tank size — <span className="mono text-text">{model.tankL} L</span>
-        </label>
-        <input
-          type="range"
+        <label className="mb-2 block text-sm text-text-secondary">Tank size</label>
+        <Input
+          type="number"
           min={30}
-          max={110}
-          step={5}
-          value={model.tankL}
-          onChange={(e) => onUpdate({ tankL: Number(e.target.value) })}
-          className="mb-lg w-full accent-[color:var(--color-text-body)]"
+          max={180}
+          step={1}
+          value={tankRaw}
+          onChange={(e) => setTankRaw(e.target.value)}
+          onBlur={commitTank}
+          suffix={<span className="text-sm">L</span>}
+          prefix={<FuelPumpIcon />}
+          size="small"
+          raised
+          className="mb-lg"
         />
 
         <div className="mb-lg">
