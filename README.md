@@ -1,4 +1,4 @@
-# Smart Petrol Finder
+# Open. Petrol
 
 > When you're about to drive somewhere, find the cheapest fill-up **with minimal
 > detour along your way**, see exactly what you save, and tap to navigate — using
@@ -11,6 +11,8 @@ time-sensitive and location-dependent — so this isn't a price browser, it's a
 refuelling is *trip-integrated* (people fill up along routes they're already
 driving and weigh detour-from-route, not distance-from-a-point), the primary flow
 is **"On my way to…"**, not "near me".
+
+https://github.com/user-attachments/assets/3f4258be-f108-4f2c-a553-ceae8f2b124a
 
 This was built as an AI-Native Engineer assessment; the design rationale lives in
 [`CLAUDE.md`](./CLAUDE.md), the behavioural evidence in [`RESEARCH.md`](./RESEARCH.md).
@@ -39,7 +41,7 @@ This was built as an AI-Native Engineer assessment; the design rationale lives i
   stale), stale prices are de-ranked, and the data's provenance + timestamp are
   always on screen.
 - **"Fill up now or wait?" advisor.** A grounded price-cycle read on top of the
-  cheapest-now answer (see [AI feature](#the-ai-feature-fill-up-now-or-wait)).
+  cheapest-now answer.
 - **One tap to navigate** — opens Maps with the station as a **waypoint en route**
   to where you were already going.
 
@@ -47,19 +49,7 @@ This was built as an AI-Native Engineer assessment; the design rationale lives i
 
 ## Architecture
 
-```
-        ┌──────────── scheduled refresh (APScheduler, in-process) ───────────┐
-        ▼                                                                     │
-   FuelSource ──────────►  PriceCache (SQLite)  ──────►  Recommendation engine ──►  API ──►  React (mobile-first)
-   (pluggable)             our own store,                (pure, deterministic)      │
-        │                  serves every request          • cheapest, net of detour  │
-   ┌────┴──────────┐       • last-good on failure        • savings vs baseline   RoutingService (OSRM)
-   │ SnapshotSource│       • accumulates daily lows      • per-price freshness    Geocoder (Nominatim)
-   │  (demo)       │                                      • price-cycle heuristic
-   │ LiveFuelCheck │                                                              Advisor: cycle engine (deterministic) → UI
-   │  (proves path)│
-   └───────────────┘
-```
+<img width="1774" height="887" alt="image" src="https://github.com/user-attachments/assets/ad885d48-ef19-435a-84b9-c83c2d02c31a" />
 
 Four decisions do the heavy lifting:
 
@@ -90,7 +80,7 @@ Four decisions do the heavy lifting:
   price-cycle series comes from (a) our own accumulated polls and (b) a launch
   backfill from the public Data.NSW monthly price-history files.
 
-### The AI feature: "fill up now or wait?"
+### The Advisor feature: "fill up now or wait?"
 
 A general chatbot can answer "cheapest E10 near me" — so that's not our differentiator.
 Timing advice is: it's the thing a one-shot answer structurally can't do. It's built
