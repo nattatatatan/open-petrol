@@ -125,7 +125,7 @@ which a model score would have to bolt SHAP onto to recover.
 ## Tech stack
 
 **Backend:** Python · FastAPI · httpx · APScheduler · SQLite · Pydantic.
-**Frontend:** React · TypeScript · Vite · Tailwind (bound to the `/frontend` design
+**Frontend:** React · TypeScript · Vite · Tailwind (bound to the `/frontend-design` design
 tokens) · Leaflet. **Routing/geocoding:** public OSRM + Nominatim (keyless).
 **Deploy:** single Docker image — FastAPI serves the built React bundle and runs the
 scheduler in-process.

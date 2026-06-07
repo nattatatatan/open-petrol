@@ -23,7 +23,7 @@ the product. Don't drift into a generic price browser.
 
 - **Product thinking** — did we understand the user problem and solve it well?
 - **Design craft** — is the experience clear, simple, and trustworthy? Frontend
-  instructions and the design system live in `/frontend`. Read and follow them.
+  instructions and the design system live in `/frontend-design`. Read and follow them.
 - **Engineering quality** — robust, well-structured, production-minded.
 - **AI-native approach** — use AI to move faster (scaffolding, tests, docs) AND ship a
   grounded AI product feature.
@@ -178,7 +178,7 @@ v1 cut: single destination, single best stop; multi-stop "how much to buy at eac
   compare tool — that's the ChatGPT-paragraph experience we're beating.
 - **Close the loop with action.** One-tap "Navigate" (open Apple/Google Maps). A
   recommendation you can't act on is just data.
-- Follow the design system in `/frontend`; build only the components the flow needs.
+- Follow the design system in `/frontend-design`; build only the components the flow needs.
 
 ### 9. Deploy reality (plan for it NOW — "didn't ship" is the #1 take-home failure)
 - The scheduled refresh needs an **always-on process** (APScheduler etc.). Typical
@@ -207,7 +207,7 @@ v1 cut: single destination, single best stop; multi-stop "how much to buy at eac
 - Geocoding for manual-entry fallback (suburb → lat/lng): use Nominatim/OSM (no key).
 
 
-- All frontend/design instructions and the design system are in `/frontend`. Read this
+- All frontend/design instructions and the design system are in `/frontend-design`. Read this
   first and match it — design craft is explicitly graded.
 
 ## Build order (de-risk first)
@@ -217,7 +217,7 @@ v1 cut: single destination, single best stop; multi-stop "how much to buy at eac
 3. Recommendation engine: nearest stations, cheapest by fuel type, saving per litre +
    per fill-up.
 4. Caching layer + scheduled refresh (so dev mirrors production).
-5. UI per `/frontend`: the "about to refuel" hero, ranked stations (map/list), trust
+5. UI per `/frontend-design`: the "about to refuel" hero, ranked stations (map/list), trust
    elements (visible prices, freshness timestamp).
 6. AI feature, grounded in cached data.
 7. Edge cases (location denied, stale data, no nearby stations), deploy, README, tests.
