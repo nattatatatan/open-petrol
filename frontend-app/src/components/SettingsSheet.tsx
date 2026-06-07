@@ -214,12 +214,24 @@ function MembershipPicker({
           </button>
         </div>
       ))}
-      <button
-        onClick={addCustom}
-        className="mt-3 text-xs text-text hover:underline"
-      >
-        + Add a custom discount
-      </button>
+      <div className="mt-3 flex items-center gap-1.5">
+        <button
+          onClick={addCustom}
+          className="text-xs text-text hover:underline"
+        >
+          + Add a custom discount
+        </button>
+        <InfoTooltip label="Custom discount brands">
+          Enter the brand name exactly as FuelCheck lists it — e.g.{" "}
+          <span className="text-text">Shell</span>,{" "}
+          <span className="text-text">BP</span>,{" "}
+          <span className="text-text">Ampol</span>. Some stations trade under a
+          different name: OTR stations are listed as{" "}
+          <span className="text-text">Shell</span>, independent stations may
+          appear as <span className="text-text">Independent</span>. The discount
+          applies to every station matching that brand.
+        </InfoTooltip>
+      </div>
     </div>
   );
 }

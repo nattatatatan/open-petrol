@@ -56,7 +56,7 @@ This was built as an AI-Native Engineer assessment; the design rationale lives i
    ┌────┴──────────┐       • last-good on failure        • savings vs baseline   RoutingService (OSRM)
    │ SnapshotSource│       • accumulates daily lows      • per-price freshness    Geocoder (Nominatim)
    │  (demo)       │                                      • price-cycle heuristic
-   │ LiveFuelCheck │                                                              Advisor: engine → Claude (phrasing) → UI
+   │ LiveFuelCheck │                                                              Advisor: cycle engine (deterministic) → UI
    │  (proves path)│
    └───────────────┘
 ```
@@ -93,27 +93,38 @@ Four decisions do the heavy lifting:
 ### The AI feature: "fill up now or wait?"
 
 A general chatbot can answer "cheapest E10 near me" — so that's not our differentiator.
-Timing advice is: it's the thing a one-shot answer structurally can't do. Built in
-three layers with a hard boundary — **LLM for language, code for truth**:
+Timing advice is: it's the thing a one-shot answer structurally can't do. It's built
+**deterministically — no LLM, no ML** — and that's a considered decision, not a
+shortcut. **Timing is a prediction problem, not a language problem.**
 
-1. **Deterministic engine** (`engine/cycle.py`) reads the recent daily-lows series and
-   returns a verdict (`fill_now` / `wait` / `cheapest_now`), position in the cycle,
-   estimated $/tank saving, and a confidence. Conservative by design — Sydney's cycle
-   is irregular, so we only say "wait" near a clear peak and fall back to
-   "cheapest now" when the signal is weak. **This is the source of truth.**
-2. **Claude** (`advisor/llm.py`) parses free-text questions and phrases the answer —
-   but only over facts handed to it via a tool, with a system prompt forbidding it
-   from inventing any number. Server-side key only.
-3. **Presentation** shows the verdict *and its basis* (recent trend, data timestamp).
+1. **Deterministic cycle classifier** (`engine/cycle.py`) reads the recent daily-lows
+   series and returns one of four verdicts — `fill_now` / `fill_only_needed` / `wait` /
+   `uncertain` — with a confidence (`data_quality × signal_strength`, biased low) and a
+   factual `basis` string that quotes the real numbers behind the call ("cheaper than
+   78% of the last 30 days, risen 3 days running"). Conservative by design: Sydney's
+   cycle is irregular and lengthening, so a peak→`wait` needs the down-turn confirmed,
+   and any weak factor collapses the whole thing to `uncertain`.
+2. **The verdict is a *modifier* on the finder's recommendation**, not a separate
+   screen: `fill_now` reinforces the pick, `wait` softens it, `fill_only_needed` adds a
+   "top up only" nuance, `uncertain` shows nothing (we never invent a signal).
+3. **Presentation** (`advisor/service.py`) turns the verdict into one glanceable line;
+   the `basis` is available on tap. The copy is a pure presentation layer over the
+   numbers — it never reads as "AI thinks…".
 
-The feature works **fully without an Anthropic key** (deterministic phrasing); the
-LLM is a pure enhancement for free-text, and any LLM error degrades to deterministic.
+**Why no LLM.** A driver at the bowser won't type free-text questions, so there's no
+genuine NL entry point — and without one, an LLM could only re-phrase a deterministic
+verdict, buying nothing for its key/latency/cost while adding a failure mode (and a
+prompt-injection surface). So the advisor needs no Anthropic key and has no network on
+its path. The `basis` string *is* the trust mechanism — explainable by construction,
+which a model score would have to bolt SHAP onto to recover.
+
+**Why no ML.** ML is a poor fit for this problem because the decision requires asymmetric risk handling, while binary classifiers optimise symmetric prediction accuracy and still need rule-based thresholds on top. The dataset contains relatively few independent fuel-price cycles, making models prone to overfitting recent patterns and failing when cycle behaviour changes, whereas simple rules based on recent price ranges and trends are more robust. Rule-based systems are also inherently explainable, providing clear justifications for recommendations, and since the application only requires a straightforward numeric decision rather than conversational interaction, an LLM would add cost, latency, and complexity without providing meaningful additional value.
 
 ---
 
 ## Tech stack
 
-**Backend:** Python · FastAPI · httpx · APScheduler · SQLite · Pydantic · Anthropic SDK.
+**Backend:** Python · FastAPI · httpx · APScheduler · SQLite · Pydantic.
 **Frontend:** React · TypeScript · Vite · Tailwind (bound to the `/frontend` design
 tokens) · Leaflet. **Routing/geocoding:** public OSRM + Nominatim (keyless).
 **Deploy:** single Docker image — FastAPI serves the built React bundle and runs the
@@ -145,12 +156,12 @@ frontend (`npm run build`) and just run the backend — it serves `dist/` at `/`
 
 ### Tests
 ```bash
-cd backend && ./.venv/bin/python -m pytest -q     # 25 tests: engine, cache, cycle, route, API
+cd backend && ./.venv/bin/python -m pytest -q     # 57 tests: engine, cache, cycle, route, advisor, history, live, API
 ```
 
 ---
 
-## Going live (optional — the demo never needs it)
+## Going live
 
 1. **FuelCheck:** register an app at <https://api.nsw.gov.au>, then in `backend/.env`:
    ```
@@ -160,9 +171,7 @@ cd backend && ./.venv/bin/python -m pytest -q     # 25 tests: engine, cache, cyc
    ```
    Capture a real dated snapshot with `python scripts/capture_snapshot.py`, then flip
    `SOURCE` back to `snapshot` for a bulletproof demo on real data.
-2. **Advisor LLM:** set `ANTHROPIC_API_KEY` in `backend/.env` (server-side only;
-   `.env` is gitignored).
-3. **Cold-start history:** `python scripts/backfill_history.py <data.nsw_file.xlsx>`.
+2. **Cold-start history:** `python scripts/backfill_history.py <data.nsw_file.xlsx>`.
 
 See `backend/.env.example`. **Keys are read from env and never committed.**
 

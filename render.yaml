@@ -10,5 +10,6 @@ services:
     envVars:
       - key: SOURCE
         value: snapshot # demo runs offline on the captured snapshot
-      # Set these in the dashboard to enable the live path / LLM advisor:
-      # FUELCHECK_API_KEY, FUELCHECK_API_SECRET, ANTHROPIC_API_KEY
+      # Set these in the dashboard to enable the live FuelCheck path:
+      # FUELCHECK_API_KEY, FUELCHECK_API_SECRET
+      # (The advisor is deterministic — no LLM key needed.)
