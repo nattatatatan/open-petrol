@@ -181,6 +181,9 @@ See `backend/.env.example`. **Keys are read from env and never committed.**
 Railway/Render/Fly (an `render.yaml` is included). It must be an **always-on** host
 so the scheduler stays warm — serverless won't keep cron alive.
 
+The live instance is deployed on Render and accessible at  
+[https://open-petrol.onrender.com/](https://open-petrol.onrender.com/)
+
 ---
 
 ## Deliberate cuts (naming the cut is the product judgment)
