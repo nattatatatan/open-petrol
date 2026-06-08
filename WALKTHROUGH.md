@@ -7,6 +7,17 @@ in [`CLAUDE.md`](./CLAUDE.md), and the behavioural evidence in [`RESEARCH.md`](.
 
 ---
 
+## Project selection rationale
+
+I chose Brief 4A — the Smart Petrol Finder — for a few reasons that felt honest rather than strategic.
+The problem is real and immediate. Petrol prices vary 10–20c/L between stations in the same suburb on the same day, and most people absorb that cost out of habit, not because they've decided it's worth it. The saving is small enough to ignore but large enough — $100–200 a year — to matter if you make it visible. What drew me in was the brief's framing: this is a timing and location problem, not an information problem. People aren't unaware that prices differ; they just don't have the right signal at the right moment.
+
+I also picked it because I could build it honestly. The NSW FuelCheck API is real, documented, and free. The route-aware behavior is grounded in actual research on how people refuel — along trips they're already making, not as a dedicated errand. And the LLM question resolved cleanly: fuel timing is a prediction problem, not a language problem, so I built an explainable cycle classifier and dropped the LLM entirely. That felt like the right call rather than the easy one.
+
+On the briefs I didn't choose: the Social Media Content Automation brief is the one I keep thinking about. The challenge of keeping generated creative genuinely on-brand across content types — not just tonally but visually — is a harder and more interesting problem than it looks, and the human-in-the-loop approval design has real stakes. I'd genuinely like to take a run at that one. If the opportunity comes up, I will.
+
+---
+
 ## The problem I focused on
 
 NSW petrol swings 10–20c/L between stations on the same day, and a weekly driver loses
